@@ -1,0 +1,60 @@
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(13, 92, 171, 0.2);
+  opacity: 0.95;
+  transform: scale(1.02) rotate(1deg);
+  cursor: grabbing;
+  background: #ffffff;
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.3;
+  border: 2px dashed #0d5cab;
+  border-radius: 12px;
+  background: #e7eff7;
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.cdk-drop-list-dragging .cdk-drag:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.drop-zone-active {
+  background-color: #e7eff7 !important;
+  border: 2px dashed #0d5cab !important;
+
+  &::after {
+    content: 'Drop here';
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0d5cab;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px;
+  }
+}
+
+.drop-zone-invalid {
+  background-color: #fee4e2 !important;
+  border: 2px dashed #f04438 !important;
+}
+
+.drag-handle {
+  cursor: grab;
+  opacity: 0;
+  transition: opacity 120ms ease-out;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.roadmap-card:hover .drag-handle {
+  opacity: 1;
+}

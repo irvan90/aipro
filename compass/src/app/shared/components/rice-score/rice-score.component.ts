@@ -1,0 +1,25 @@
+import { Component, Input } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
+
+@Component({
+  selector: 'app-rice-score',
+  standalone: true,
+  template: `
+    <div class="text-right">
+      <div class="text-sm font-bold text-bca-navy">{{ score | number }}</div>
+      @if (showBar && maxScore > 0) {
+        <div class="w-14 h-1 bg-gray-100 rounded-full mt-1 overflow-hidden">
+          <div class="h-full bg-bca-primary rounded-full"
+               [style.width.%]="(score / maxScore) * 100">
+          </div>
+        </div>
+      }
+    </div>
+  `,
+  imports: [DecimalPipe],
+})
+export class RiceScoreComponent {
+  @Input() score = 0;
+  @Input() maxScore = 0;
+  @Input() showBar = true;
+}

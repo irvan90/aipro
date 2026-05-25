@@ -1,0 +1,6 @@
+{
+  "buildCommand": "cd compass && npm install && npm run build",
+  "outputDirectory": "compass/dist/compass/browser",
+  "installCommand": "echo 'skip root install'",
+  "framework": null
+}
