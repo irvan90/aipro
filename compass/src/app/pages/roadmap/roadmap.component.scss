@@ -1,0 +1,189 @@
+// ── Mode toggle ──────────────────────────────────────────────────────────────
+.mode-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 150ms ease;
+  background: white;
+  color: #6b7280;
+
+  &--inactive:hover {
+    color: #374151;
+    background: #f9fafb;
+  }
+
+  &--shadow-active {
+    background: #f59e0b;
+    color: white;
+    font-weight: 600;
+  }
+
+  &--final-active {
+    background: #083767;
+    color: white;
+    font-weight: 600;
+  }
+}
+
+// ── Mode banners ─────────────────────────────────────────────────────────────
+.shadow-banner {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 60%, #fde68a 100%);
+  border: 1.5px solid #f59e0b;
+}
+
+.final-banner {
+  background: linear-gradient(135deg, #083767 0%, #0d5cab 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+}
+
+// ── Quarter badge ─────────────────────────────────────────────────────────────
+.quarter-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+
+  &.badge-q1 { background: #1e293b; color: white; }
+  &.badge-q2 { background: #2563eb; color: white; }
+  &.badge-q3 { background: #083767; color: white; }
+  &.badge-q4 { background: #7c3aed; color: white; }
+}
+
+// ── State chips ───────────────────────────────────────────────────────────────
+.state-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 600;
+
+  &--submitted {
+    background: #d1fae5;
+    color: #065f46;
+  }
+
+  &--locked {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  &--pending {
+    background: #f3f4f6;
+    color: #9ca3af;
+  }
+}
+
+// ── Drop zones ────────────────────────────────────────────────────────────────
+.quarter-drop-zone {
+  position: relative;
+  overflow: hidden;
+
+  // Shadow — editable (amber dashed)
+  &.dz--shadow-edit {
+    background: rgba(255, 251, 235, 0.6);
+    border: 2px dashed #fbbf24;
+
+    &.cdk-drop-list-receiving {
+      background: rgba(254, 243, 199, 0.9) !important;
+      border-color: #f59e0b !important;
+      border-style: solid !important;
+    }
+
+    &.cdk-drop-list-dragging {
+      background: rgba(255, 251, 235, 0.9);
+    }
+  }
+
+  // Shadow — locked (solid amber + hatching)
+  &.dz--shadow-lock {
+    background: rgba(254, 243, 199, 0.35);
+    border: 2px solid #fbbf24;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 10px,
+        rgba(251, 191, 36, 0.07) 10px,
+        rgba(251, 191, 36, 0.07) 20px
+      );
+      border-radius: 10px;
+      pointer-events: none;
+    }
+  }
+
+  // Shadow — submitted (green)
+  &.dz--shadow-done {
+    background: rgba(240, 253, 244, 0.5);
+    border: 2px solid #6ee7b7;
+  }
+
+  // Final — submitted quarter
+  &.dz--final-done {
+    background: #f0fdf4;
+    border: 2px solid #86efac;
+  }
+
+  // Final — not yet submitted from shadow
+  &.dz--final-pend {
+    background: #f9fafb;
+    border: 2px dashed #e5e7eb;
+    opacity: 0.55;
+  }
+}
+
+// ── Roadmap cards ─────────────────────────────────────────────────────────────
+.roadmap-card {
+  &.roadmap-card--grab {
+    cursor: grab;
+
+    &:hover {
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.10);
+      transform: translateY(-1px);
+      border-color: #d1d5db;
+    }
+
+    &:active { cursor: grabbing; }
+  }
+
+  &.roadmap-card--static {
+    cursor: default;
+
+    &.dz--shadow-lock & {
+      opacity: 0.72;
+    }
+  }
+}
+
+// Drag handle dots — visible on card hover
+.drag-handle {
+  opacity: 0;
+  transition: opacity 120ms ease;
+  cursor: grab;
+
+  .roadmap-card:hover & {
+    opacity: 1;
+  }
+}
+
+// ── CDK drag elements ─────────────────────────────────────────────────────────
+.drag-placeholder {
+  min-height: 64px;
+  background: linear-gradient(135deg, #e7eff7 0%, #dbeafe 100%);
+  border: 2px dashed rgba(13, 92, 171, 0.35);
+}
+
+.drag-preview {
+  border: 1.5px solid rgba(13, 92, 171, 0.25);
+}
