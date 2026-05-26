@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { Quarter } from '../models/backlog.model';
 import { roadmapStore } from '../stores/roadmap.store';
 import { ToastService } from './toast.service';
+import { ActivityService } from './activity.service';
 
 @Injectable({ providedIn: 'root' })
 export class RoadmapService {
-  constructor(private toast: ToastService) {}
+  constructor(private toast: ToastService, private activityService: ActivityService) {}
 
-  moveBacklog(backlogId: string, fromQuarter: Quarter, toQuarter: Quarter): void {
+  moveBacklog(backlogId: string, fromQuarter: Quarter | null, toQuarter: Quarter, backlogTitle?: string): void {
     roadmapStore.roadmap.update(rm => ({
       ...rm,
       quarters: rm.quarters.map(q => {
@@ -21,19 +22,29 @@ export class RoadmapService {
       }),
       lastModifiedAt: new Date(),
     }));
-    this.toast.show('success', `Moved to ${toQuarter} — recorded in audit trail`);
+    this.activityService.log({
+      type: 'roadmap_moved',
+      description: `"${backlogTitle ?? backlogId}" moved from ${fromQuarter ?? 'Unplanned'} to ${toQuarter}`,
+      backlogId,
+      backlogTitle,
+      metadata: { from: fromQuarter ?? 'Unplanned', to: toQuarter },
+    });
+    this.toast.show('success', `Moved to ${toQuarter}`);
   }
 
-  submitQ3(): void {
+  submitQuarter(quarter: Quarter): void {
     roadmapStore.roadmap.update(rm => ({
       ...rm,
-      status: 'submitted',
-      submittedAt: new Date(),
-      submittedBy: 'user-po-001',
+      lastModifiedAt: new Date(),
       quarters: rm.quarters.map(q =>
-        q.quarter === 'Q3' ? { ...q, status: 'submitted' } : q
+        q.quarter === quarter ? { ...q, status: 'submitted' } : q
       ),
     }));
-    this.toast.show('success', 'Q3 roadmap submitted to PMO');
+    this.activityService.log({
+      type: 'quarter_submitted',
+      description: `${quarter} roadmap submitted to PMO`,
+      metadata: { quarter },
+    });
+    this.toast.show('success', `${quarter} roadmap submitted to PMO`);
   }
 }

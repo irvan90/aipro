@@ -20,26 +20,8 @@ import { appStore } from '../core/stores/app.store';
     ModalComponent,
     SlidePanelComponent,
   ],
-  template: `
-    <div class="flex h-screen bg-gray-50 font-sans overflow-hidden">
-      <!-- Sidebar (desktop) -->
-      <app-sidebar class="hidden lg:flex flex-shrink-0" />
-
-      <!-- Main content -->
-      <div class="flex-1 flex flex-col overflow-hidden">
-        <app-topbar />
-        <main class="flex-1 overflow-y-auto p-4 lg:p-6">
-          <router-outlet />
-        </main>
-        <!-- Bottom nav (mobile) -->
-        <app-bottom-nav class="lg:hidden" />
-      </div>
-    </div>
-
-    <!-- Global overlays -->
-    <app-toast />
-    <app-modal />
-  `,
+  templateUrl: './layout.component.html',
+  styleUrl: './layout.component.scss',
 })
 export class LayoutComponent {
   store = appStore;

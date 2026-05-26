@@ -1,7 +1,7 @@
 export type MoSCoW = 'Must Have' | 'Should Have' | 'Could Have' | "Won't Have";
 export type ImpactArea = 'Revenue' | 'CX' | 'Compliance' | 'Ops' | 'Retention' | 'Risk';
 export type Quarter = 'Q1' | 'Q2' | 'Q3' | 'Q4' | 'Unplanned';
-export type BacklogStatus = 'draft' | 'ai_scored' | 'ready' | 'not_ready' | 'submitted' | 'archived';
+export type BacklogStatus = 'draft' | 'ai_scored' | 'ready' | 'not_ready' | 'submitted' | 'archived' | 'delivered';
 export type EvidenceType = 'Analytics' | 'Complaint Data' | 'Survey' | 'Incident Report' | 'Business Request';
 
 export interface Backlog {

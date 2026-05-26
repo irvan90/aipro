@@ -1,0 +1,48 @@
+
+    <div class="space-y-2">
+      <!-- Search field -->
+      <div class="relative">
+        <input type="text"
+               [(ngModel)]="searchQuery"
+               (input)="onSearch()"
+               (focus)="showDropdown.set(true)"
+               placeholder="Search backlogs..."
+               class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-bca-primary/30 focus:border-bca-primary" />
+
+        @if (showDropdown() && filteredBacklogs().length > 0) {
+          <div class="absolute z-10 top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-blue-md max-h-48 overflow-y-auto">
+            @for (backlog of filteredBacklogs(); track backlog.id) {
+              <button type="button"
+                      (click)="addDependency(backlog)"
+                      class="w-full flex items-center gap-2 px-3 py-2.5 hover:bg-gray-50 text-left transition-colors">
+                <span class="text-xs font-semibold text-bca-navy w-4">{{ getRank(backlog) }}</span>
+                <span class="flex-1 text-xs text-gray-700 truncate">{{ backlog.title }}</span>
+                <span class="text-xs text-gray-400">{{ backlog.aiResult?.riceScore | number }}</span>
+                <span class="text-[10px] text-gray-400 ml-1">{{ backlog.targetQuarter }}</span>
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Selected chips -->
+      @if (selectedBacklogs().length > 0) {
+        <div class="flex flex-wrap gap-1.5">
+          @for (backlog of selectedBacklogs(); track backlog.id) {
+            <span [class]="hasConflict(backlog.id) ? 'border-warning bg-warning-bg' : 'border-gray-200 bg-gray-50'"
+                  class="flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-full border">
+              @if (hasConflict(backlog.id)) {
+                <span title="Conflict detected">⚠️</span>
+              }
+              <span class="text-gray-700 font-medium truncate max-w-[120px]">{{ backlog.title }}</span>
+              <button type="button"
+                      (click)="removeDependency(backlog.id)"
+                      class="text-gray-400 hover:text-danger transition-colors leading-none">✕</button>
+            </span>
+          }
+        </div>
+      } @else {
+        <p class="text-xs text-gray-400">No dependencies selected</p>
+      }
+    </div>
+  

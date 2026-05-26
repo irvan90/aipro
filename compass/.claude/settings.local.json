@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rtk ls *)",
+      "Bash(python3 *)",
+      "Bash(rtk grep *)",
+      "Bash(rtk read *)",
+      "Bash(rtk wc *)",
+      "Bash(rtk git *)",
+      "Bash(git checkout *)",
+      "Bash(xargs sed -i \"s/styleUrl: '\\\\\\(.*\\\\\\)\\\\.css'/styleUrl: '\\\\1.scss'/g\")",
+      "Bash(rtk find *)"
+    ]
+  }
+}
