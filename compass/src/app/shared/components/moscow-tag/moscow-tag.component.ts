@@ -6,11 +6,8 @@ import { MoSCoW } from '../../../core/models/backlog.model';
   selector: 'app-moscow-tag',
   standalone: true,
   imports: [NgClass],
-  template: `
-    <span [class]="getClass()" class="text-[10px] font-semibold px-2 py-0.5 rounded-full">
-      {{ moscow }}
-    </span>
-  `,
+  templateUrl: './moscow-tag.component.html',
+  styleUrl: './moscow-tag.component.css',
 })
 export class MoscowTagComponent {
   @Input() moscow: MoSCoW = 'Could Have';

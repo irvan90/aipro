@@ -7,20 +7,8 @@ import { ModalConfig } from '../../../core/models/ui.model';
   selector: 'app-modal',
   standalone: true,
   imports: [NgClass, NgIf],
-  template: `
-    @if (store.activeModal()) {
-      <div class="fixed inset-0 z-50 flex items-center justify-center p-4"
-           (click)="handleOverlayClick($event)">
-        <!-- Overlay -->
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-        <!-- Modal content -->
-        <div class="relative bg-white rounded-card shadow-blue-md max-w-md w-full animate-modal-in"
-             (click)="$event.stopPropagation()">
-          <ng-content />
-        </div>
-      </div>
-    }
-  `,
+  templateUrl: './modal.component.html',
+  styleUrl: './modal.component.css',
 })
 export class ModalComponent {
   store = appStore;

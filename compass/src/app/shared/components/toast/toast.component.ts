@@ -7,17 +7,8 @@ import { Toast } from '../../../core/models/ui.model';
   selector: 'app-toast',
   standalone: true,
   imports: [NgClass],
-  template: `
-    <div class="fixed bottom-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none">
-      @for (toast of store.toasts(); track toast.id) {
-        <div [class]="getToastClass(toast)"
-             class="flex items-center gap-3 px-4 py-3 rounded-lg shadow-blue-md text-sm font-medium pointer-events-auto animate-toast-in max-w-sm">
-          <span class="text-base">{{ getToastIcon(toast.type) }}</span>
-          <span class="flex-1">{{ toast.message }}</span>
-        </div>
-      }
-    </div>
-  `,
+  templateUrl: './toast.component.html',
+  styleUrl: './toast.component.css',
 })
 export class ToastComponent {
   store = appStore;

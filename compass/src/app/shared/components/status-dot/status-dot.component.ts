@@ -6,12 +6,8 @@ import { BacklogStatus } from '../../../core/models/backlog.model';
   selector: 'app-status-dot',
   standalone: true,
   imports: [NgClass],
-  template: `
-    <span class="flex items-center gap-1.5">
-      <span [class]="getDotClass()" class="w-1.5 h-1.5 rounded-full flex-shrink-0"></span>
-      <span class="text-[10px] text-gray-500">{{ getLabel() }}</span>
-    </span>
-  `,
+  templateUrl: './status-dot.component.html',
+  styleUrl: './status-dot.component.css',
 })
 export class StatusDotComponent {
   @Input() status: BacklogStatus = 'draft';

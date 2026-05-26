@@ -5,21 +5,8 @@ import { NgClass } from '@angular/common';
   selector: 'app-completeness-bar',
   standalone: true,
   imports: [NgClass],
-  template: `
-    <div>
-      <div class="flex items-center justify-between mb-1">
-        <span class="text-xs font-medium text-gray-600">Completeness</span>
-        <span [class]="getScoreClass()" class="text-xs font-bold">{{ score }}%</span>
-      </div>
-      <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-        <div [class]="getBarClass()"
-             [style.width.%]="score"
-             class="h-full rounded-full transition-all duration-500 animate-bar-in"
-             style="transform-origin: left">
-        </div>
-      </div>
-    </div>
-  `,
+  templateUrl: './completeness-bar.component.html',
+  styleUrl: './completeness-bar.component.css',
 })
 export class CompletenessBarComponent {
   @Input() score = 0;
