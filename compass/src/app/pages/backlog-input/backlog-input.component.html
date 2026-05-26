@@ -36,7 +36,7 @@
               <!-- Title -->
               <div>
                 <label class="block text-xs font-semibold text-gray-700 mb-1">Backlog Title <span class="text-danger">*</span></label>
-                <input type="text" [(ngModel)]="form.title"
+                <input type="text" [ngModel]="form().title" (ngModelChange)="updateForm({title: $event})"
                        placeholder="Enter a clear, specific title..."
                        class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-bca-primary/30 focus:border-bca-primary" />
               </div>
@@ -44,7 +44,7 @@
               <!-- Description -->
               <div>
                 <label class="block text-xs font-semibold text-gray-700 mb-1">Description <span class="text-danger">*</span></label>
-                <textarea [(ngModel)]="form.description" rows="3"
+                <textarea [ngModel]="form().description" (ngModelChange)="updateForm({description: $event})" rows="3"
                           placeholder="Describe the backlog item..."
                           class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-bca-primary/30 focus:border-bca-primary resize-none"></textarea>
               </div>
@@ -67,7 +67,7 @@
               <!-- Business Objective -->
               <div>
                 <label class="block text-xs font-semibold text-gray-700 mb-1">Business Objective <span class="text-danger">*</span></label>
-                <textarea [(ngModel)]="form.businessObjective" rows="2"
+                <textarea [ngModel]="form().businessObjective" (ngModelChange)="updateForm({businessObjective: $event})" rows="2"
                           placeholder="What business goal does this achieve?"
                           class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-bca-primary/30 focus:border-bca-primary resize-none"></textarea>
               </div>
@@ -75,7 +75,7 @@
               <!-- Target Users -->
               <div>
                 <label class="block text-xs font-semibold text-gray-700 mb-1">Target Users <span class="text-danger">*</span></label>
-                <input type="text" [(ngModel)]="form.targetUsers"
+                <input type="text" [ngModel]="form().targetUsers" (ngModelChange)="updateForm({targetUsers: $event})"
                        placeholder="Who will benefit from this?"
                        class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-bca-primary/30 focus:border-bca-primary" />
               </div>
@@ -98,7 +98,7 @@
               <!-- Estimated Impact -->
               <div>
                 <label class="block text-xs font-semibold text-gray-700 mb-1">Estimated Business Impact</label>
-                <input type="text" [(ngModel)]="form.estimatedImpact"
+                <input type="text" [ngModel]="form().estimatedImpact" (ngModelChange)="updateForm({estimatedImpact: $event})"
                        placeholder="e.g., Reduce failed transactions by 30%"
                        class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-bca-primary/30 focus:border-bca-primary" />
               </div>
@@ -109,8 +109,8 @@
                 <div class="flex gap-2">
                   @for (q of quarters; track q) {
                     <button type="button"
-                            (click)="form.targetQuarter = q"
-                            [class]="form.targetQuarter === q ? 'bg-bca-primary text-white border-bca-primary' : 'bg-white text-gray-600 border-gray-200 hover:border-bca-primary'"
+                            (click)="updateForm({targetQuarter: q})"
+                            [class]="form().targetQuarter === q ? 'bg-bca-primary text-white border-bca-primary' : 'bg-white text-gray-600 border-gray-200 hover:border-bca-primary'"
                             class="px-4 py-2 text-xs font-semibold border rounded-btn transition-colors duration-120">
                       {{ q }}
                     </button>
@@ -122,15 +122,15 @@
               <div>
                 <label class="block text-xs font-semibold text-gray-700 mb-2">Dependencies</label>
                 <app-dependency-chips
-                  [selectedIds]="form.dependency"
+                  [selectedIds]="form().dependency"
                   [currentBacklogId]="backlogId || ''"
-                  (selectedIdsChange)="form.dependency = $event" />
+                  (selectedIdsChange)="updateForm({dependency: $event})" />
               </div>
 
               <!-- Risk -->
               <div>
                 <label class="block text-xs font-semibold text-gray-700 mb-1">Risk if Not Implemented</label>
-                <textarea [(ngModel)]="form.riskIfNotImplemented" rows="2"
+                <textarea [ngModel]="form().riskIfNotImplemented" (ngModelChange)="updateForm({riskIfNotImplemented: $event})" rows="2"
                           placeholder="What are the consequences of not implementing this?"
                           class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-bca-primary/30 focus:border-bca-primary resize-none"></textarea>
               </div>
@@ -142,17 +142,17 @@
                   <div class="text-[11px] text-gray-400">For business emergencies requiring immediate priority</div>
                 </div>
                 <button type="button" (click)="toggleEmergency()"
-                        [class]="form.isEmergency ? 'bg-danger' : 'bg-gray-200'"
+                        [class]="form().isEmergency ? 'bg-danger' : 'bg-gray-200'"
                         class="relative w-10 h-5 rounded-full transition-colors duration-200">
-                  <span [class]="form.isEmergency ? 'translate-x-5' : 'translate-x-0.5'"
+                  <span [class]="form().isEmergency ? 'translate-x-5' : 'translate-x-0.5'"
                         class="absolute top-0.5 w-4 h-4 bg-white rounded-full transition-transform duration-200 shadow-sm block"></span>
                 </button>
               </div>
 
-              @if (form.isEmergency) {
+              @if (form().isEmergency) {
                 <div class="p-3 bg-warning-bg border border-warning/20 rounded-lg">
                   <p class="text-xs font-semibold text-warning mb-2">⚠️ Business emergency only. Requires PMO/CPO approval.</p>
-                  <textarea [(ngModel)]="form.emergencyReason" rows="2"
+                  <textarea [ngModel]="form().emergencyReason" (ngModelChange)="updateForm({emergencyReason: $event})" rows="2"
                             placeholder="Emergency reason (required)..."
                             class="w-full px-3 py-2 text-xs border border-warning/30 rounded-lg focus:outline-none resize-none"></textarea>
                 </div>

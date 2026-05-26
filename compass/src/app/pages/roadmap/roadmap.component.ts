@@ -5,6 +5,7 @@ import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-
 import { backlogStore } from '../../core/stores/backlog.store';
 import { roadmapStore } from '../../core/stores/roadmap.store';
 import { ToastService } from '../../core/services/toast.service';
+import { ActivityService } from '../../core/services/activity.service';
 import { Backlog } from '../../core/models/backlog.model';
 import { MoscowTagComponent } from '../../shared/components/moscow-tag/moscow-tag.component';
 import { RiceScoreComponent } from '../../shared/components/rice-score/rice-score.component';
@@ -70,7 +71,7 @@ export class RoadmapComponent implements OnInit {
 
   submittedCount = computed(() => Object.values(this.quarterSubmitted()).filter(Boolean).length);
 
-  constructor(private toastService: ToastService) {}
+  constructor(private toastService: ToastService, private activityService: ActivityService) {}
 
   ngOnInit(): void {
     const map: Record<string, Backlog[]> = { Q1: [], Q2: [], Q3: [], Q4: [] };
@@ -82,9 +83,13 @@ export class RoadmapComponent implements OnInit {
     this.quarterMap.set(map);
     this.unplannedBacklogs.set(unplanned);
 
-    // Q1 2026 is expired (Mar 31 passed) — pre-set as finalized
-    this.quarterLocked.update(m => ({ ...m, Q1: true }));
-    this.quarterSubmitted.update(m => ({ ...m, Q1: true }));
+    // Auto-lock/submit quarters whose deadline has already passed
+    for (const q of this.quarters) {
+      if (this.isQuarterExpired(q)) {
+        this.quarterLocked.update(m => ({ ...m, [q]: true }));
+        this.quarterSubmitted.update(m => ({ ...m, [q]: true }));
+      }
+    }
   }
 
   // ── Quarter metadata ──────────────────────────────────────────────────────
@@ -113,28 +118,42 @@ export class RoadmapComponent implements OnInit {
   isQuarterEditable(q: string): boolean {
     return this.viewMode() === 'shadow'
       && !this.isQuarterLocked(q)
-      && !this.isQuarterSubmitted(q)
-      && !this.isQuarterExpired(q);
+      && !this.isQuarterSubmitted(q);
   }
 
   canRevertToDraft(q: string): boolean {
-    return this.isQuarterSubmitted(q) && !this.isQuarterExpired(q);
+    return this.isQuarterSubmitted(q);
   }
 
   // ── Quarter actions ───────────────────────────────────────────────────────
 
   lockQuarter(q: string): void {
     this.quarterLocked.update(m => ({ ...m, [q]: true }));
+    this.activityService.log({
+      type: 'quarter_locked',
+      description: `${q} locked for review`,
+      metadata: { quarter: q },
+    });
     this.toastService.show('info', `${q} locked — ready to submit to Final`);
   }
 
   unlockQuarter(q: string): void {
     this.quarterLocked.update(m => ({ ...m, [q]: false }));
+    this.activityService.log({
+      type: 'quarter_unlocked',
+      description: `${q} unlocked for editing`,
+      metadata: { quarter: q },
+    });
     this.toastService.show('info', `${q} unlocked`);
   }
 
   submitQuarterToFinal(q: string): void {
     this.quarterSubmitted.update(m => ({ ...m, [q]: true }));
+    this.activityService.log({
+      type: 'quarter_submitted',
+      description: `${q} submitted to Final Roadmap`,
+      metadata: { quarter: q },
+    });
     this.toastService.show('success', `${q} submitted to Final Roadmap!`);
   }
 
@@ -142,6 +161,11 @@ export class RoadmapComponent implements OnInit {
     this.quarterSubmitted.update(m => ({ ...m, [q]: false }));
     this.quarterLocked.update(m => ({ ...m, [q]: false }));
     this.viewMode.set('shadow');
+    this.activityService.log({
+      type: 'quarter_reverted',
+      description: `${q} reverted to draft`,
+      metadata: { quarter: q },
+    });
     this.toastService.show('info', `${q} reverted to draft — make your changes in Shadow mode`);
   }
 
@@ -214,6 +238,13 @@ export class RoadmapComponent implements OnInit {
     arr.splice(event.currentIndex, 0, backlog);
     map[toQuarter] = arr;
     this.quarterMap.set(map);
+    this.activityService.log({
+      type: 'roadmap_moved',
+      description: `"${backlog.title}" moved from ${fromQuarter ?? 'Unplanned'} to ${toQuarter}`,
+      backlogId: backlog.id,
+      backlogTitle: backlog.title,
+      metadata: { from: fromQuarter ?? 'Unplanned', to: toQuarter },
+    });
     this.toastService.show('success', `Moved to ${toQuarter}`);
   }
 

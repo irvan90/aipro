@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd /c/File/project/compass/compass && find src -type f \\\\\\( -name \"*backlog*\" -o -name \"*roadmap*\" -o -name \"*pmo*\" -o -name \"*submission*\" -o -name \"*audit*\" \\\\\\) 2>/dev/null)",
+      "Read(//c/c/File/project/compass/compass/**)",
+      "Bash(cd /c/File/project/compass/compass && ls -la src/app/pages/ | head -30)",
+      "Read(//c/c/File/project/compass/compass/src/app/**)",
+      "Bash(cd /c/File/project/compass/compass && find src/app -type d | grep -E \"\\(backlog|roadmap|pmo|submission|audit\\)\" 2>/dev/null)",
+      "Read(//c/c/File/project/compass/compass/src/**)",
+      "Bash(xargs basename -a)",
+      "Bash(npx tsc *)"
+    ]
+  }
+}

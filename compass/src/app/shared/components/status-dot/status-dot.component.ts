@@ -19,6 +19,7 @@ export class StatusDotComponent {
       ready: 'bg-bca-primary',
       not_ready: 'bg-danger',
       submitted: 'bg-success',
+      delivered: 'bg-success',
       archived: 'bg-gray-300',
     };
     return classes[this.status] ?? 'bg-gray-400';
@@ -31,6 +32,7 @@ export class StatusDotComponent {
       ready: 'Ready',
       not_ready: 'Not Ready',
       submitted: 'Submitted',
+      delivered: 'Delivered',
       archived: 'Archived',
     };
     return labels[this.status] ?? this.status;

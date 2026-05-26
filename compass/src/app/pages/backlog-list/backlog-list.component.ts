@@ -8,6 +8,7 @@ import { MoscowTagComponent } from '../../shared/components/moscow-tag/moscow-ta
 import { StatusDotComponent } from '../../shared/components/status-dot/status-dot.component';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { ToastService } from '../../core/services/toast.service';
+import { BacklogService } from '../../core/services/backlog.service';
 
 @Component({
   selector: 'app-backlog-list',
@@ -25,7 +26,7 @@ export class BacklogListComponent {
   filterQuarterValue = 'all';
   sortByValue = 'rice';
 
-  constructor(private toast: ToastService) {}
+  constructor(private toast: ToastService, private backlogService: BacklogService) {}
 
   onSearch(q: string): void { backlogStore.searchQuery.set(q); }
   onFilterStatus(v: string): void { backlogStore.filterStatus.set(v as any); }
@@ -50,5 +51,11 @@ export class BacklogListComponent {
     backlogStore.filterMoscow.set('all');
     backlogStore.filterQuarter.set('all');
     this.toast.show('info', 'Filters cleared');
+  }
+
+  markDelivered(id: string, event: Event): void {
+    event.stopPropagation();
+    event.preventDefault();
+    this.backlogService.markDelivered(id);
   }
 }

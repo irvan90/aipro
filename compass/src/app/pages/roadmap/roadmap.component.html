@@ -167,7 +167,7 @@
           [id]="'quarter-' + quarter"
           [cdkDropListData]="getQuarterBacklogs(quarter)"
           [cdkDropListConnectedTo]="connectedLists"
-          [cdkDropListDisabled]="!isQuarterEditable(quarter)"
+          [cdkDropListDisabled]="!isQuarterEditable(quarter) || isQuarterExpired(quarter)"
           (cdkDropListDropped)="onDrop($event, quarter)"
           class="quarter-drop-zone flex-1 min-h-48 rounded-xl p-3 space-y-2 transition-all duration-200"
           [class.dz--archived]="isQuarterExpired(quarter)"

@@ -23,7 +23,7 @@ export class BacklogInputComponent implements OnInit {
   saved = signal(false);
   showReasoning = signal(false);
 
-  form = {
+  form = signal({
     title: '',
     description: '',
     businessObjective: '',
@@ -37,7 +37,7 @@ export class BacklogInputComponent implements OnInit {
     dependency: [] as string[],
     isEmergency: false,
     emergencyReason: '',
-  };
+  });
 
   impactAreas: ImpactArea[] = ['Revenue', 'CX', 'Compliance', 'Ops', 'Retention', 'Risk'];
   evidenceTypes: EvidenceType[] = ['Analytics', 'Complaint Data', 'Survey', 'Incident Report', 'Business Request'];
@@ -48,15 +48,16 @@ export class BacklogInputComponent implements OnInit {
   aiResult = computed(() => backlogStore.selectedBacklog()?.aiResult ?? null);
 
   completenessScore = computed(() => {
+    const f = this.form();
     let score = 0;
-    if (this.form.title) score += 20;
-    if (this.form.description) score += 15;
-    if (this.form.businessObjective) score += 15;
-    if (this.form.targetUsers) score += 15;
-    if (this.form.impactArea.length > 0) score += 15;
-    if (this.form.supportingEvidence.length > 0) score += 10;
-    if (this.form.estimatedImpact) score += 5;
-    if (this.form.riskIfNotImplemented) score += 5;
+    if (f.title) score += 20;
+    if (f.description) score += 15;
+    if (f.businessObjective) score += 15;
+    if (f.targetUsers) score += 15;
+    if (f.impactArea.length > 0) score += 15;
+    if (f.supportingEvidence.length > 0) score += 10;
+    if (f.estimatedImpact) score += 5;
+    if (f.riskIfNotImplemented) score += 5;
     return score;
   });
 
@@ -87,7 +88,7 @@ export class BacklogInputComponent implements OnInit {
       this.backlogId = id;
       const backlog = this.backlogService.getById(id);
       if (backlog) {
-        this.form = {
+        this.form.set({
           title: backlog.title,
           description: backlog.description,
           businessObjective: backlog.businessObjective,
@@ -101,41 +102,61 @@ export class BacklogInputComponent implements OnInit {
           dependency: [...backlog.dependency],
           isEmergency: backlog.isEmergency,
           emergencyReason: backlog.emergencyReason ?? '',
-        };
+        });
         backlogStore.selectedBacklogId.set(id);
       }
     }
     backlogStore.aiLoadingState.set('idle');
   }
 
+  updateForm(updates: Partial<{
+    title: string;
+    description: string;
+    businessObjective: string;
+    targetUsers: string;
+    impactArea: ImpactArea[];
+    supportingEvidence: EvidenceType[];
+    estimatedImpact: string;
+    riskIfNotImplemented: string;
+    effortEstimation: string;
+    targetQuarter: Quarter;
+    dependency: string[];
+    isEmergency: boolean;
+    emergencyReason: string;
+  }>): void {
+    this.form.update(f => ({ ...f, ...updates }));
+  }
+
   toggleImpactArea(area: ImpactArea): void {
-    const idx = this.form.impactArea.indexOf(area);
+    const current = this.form();
+    const idx = current.impactArea.indexOf(area);
     if (idx >= 0) {
-      this.form.impactArea = this.form.impactArea.filter(a => a !== area);
+      this.form.update(f => ({ ...f, impactArea: f.impactArea.filter(a => a !== area) }));
     } else {
-      this.form.impactArea = [...this.form.impactArea, area];
+      this.form.update(f => ({ ...f, impactArea: [...f.impactArea, area] }));
     }
   }
 
   isAreaSelected(area: ImpactArea): boolean {
-    return this.form.impactArea.includes(area);
+    return this.form().impactArea.includes(area);
   }
 
   toggleEvidence(ev: EvidenceType): void {
-    const idx = this.form.supportingEvidence.indexOf(ev);
+    const current = this.form();
+    const idx = current.supportingEvidence.indexOf(ev);
     if (idx >= 0) {
-      this.form.supportingEvidence = this.form.supportingEvidence.filter(e => e !== ev);
+      this.form.update(f => ({ ...f, supportingEvidence: f.supportingEvidence.filter(e => e !== ev) }));
     } else {
-      this.form.supportingEvidence = [...this.form.supportingEvidence, ev];
+      this.form.update(f => ({ ...f, supportingEvidence: [...f.supportingEvidence, ev] }));
     }
   }
 
   isEvidenceSelected(ev: EvidenceType): boolean {
-    return this.form.supportingEvidence.includes(ev);
+    return this.form().supportingEvidence.includes(ev);
   }
 
   toggleEmergency(): void {
-    this.form.isEmergency = !this.form.isEmergency;
+    this.form.update(f => ({ ...f, isEmergency: !f.isEmergency }));
   }
 
   saveDraft(): void {
@@ -182,21 +203,22 @@ export class BacklogInputComponent implements OnInit {
   }
 
   private buildBacklog(status: any): Backlog {
+    const f = this.form();
     return {
       id: 'bl-new-' + Date.now(),
-      title: this.form.title,
-      description: this.form.description,
-      businessObjective: this.form.businessObjective,
-      targetUsers: this.form.targetUsers,
-      impactArea: this.form.impactArea,
-      supportingEvidence: this.form.supportingEvidence,
-      estimatedImpact: this.form.estimatedImpact,
-      riskIfNotImplemented: this.form.riskIfNotImplemented,
-      effortEstimation: this.form.effortEstimation,
-      targetQuarter: this.form.targetQuarter,
-      dependency: this.form.dependency,
-      isEmergency: this.form.isEmergency,
-      emergencyReason: this.form.emergencyReason,
+      title: f.title,
+      description: f.description,
+      businessObjective: f.businessObjective,
+      targetUsers: f.targetUsers,
+      impactArea: f.impactArea,
+      supportingEvidence: f.supportingEvidence,
+      estimatedImpact: f.estimatedImpact,
+      riskIfNotImplemented: f.riskIfNotImplemented,
+      effortEstimation: f.effortEstimation,
+      targetQuarter: f.targetQuarter,
+      dependency: f.dependency,
+      isEmergency: f.isEmergency,
+      emergencyReason: f.emergencyReason,
       completenessScore: this.completenessScore(),
       status,
       createdBy: 'user-po-001',
