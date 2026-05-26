@@ -20,7 +20,7 @@ interface PRDSection {
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule, AiBadgeComponent, StatusDotComponent],
   templateUrl: './prd-draft.component.html',
-  styleUrl: './prd-draft.component.css',
+  styleUrl: './prd-draft.component.scss',
 })
 export class PrdDraftComponent implements OnInit {
   backlogId = signal<string>('');

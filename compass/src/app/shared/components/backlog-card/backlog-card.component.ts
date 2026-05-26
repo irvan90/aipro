@@ -11,7 +11,7 @@ import { RiceFormatPipe } from '../../pipes/rice-format.pipe';
   standalone: true,
   imports: [NgClass, RouterLink, MoscowTagComponent, StatusDotComponent, RiceFormatPipe],
   templateUrl: './backlog-card.component.html',
-  styleUrl: './backlog-card.component.css',
+  styleUrl: './backlog-card.component.scss',
 })
 export class BacklogCardComponent {
   @Input() backlog!: Backlog;

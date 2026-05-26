@@ -20,7 +20,7 @@ import { RelativeTimePipe } from '../../shared/pipes/relative-time.pipe';
     MoscowTagComponent, StatusDotComponent, RelativeTimePipe,
   ],
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.css',
+  styleUrl: './dashboard.component.scss',
 })
 export class DashboardComponent {
   backlog = backlogStore;

@@ -11,7 +11,7 @@ import { ToastService } from '../../core/services/toast.service';
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './team-members.component.html',
-  styleUrl: './team-members.component.css',
+  styleUrl: './team-members.component.scss',
 })
 export class TeamMembersComponent implements OnInit {
   members = signal<User[]>([]);

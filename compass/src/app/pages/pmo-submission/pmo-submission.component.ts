@@ -15,7 +15,7 @@ import { StatusDotComponent } from '../../shared/components/status-dot/status-do
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule, MoscowTagComponent, StatusDotComponent, DatePipe],
   templateUrl: './pmo-submission.component.html',
-  styleUrl: './pmo-submission.component.css',
+  styleUrl: './pmo-submission.component.scss',
 })
 export class PmoSubmissionComponent implements OnInit {
   q3Backlogs = signal<Backlog[]>([]);

@@ -6,7 +6,7 @@ import { NgClass } from '@angular/common';
   standalone: true,
   imports: [NgClass],
   templateUrl: './completeness-bar.component.html',
-  styleUrl: './completeness-bar.component.css',
+  styleUrl: './completeness-bar.component.scss',
 })
 export class CompletenessBarComponent {
   @Input() score = 0;

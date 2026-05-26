@@ -17,7 +17,7 @@ export interface AIInsight {
   standalone: true,
   imports: [NgFor, AiBadgeComponent, RouterLink],
   templateUrl: './ai-insight-card.component.html',
-  styleUrl: './ai-insight-card.component.css',
+  styleUrl: './ai-insight-card.component.scss',
 })
 export class AiInsightCardComponent {
   @Input() insight!: AIInsight;

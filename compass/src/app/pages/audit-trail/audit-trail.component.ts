@@ -11,7 +11,7 @@ import { RelativeTimePipe } from '../../shared/pipes/relative-time.pipe';
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule, RelativeTimePipe],
   templateUrl: './audit-trail.component.html',
-  styleUrl: './audit-trail.component.css',
+  styleUrl: './audit-trail.component.scss',
 })
 export class AuditTrailComponent implements OnInit {
   allActivities = signal<Activity[]>([]);

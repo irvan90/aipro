@@ -11,7 +11,7 @@ import { Product } from '../../core/models/product.model';
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './product-context.component.html',
-  styleUrl: './product-context.component.css',
+  styleUrl: './product-context.component.scss',
 })
 export class ProductContextComponent implements OnInit {
   products = appStore.products;

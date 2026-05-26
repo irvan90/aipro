@@ -15,7 +15,7 @@ import { DependencyChipsComponent } from '../../shared/components/dependency-chi
   standalone: true,
   imports: [RouterLink, NgClass, NgFor, NgIf, DecimalPipe, FormsModule, ReactiveFormsModule, CompletenessBarComponent, DependencyChipsComponent],
   templateUrl: './backlog-input.component.html',
-  styleUrl: './backlog-input.component.css',
+  styleUrl: './backlog-input.component.scss',
 })
 export class BacklogInputComponent implements OnInit {
   isEdit = false;

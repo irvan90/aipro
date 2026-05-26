@@ -7,7 +7,7 @@ import { BacklogStatus } from '../../../core/models/backlog.model';
   standalone: true,
   imports: [NgClass],
   templateUrl: './status-dot.component.html',
-  styleUrl: './status-dot.component.css',
+  styleUrl: './status-dot.component.scss',
 })
 export class StatusDotComponent {
   @Input() status: BacklogStatus = 'draft';

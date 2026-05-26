@@ -11,7 +11,7 @@ import { ToastService } from '../../core/services/toast.service';
   standalone: true,
   imports: [RouterLink, NgClass, NgIf],
   templateUrl: './topbar.component.html',
-  styleUrl: './topbar.component.css',
+  styleUrl: './topbar.component.scss',
 })
 export class TopbarComponent {
   store = appStore;

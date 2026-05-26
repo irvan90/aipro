@@ -17,7 +17,7 @@ interface NavItem {
   standalone: true,
   imports: [RouterLink, RouterLinkActive, NgClass, NgFor, NgIf],
   templateUrl: './sidebar.component.html',
-  styleUrl: './sidebar.component.css',
+  styleUrl: './sidebar.component.scss',
 })
 export class SidebarComponent {
   store = appStore;

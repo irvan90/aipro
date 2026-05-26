@@ -8,7 +8,7 @@ import { ModalConfig } from '../../../core/models/ui.model';
   standalone: true,
   imports: [NgClass, NgIf],
   templateUrl: './modal.component.html',
-  styleUrl: './modal.component.css',
+  styleUrl: './modal.component.scss',
 })
 export class ModalComponent {
   store = appStore;

@@ -6,7 +6,7 @@ import { NgClass } from '@angular/common';
   standalone: true,
   imports: [NgClass],
   templateUrl: './slide-panel.component.html',
-  styleUrl: './slide-panel.component.css',
+  styleUrl: './slide-panel.component.scss',
 })
 export class SlidePanelComponent {
   @Input() isOpen = false;

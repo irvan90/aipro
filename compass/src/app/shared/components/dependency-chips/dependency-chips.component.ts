@@ -9,7 +9,7 @@ import { backlogStore } from '../../../core/stores/backlog.store';
   standalone: true,
   imports: [NgClass, NgFor, NgIf, FormsModule, DecimalPipe],
   templateUrl: './dependency-chips.component.html',
-  styleUrl: './dependency-chips.component.css',
+  styleUrl: './dependency-chips.component.scss',
 })
 export class DependencyChipsComponent {
   @Input() selectedIds: string[] = [];

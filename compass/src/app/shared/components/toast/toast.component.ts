@@ -8,7 +8,7 @@ import { Toast } from '../../../core/models/ui.model';
   standalone: true,
   imports: [NgClass],
   templateUrl: './toast.component.html',
-  styleUrl: './toast.component.css',
+  styleUrl: './toast.component.scss',
 })
 export class ToastComponent {
   store = appStore;

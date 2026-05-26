@@ -5,7 +5,7 @@ import { DecimalPipe } from '@angular/common';
   selector: 'app-rice-score',
   standalone: true,
   templateUrl: './rice-score.component.html',
-  styleUrl: './rice-score.component.css',
+  styleUrl: './rice-score.component.scss',
   imports: [DecimalPipe],
 })
 export class RiceScoreComponent {

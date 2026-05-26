@@ -15,7 +15,7 @@ import { AiService } from '../../core/services/ai.service';
   standalone: true,
   imports: [RouterLink, NgClass, DecimalPipe, MoscowTagComponent, StatusDotComponent, CompletenessBarComponent, RelativeTimePipe],
   templateUrl: './backlog-detail.component.html',
-  styleUrl: './backlog-detail.component.css',
+  styleUrl: './backlog-detail.component.scss',
 })
 export class BacklogDetailComponent implements OnInit {
   tabs = ['Overview', 'AI Scoring', 'Impact', 'PRD Draft', 'Audit Trail'];

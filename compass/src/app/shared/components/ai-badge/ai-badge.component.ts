@@ -6,7 +6,7 @@ type BadgeType = 'Impact Alert' | 'Recommendation' | 'Planning' | 'AI Draft' | '
   selector: 'app-ai-badge',
   standalone: true,
   templateUrl: './ai-badge.component.html',
-  styleUrl: './ai-badge.component.css',
+  styleUrl: './ai-badge.component.scss',
 })
 export class AiBadgeComponent {
   @Input() type: string = 'Recommendation';

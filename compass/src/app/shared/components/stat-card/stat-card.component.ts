@@ -6,7 +6,7 @@ import { NgClass } from '@angular/common';
   standalone: true,
   imports: [NgClass],
   templateUrl: './stat-card.component.html',
-  styleUrl: './stat-card.component.css',
+  styleUrl: './stat-card.component.scss',
 })
 export class StatCardComponent {
   @Input() label = '';

@@ -16,7 +16,7 @@ import { RiceScoreComponent } from '../../shared/components/rice-score/rice-scor
   standalone: true,
   imports: [CommonModule, RouterModule, DragDropModule, MoscowTagComponent, StatusDotComponent, RiceScoreComponent],
   templateUrl: './roadmap.component.html',
-  styleUrl: './roadmap.component.css',
+  styleUrl: './roadmap.component.scss',
 })
 export class RoadmapComponent implements OnInit {
   viewMode = roadmapStore.viewMode;

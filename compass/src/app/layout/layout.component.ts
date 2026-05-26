@@ -21,7 +21,7 @@ import { appStore } from '../core/stores/app.store';
     SlidePanelComponent,
   ],
   templateUrl: './layout.component.html',
-  styleUrl: './layout.component.css',
+  styleUrl: './layout.component.scss',
 })
 export class LayoutComponent {
   store = appStore;

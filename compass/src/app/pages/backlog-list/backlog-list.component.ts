@@ -14,7 +14,7 @@ import { ToastService } from '../../core/services/toast.service';
   standalone: true,
   imports: [RouterLink, NgClass, NgFor, NgIf, DecimalPipe, FormsModule, MoscowTagComponent, StatusDotComponent, EmptyStateComponent],
   templateUrl: './backlog-list.component.html',
-  styleUrl: './backlog-list.component.css',
+  styleUrl: './backlog-list.component.scss',
 })
 export class BacklogListComponent {
   filtered = computed(() => backlogStore.filtered());

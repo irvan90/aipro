@@ -57,7 +57,7 @@ interface ImpactDisplayResult {
   standalone: true,
   imports: [CommonModule, RouterModule, MoscowTagComponent, StatusDotComponent, AiBadgeComponent],
   templateUrl: './impact-analysis.component.html',
-  styleUrl: './impact-analysis.component.css',
+  styleUrl: './impact-analysis.component.scss',
 })
 export class ImpactAnalysisComponent implements OnInit {
   backlogs = computed(() => backlogStore.all());

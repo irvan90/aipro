@@ -7,7 +7,7 @@ import { MoSCoW } from '../../../core/models/backlog.model';
   standalone: true,
   imports: [NgClass],
   templateUrl: './moscow-tag.component.html',
-  styleUrl: './moscow-tag.component.css',
+  styleUrl: './moscow-tag.component.scss',
 })
 export class MoscowTagComponent {
   @Input() moscow: MoSCoW = 'Could Have';
