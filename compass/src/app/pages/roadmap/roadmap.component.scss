@@ -79,12 +79,40 @@
     background: #f3f4f6;
     color: #9ca3af;
   }
+
+  &--expired {
+    background: #f1f5f9;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+  }
+
+  &--current {
+    background: #dbeafe;
+    color: #1d4ed8;
+    animation: pulse-chip 2s ease-in-out infinite;
+  }
+}
+
+@keyframes pulse-chip {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
 }
 
 // ── Drop zones ────────────────────────────────────────────────────────────────
 .quarter-drop-zone {
   position: relative;
   overflow: hidden;
+
+  // Archived — expired quarter (gray, desaturated)
+  &.dz--archived {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    opacity: 0.8;
+
+    .roadmap-card {
+      filter: saturate(0.55) brightness(1.02);
+    }
+  }
 
   // Shadow — editable (amber dashed)
   &.dz--shadow-edit {

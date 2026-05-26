@@ -9,6 +9,21 @@ import { Backlog } from '../../core/models/backlog.model';
 import { MoscowTagComponent } from '../../shared/components/moscow-tag/moscow-tag.component';
 import { RiceScoreComponent } from '../../shared/components/rice-score/rice-score.component';
 
+// Quarter boundaries for 2026
+const QUARTER_END: Record<string, Date> = {
+  Q1: new Date('2026-03-31T23:59:59'),
+  Q2: new Date('2026-06-30T23:59:59'),
+  Q3: new Date('2026-09-30T23:59:59'),
+  Q4: new Date('2026-12-31T23:59:59'),
+};
+
+const QUARTER_LABEL: Record<string, string> = {
+  Q1: 'Jan – Mar 2026',
+  Q2: 'Apr – Jun 2026',
+  Q3: 'Jul – Sep 2026',
+  Q4: 'Oct – Dec 2026',
+};
+
 @Component({
   selector: 'app-roadmap',
   standalone: true,
@@ -20,10 +35,10 @@ export class RoadmapComponent implements OnInit {
   viewMode = roadmapStore.viewMode;
   readonly quarters = ['Q1', 'Q2', 'Q3', 'Q4'] as const;
 
-  quarterMap = signal<Record<string, Backlog[]>>({ Q1: [], Q2: [], Q3: [], Q4: [] });
+  quarterMap       = signal<Record<string, Backlog[]>>({ Q1: [], Q2: [], Q3: [], Q4: [] });
   unplannedBacklogs = signal<Backlog[]>([]);
 
-  // Per-quarter state for Shadow mode
+  // Per-quarter state (shadow mode)
   quarterLocked    = signal<Record<string, boolean>>({ Q1: false, Q2: false, Q3: false, Q4: false });
   quarterSubmitted = signal<Record<string, boolean>>({ Q1: false, Q2: false, Q3: false, Q4: false });
 
@@ -32,6 +47,8 @@ export class RoadmapComponent implements OnInit {
   pendingDropEvent = signal<CdkDragDrop<Backlog[]> | null>(null);
 
   readonly connectedLists = ['quarter-Q1', 'quarter-Q2', 'quarter-Q3', 'quarter-Q4', 'unplanned-pool'];
+
+  today = new Date();
 
   readyCount = computed(() =>
     this.quarterMap()['Q3'].filter(b => b.status === 'ready' || b.status === 'ai_scored').length
@@ -55,7 +72,7 @@ export class RoadmapComponent implements OnInit {
 
   constructor(private toastService: ToastService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     const map: Record<string, Backlog[]> = { Q1: [], Q2: [], Q3: [], Q4: [] };
     const unplanned: Backlog[] = [];
     for (const b of backlogStore.all()) {
@@ -64,9 +81,28 @@ export class RoadmapComponent implements OnInit {
     }
     this.quarterMap.set(map);
     this.unplannedBacklogs.set(unplanned);
+
+    // Q1 2026 is expired (Mar 31 passed) — pre-set as finalized
+    this.quarterLocked.update(m => ({ ...m, Q1: true }));
+    this.quarterSubmitted.update(m => ({ ...m, Q1: true }));
   }
 
-  // ── Helpers ────────────────────────────────────────────────────────────────
+  // ── Quarter metadata ──────────────────────────────────────────────────────
+
+  getQuarterLabel(q: string): string { return QUARTER_LABEL[q] ?? q; }
+
+  isQuarterExpired(q: string): boolean {
+    return (QUARTER_END[q] ?? new Date(0)) < this.today;
+  }
+
+  isCurrentQuarter(q: string): boolean {
+    const end   = QUARTER_END[q] ?? new Date(0);
+    const start = new Date(end);
+    start.setMonth(start.getMonth() - 3);
+    return start <= this.today && this.today <= end;
+  }
+
+  // ── Per-quarter state ─────────────────────────────────────────────────────
 
   getQuarterBacklogs(q: string): Backlog[] { return this.quarterMap()[q]; }
   getQuarterCount(q: string): number        { return this.quarterMap()[q].length; }
@@ -77,10 +113,15 @@ export class RoadmapComponent implements OnInit {
   isQuarterEditable(q: string): boolean {
     return this.viewMode() === 'shadow'
       && !this.isQuarterLocked(q)
-      && !this.isQuarterSubmitted(q);
+      && !this.isQuarterSubmitted(q)
+      && !this.isQuarterExpired(q);
   }
 
-  // ── Quarter state actions ──────────────────────────────────────────────────
+  canRevertToDraft(q: string): boolean {
+    return this.isQuarterSubmitted(q) && !this.isQuarterExpired(q);
+  }
+
+  // ── Quarter actions ───────────────────────────────────────────────────────
 
   lockQuarter(q: string): void {
     this.quarterLocked.update(m => ({ ...m, [q]: true }));
@@ -95,6 +136,13 @@ export class RoadmapComponent implements OnInit {
   submitQuarterToFinal(q: string): void {
     this.quarterSubmitted.update(m => ({ ...m, [q]: true }));
     this.toastService.show('success', `${q} submitted to Final Roadmap!`);
+  }
+
+  revertToDraft(q: string): void {
+    this.quarterSubmitted.update(m => ({ ...m, [q]: false }));
+    this.quarterLocked.update(m => ({ ...m, [q]: false }));
+    this.viewMode.set('shadow');
+    this.toastService.show('info', `${q} reverted to draft — make your changes in Shadow mode`);
   }
 
   // ── Drag & Drop ───────────────────────────────────────────────────────────
@@ -173,9 +221,9 @@ export class RoadmapComponent implements OnInit {
 
   getRiceBorderClass(b: Backlog): string {
     const s = b.aiResult?.riceScore ?? 0;
-    if (s >= 80) return 'bg-green-500';
-    if (s >= 50) return 'bg-blue-500';
-    if (s >= 25) return 'bg-yellow-400';
+    if (s >= 10000) return 'bg-green-500';
+    if (s >= 7000)  return 'bg-blue-500';
+    if (s >= 4000)  return 'bg-yellow-400';
     return 'bg-gray-300';
   }
 
