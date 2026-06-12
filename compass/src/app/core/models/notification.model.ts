@@ -1,5 +1,5 @@
-export type NotificationType = 'ai_scored' | 'deadline' | 'pmo_comment'
-  | 'dependency_conflict' | 'emergency_approval' | 'submission_confirmed';
+export type NotificationType = 'ai_scored' | 'deadline' | 'myservice_new'
+  | 'dependency_conflict' | 'emergency_approval';
 
 export interface Notification {
   id: string;

@@ -1,9 +1,20 @@
 import { signal, computed, Signal } from '@angular/core';
-import { Backlog, BacklogStatus, Quarter, MoSCoW } from '../models/backlog.model';
+import { AgentFinding, AgentId, Backlog, BacklogStatus, Quarter, MoSCoW } from '../models/backlog.model';
 import { AILoadingState, AILoadingStep } from '../models/ui.model';
 import { MOCK_BACKLOGS } from '../services/mock-data.service';
 
+export const CURRENT_QUARTER: Quarter = 'Q2';
+
+export interface AgentState {
+  agentId: AgentId;
+  name: string;
+  icon: string;
+  status: 'pending' | 'running' | 'done';
+  finding?: AgentFinding;
+}
+
 const _all = signal<Backlog[]>(MOCK_BACKLOGS);
+const _agentStates = signal<AgentState[]>([]);
 const _filterStatus = signal<BacklogStatus | 'all'>('all');
 const _filterQuarter = signal<Quarter | 'all'>('all');
 const _filterMoscow = signal<MoSCoW | 'all'>('all');
@@ -60,11 +71,17 @@ export const backlogStore = {
   scoredCount: computed<number>(() =>
     _all().filter((b: Backlog) => b.status === 'ai_scored' || b.status === 'ready').length
   ),
-  prdDraftedCount: computed<number>(() =>
-    _all().filter((b: Backlog) => b.status !== 'draft').length
+  newFromMyService: computed<Backlog[]>(() =>
+    _all().filter((b: Backlog) => b.status === 'new')
   ),
-  needsAttentionCount: computed<number>(() =>
-    _all().filter((b: Backlog) => b.dependency.length > 0 || b.status === 'not_ready').length
+  ongoingCount: computed<number>(() =>
+    _all().filter((b: Backlog) =>
+      b.targetQuarter === CURRENT_QUARTER &&
+      !['delivered', 'submitted', 'archived'].includes(b.status)
+    ).length
+  ),
+  deliveredCount: computed<number>(() =>
+    _all().filter((b: Backlog) => b.status === 'delivered' || b.status === 'submitted').length
   ),
   maxRiceScore: computed<number>(() =>
     Math.max(..._all().map((b: Backlog) => b.aiResult?.riceScore ?? 0), 1)
@@ -73,6 +90,7 @@ export const backlogStore = {
   aiLoadingState: _aiLoadingState,
   aiLoadingStep: _aiLoadingStep,
   currentAnalyzingId: _currentAnalyzingId,
+  agentStates: _agentStates,
 
   selectedBacklogId: _selectedBacklogId,
   selectedBacklog: computed<Backlog | null>(() =>

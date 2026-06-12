@@ -2,26 +2,26 @@ import { Component, computed, signal, OnInit } from '@angular/core';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { NgClass, NgFor, NgIf, DecimalPipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Backlog, ImpactArea, EvidenceType, Quarter } from '../../core/models/backlog.model';
+import { Backlog, ImpactArea, EvidenceType, Quarter, MyServiceData } from '../../core/models/backlog.model';
 import { backlogStore } from '../../core/stores/backlog.store';
 import { AiService } from '../../core/services/ai.service';
 import { BacklogService } from '../../core/services/backlog.service';
 import { ToastService } from '../../core/services/toast.service';
 import { CompletenessBarComponent } from '../../shared/components/completeness-bar/completeness-bar.component';
 import { DependencyChipsComponent } from '../../shared/components/dependency-chips/dependency-chips.component';
+import { AgentPipelineComponent } from '../../shared/components/agent-pipeline/agent-pipeline.component';
 
 @Component({
   selector: 'app-backlog-input',
   standalone: true,
-  imports: [RouterLink, NgClass, NgFor, NgIf, DecimalPipe, FormsModule, ReactiveFormsModule, CompletenessBarComponent, DependencyChipsComponent],
+  imports: [RouterLink, NgClass, NgFor, NgIf, DecimalPipe, FormsModule, ReactiveFormsModule, CompletenessBarComponent, DependencyChipsComponent, AgentPipelineComponent],
   templateUrl: './backlog-input.component.html',
   styleUrl: './backlog-input.component.scss',
 })
 export class BacklogInputComponent implements OnInit {
-  isEdit = false;
   backlogId: string | null = null;
+  original: Backlog | null = null;
   saved = signal(false);
-  showReasoning = signal(false);
 
   form = signal({
     title: '',
@@ -41,11 +41,13 @@ export class BacklogInputComponent implements OnInit {
 
   impactAreas: ImpactArea[] = ['Revenue', 'CX', 'Compliance', 'Ops', 'Retention', 'Risk'];
   evidenceTypes: EvidenceType[] = ['Analytics', 'Complaint Data', 'Survey', 'Incident Report', 'Business Request'];
-  quarters: Quarter[] = ['Q1', 'Q2', 'Q3', 'Q4'];
+  quarters: Quarter[] = ['Q1', 'Q2', 'Q3', 'Q4', 'Unplanned'];
 
   aiState = computed(() => backlogStore.aiLoadingState());
   currentStep = computed(() => backlogStore.aiLoadingStep());
-  aiResult = computed(() => backlogStore.selectedBacklog()?.aiResult ?? null);
+
+  msData = computed<MyServiceData | null>(() => this.original?.myService ?? null);
+  isMyService = computed(() => this.original?.source === 'myservice');
 
   completenessScore = computed(() => {
     const f = this.form();
@@ -61,18 +63,6 @@ export class BacklogInputComponent implements OnInit {
     return score;
   });
 
-  dimensionRows = computed(() => {
-    const r = this.aiResult();
-    if (!r) return [];
-    const labelToPct: Record<string, number> = { Minimal: 10, Low: 25, Medium: 50, High: 75, Massive: 100 };
-    return [
-      { label: 'Reach', dimLabel: r.reach.label, pct: labelToPct[r.reach.label] ?? 50 },
-      { label: 'Impact', dimLabel: r.impact.label, pct: labelToPct[r.impact.label] ?? 50 },
-      { label: 'Confidence', dimLabel: `${r.confidence.value * 100}%`, pct: r.confidence.value * 100 },
-      { label: 'Effort', dimLabel: r.effort.label, pct: labelToPct[r.effort.label] ?? 50 },
-    ];
-  });
-
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -83,11 +73,11 @@ export class BacklogInputComponent implements OnInit {
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    if (id && this.route.snapshot.url.some(s => s.path === 'edit')) {
-      this.isEdit = true;
+    if (id) {
       this.backlogId = id;
       const backlog = this.backlogService.getById(id);
       if (backlog) {
+        this.original = backlog;
         this.form.set({
           title: backlog.title,
           description: backlog.description,
@@ -160,52 +150,39 @@ export class BacklogInputComponent implements OnInit {
   }
 
   saveDraft(): void {
-    const backlog = this.buildBacklog('draft');
-    if (this.isEdit && this.backlogId) {
-      this.backlogService.updateBacklog({ ...backlog, id: this.backlogId });
-    } else {
-      this.backlogService.addBacklog(backlog);
-    }
+    const backlog = this.buildBacklog();
+    if (!backlog) return;
+    this.backlogService.updateBacklog(backlog);
+    this.original = backlog;
     this.saved.set(true);
     setTimeout(() => this.saved.set(false), 2000);
   }
 
   analyzeWithAI(): void {
-    if (this.completenessScore() < 50) return;
-    const tempId = this.backlogId ?? 'bl-temp-' + Date.now();
-    const backlog = this.buildBacklog('draft');
-    backlog.id = tempId;
-    backlogStore.aiLoadingState.set('loading');
-    backlogStore.selectedBacklogId.set(tempId);
+    const backlog = this.buildBacklog();
+    if (!backlog || backlogStore.aiLoadingState() === 'loading') return;
 
-    if (!this.backlogId) {
-      backlogStore.all.update(all => [backlog, ...all]);
-    }
+    this.backlogService.updateBacklog(backlog);
+    this.original = backlog;
+    backlogStore.aiLoadingState.set('loading');
+    backlogStore.currentAnalyzingId.set(backlog.id);
 
     this.ai.analyzeBacklog(backlog).subscribe(result => {
       backlogStore.all.update(all =>
-        all.map(b => b.id === tempId ? { ...b, aiResult: result, status: 'ai_scored' } : b)
+        all.map(b => b.id === backlog.id ? { ...b, aiResult: result, status: 'ai_scored' as const, updatedAt: new Date() } : b)
       );
       backlogStore.aiLoadingState.set('complete');
-      this.backlogId = tempId;
-      this.toast.show('success', 'AI analysis complete — scored in 3.2s');
+      backlogStore.currentAnalyzingId.set(null);
+      this.toast.show('success', `AI scoring selesai — confidence ${result.confidenceLevel}%`);
+      this.router.navigate(['/backlog', backlog.id]);
     });
   }
 
-  saveToRoadmap(): void {
-    this.toast.show('success', 'Added to Shadow Roadmap — Q3');
-  }
-
-  generatePRD(): void {
-    if (this.backlogId) {
-      this.router.navigate(['/prd-draft', this.backlogId]);
-    }
-  }
-
-  private buildBacklog(status: any): Backlog {
+  private buildBacklog(): Backlog | null {
+    if (!this.original) return null;
     const f = this.form();
     return {
-      id: 'bl-new-' + Date.now(),
+      ...this.original,
       title: f.title,
       description: f.description,
       businessObjective: f.businessObjective,
@@ -220,11 +197,8 @@ export class BacklogInputComponent implements OnInit {
       isEmergency: f.isEmergency,
       emergencyReason: f.emergencyReason,
       completenessScore: this.completenessScore(),
-      status,
-      createdBy: 'user-po-001',
-      createdAt: new Date(),
+      status: this.original.status === 'new' ? 'draft' : this.original.status,
       updatedAt: new Date(),
-      productId: 'prod-001',
     };
   }
 }

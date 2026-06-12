@@ -14,6 +14,7 @@ export class StatusDotComponent {
 
   getDotClass(): string {
     const classes: Record<BacklogStatus, string> = {
+      new: 'bg-purple',
       draft: 'bg-gray-400',
       ai_scored: 'bg-bca-primary',
       ready: 'bg-bca-primary',
@@ -27,6 +28,7 @@ export class StatusDotComponent {
 
   getLabel(): string {
     const labels: Record<BacklogStatus, string> = {
+      new: 'Baru — myService',
       draft: 'Draft',
       ai_scored: 'AI Scored',
       ready: 'Ready',

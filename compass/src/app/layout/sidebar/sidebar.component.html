@@ -16,7 +16,7 @@
     <div class="mb-4">
       <div class="text-[10px] font-semibold text-white/40 uppercase tracking-wider px-2 mb-2">Main Menu</div>
       <ul class="space-y-0.5">
-        @for (item of mainNavItems; track item.route) {
+        @for (item of mainNavItems(); track item.route) {
           <li>
             <a [routerLink]="item.route"
                routerLinkActive="bg-bca-primary text-white"
