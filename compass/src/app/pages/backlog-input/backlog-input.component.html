@@ -2,16 +2,16 @@
     <div class="animate-fade-up">
       <!-- Topbar -->
       <div class="sticky top-0 z-20 bg-white border-b border-gray-200 -mx-4 lg:-mx-6 px-4 lg:px-6 py-3 mb-4 flex items-center gap-3">
-        <a routerLink="/backlog" class="text-xs text-gray-500 hover:text-gray-700">← Backlog</a>
+        <a [routerLink]="['/backlog', backlogId]" class="text-xs text-gray-500 hover:text-gray-700">← Detail</a>
         <span class="text-gray-300">/</span>
-        <span class="text-xs font-semibold text-gray-900">{{ isEdit ? 'Edit Backlog' : 'New Backlog' }}</span>
+        <span class="text-xs font-semibold text-gray-900">{{ isMyService() ? 'Lengkapi Backlog (dari myService)' : 'Edit Backlog' }}</span>
         <div class="flex-1"></div>
         <button (click)="saveDraft()"
                 class="px-3 py-2 text-xs font-semibold text-bca-primary border border-bca-primary rounded-btn hover:bg-bca-accent transition-colors">
           {{ saved() ? 'Saved ✓' : 'Save Draft' }}
         </button>
         <button (click)="analyzeWithAI()"
-                [disabled]="aiState() === 'loading' || completenessScore() < 50"
+                [disabled]="aiState() === 'loading'"
                 [class]="aiState() === 'loading' ? 'bg-bca-hover' : 'bg-bca-primary hover:bg-bca-hover'"
                 class="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-white rounded-btn transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
           @if (aiState() === 'loading') {
@@ -26,6 +26,27 @@
       <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
         <!-- Left: Form -->
         <div class="lg:col-span-3 space-y-4">
+          <!-- myService source data (read-only) -->
+          @if (msData(); as ms) {
+            <div class="bg-bca-accent/40 rounded-card border border-bca-primary/20 p-4">
+              <div class="flex items-center gap-2 mb-2 flex-wrap">
+                <span class="text-sm">📥</span>
+                <span class="text-xs font-bold text-bca-navy">Data asal myService</span>
+                <span class="text-[10px] px-2 py-0.5 bg-white text-bca-primary rounded-full font-bold">{{ ms.myServiceId }}</span>
+                <span class="text-[10px] text-gray-500 ml-auto">read-only</span>
+              </div>
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-2 text-[11px] text-gray-700">
+                <div><span class="text-gray-400 block">Initiator</span>{{ ms.featureInitiator }}</div>
+                @if (ms.category) { <div><span class="text-gray-400 block">Category</span>{{ ms.category }}</div> }
+                @if (ms.timeToMarketMonths) { <div><span class="text-gray-400 block">Time to Market</span>{{ ms.timeToMarketMonths }} bulan</div> }
+                <div><span class="text-gray-400 block">Valuegraph Value</span>{{ ms.valuegraphValue }}</div>
+                <div><span class="text-gray-400 block">Valuegraph Effort</span>{{ ms.valuegraphEffort }}</div>
+                <div><span class="text-gray-400 block">Personal Data</span>{{ ms.personalDataAccess ? 'Ya — ROPA/DPIA' : 'Tidak' }}</div>
+              </div>
+              <p class="text-[10px] text-gray-500 mt-2 italic">Lengkapi field di bawah untuk meningkatkan confidence scoring AI.</p>
+            </div>
+          }
+
           <div class="bg-white rounded-card border border-gray-200 p-5">
             <!-- Completeness bar -->
             <div class="mb-5">
@@ -164,110 +185,26 @@
         <!-- Right: AI Scoring Panel -->
         <div class="lg:col-span-2">
           <div class="bg-white rounded-card border border-gray-200 overflow-hidden sticky top-20">
-            @if (aiState() === 'idle') {
-              <div class="p-6 text-center">
-                <div class="text-4xl mb-3">🤖</div>
-                <h3 class="text-sm font-bold text-gray-900 mb-1">AI Analysis</h3>
-                <p class="text-xs text-gray-500 mb-4">Click "Analyze with AI" to get RICE scoring and MoSCoW classification</p>
-                <button (click)="analyzeWithAI()"
-                        [disabled]="completenessScore() < 50"
-                        class="w-full py-2.5 px-4 bg-bca-primary hover:bg-bca-hover text-white text-xs font-semibold rounded-btn transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                  {{ completenessScore() < 50 ? 'Complete fields first (min 50%)' : 'Analyze with AI →' }}
-                </button>
-              </div>
-            }
-
             @if (aiState() === 'loading') {
               <div class="p-5">
                 <div class="flex items-center gap-2 mb-4">
                   <span class="text-lg">🤖</span>
-                  <span class="text-sm font-bold text-gray-900">COMPASS AI</span>
+                  <span class="text-sm font-bold text-gray-900">Agentic AI Scoring</span>
                 </div>
-                <div class="flex items-center gap-2 mb-3">
-                  <span class="text-bca-primary">⠋</span>
-                  <span class="text-xs text-gray-600">{{ currentStep() }}</span>
-                </div>
-                <!-- Progress bar -->
-                <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden mb-4">
-                  <div class="h-full bg-bca-primary rounded-full animate-pulse" style="width: 60%"></div>
-                </div>
-                <!-- Skeleton -->
-                <div class="animate-pulse space-y-3">
-                  <div class="h-8 bg-gray-100 rounded-lg"></div>
-                  <div class="h-4 bg-gray-100 rounded w-3/4"></div>
-                  <div class="space-y-2">
-                    @for (r of [1,2,3,4]; track r) {
-                      <div class="h-3 bg-gray-100 rounded"></div>
-                    }
-                  </div>
-                </div>
+                <app-agent-pipeline />
               </div>
-            }
-
-            @if (aiState() === 'complete' && aiResult()) {
-              <div class="p-5">
-                <!-- Success indicator -->
-                <div class="flex items-center gap-2 mb-4 p-2 bg-success-bg rounded-lg">
-                  <span class="text-sm">✅</span>
-                  <span class="text-xs font-semibold text-success">Analysis complete — 3.2s</span>
-                  <span class="text-[10px] text-gray-400 ml-auto">Prompt {{ aiResult()!.promptVersion }}</span>
-                </div>
-
-                <!-- RICE Score -->
-                <div class="text-center mb-5">
-                  <div class="text-4xl font-black text-bca-navy mb-1">{{ aiResult()!.riceScore | number }}</div>
-                  <div class="text-xs text-gray-500">RICE Score · {{ aiResult()!.moscow }}</div>
-                </div>
-
-                <!-- Dimension bars -->
-                <div class="space-y-3 mb-4">
-                  @for (dim of dimensionRows(); track dim.label) {
-                    <div>
-                      <div class="flex items-center justify-between mb-1">
-                        <span class="text-xs font-medium text-gray-600">{{ dim.label }}</span>
-                        <span class="text-xs font-semibold text-gray-900">{{ dim.dimLabel }}</span>
-                      </div>
-                      <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                        <div [style.width.%]="dim.pct"
-                             class="h-full bg-bca-primary rounded-full transition-all duration-700">
-                        </div>
-                      </div>
-                    </div>
-                  }
-                </div>
-
-                <!-- MoSCoW badge -->
-                <div class="text-center mb-4">
-                  <span class="inline-block px-4 py-1.5 bg-blue-100 text-blue-800 text-sm font-bold rounded-full">
-                    {{ aiResult()!.moscow }}
-                  </span>
-                </div>
-
-                <!-- Reasoning toggle -->
-                <button (click)="showReasoning.set(!showReasoning())"
-                        class="w-full flex items-center justify-between text-xs font-semibold text-bca-primary py-2 border-t border-gray-100">
-                  <span>{{ showReasoning() ? '▲' : '▼' }} Why this score?</span>
+            } @else {
+              <div class="p-6 text-center">
+                <div class="text-4xl mb-3">🤖</div>
+                <h3 class="text-sm font-bold text-gray-900 mb-1">Agentic AI Scoring</h3>
+                <p class="text-xs text-gray-500 mb-4">
+                  6 agent AI akan mengisi parameter RICE dengan reasoning & evidence, lalu menurunkan MoSCoW.
+                  Bisa dijalankan kapan saja — makin lengkap data ({{ completenessScore() }}%), makin tinggi confidence.
+                </p>
+                <button (click)="analyzeWithAI()"
+                        class="w-full py-2.5 px-4 bg-bca-primary hover:bg-bca-hover text-white text-xs font-semibold rounded-btn transition-colors">
+                  Analyze with AI →
                 </button>
-                @if (showReasoning()) {
-                  <div class="mt-2 space-y-2 text-[11px] text-gray-500">
-                    <p><strong class="text-gray-700">Reach:</strong> {{ aiResult()!.reasoning.reach }}</p>
-                    <p><strong class="text-gray-700">Impact:</strong> {{ aiResult()!.reasoning.impact }}</p>
-                    <p><strong class="text-gray-700">Confidence:</strong> {{ aiResult()!.reasoning.confidence }}</p>
-                    <p><strong class="text-gray-700">Effort:</strong> {{ aiResult()!.reasoning.effort }}</p>
-                  </div>
-                }
-
-                <!-- Action buttons -->
-                <div class="mt-4 space-y-2">
-                  <button (click)="saveToRoadmap()"
-                          class="w-full py-2.5 px-4 bg-bca-primary hover:bg-bca-hover text-white text-xs font-semibold rounded-btn transition-colors">
-                    Save to Shadow Roadmap
-                  </button>
-                  <button (click)="generatePRD()"
-                          class="w-full py-2.5 px-4 border border-bca-primary text-bca-primary hover:bg-bca-accent text-xs font-semibold rounded-btn transition-colors">
-                    Generate PRD Draft →
-                  </button>
-                </div>
               </div>
             }
           </div>

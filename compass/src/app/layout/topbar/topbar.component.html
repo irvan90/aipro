@@ -1,18 +1,8 @@
 <header class="flex items-center gap-4 px-4 lg:px-6 h-14 bg-white border-b border-gray-200 flex-shrink-0 z-30">
   <!-- Page title -->
   <div class="flex-1 min-w-0">
-    <h1 class="font-bold text-gray-900 text-sm truncate">Dashboard</h1>
-    <p class="text-xs text-gray-500 hidden sm:block">{{ store.activeProduct().name }} · Q3 Planning</p>
-  </div>
-
-  <!-- Status badges -->
-  <div class="hidden md:flex items-center gap-2">
-    <span class="flex items-center gap-1.5 px-2.5 py-1 bg-bca-accent text-bca-primary text-[11px] font-semibold rounded-full">
-      📅 Q3 Planning
-    </span>
-    <span class="flex items-center gap-1.5 px-2.5 py-1 bg-warning-bg text-warning text-[11px] font-semibold rounded-full">
-      ⏰ 18 days left
-    </span>
+    <h1 class="font-bold text-gray-900 text-sm truncate">COMPASS</h1>
+    <p class="text-xs text-gray-500 hidden sm:block">{{ store.activeProduct().name }} · 2026 Planning</p>
   </div>
 
   <!-- Actions -->
@@ -27,13 +17,6 @@
         </span>
       }
     </button>
-
-    <!-- Input Backlog CTA -->
-    <a routerLink="/backlog/new"
-       class="flex items-center gap-1.5 px-3 py-2 bg-bca-primary hover:bg-bca-hover text-white text-xs font-semibold rounded-btn transition-colors duration-120 shadow-blue-btn whitespace-nowrap">
-      <span>+</span>
-      <span class="hidden sm:inline">Input Backlog</span>
-    </a>
   </div>
 </header>
 

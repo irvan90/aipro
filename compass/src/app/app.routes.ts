@@ -11,14 +11,6 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/dashboard/dashboard.component').then(m => m.DashboardComponent)
       },
       {
-        path: 'backlog',
-        loadComponent: () => import('./pages/backlog-list/backlog-list.component').then(m => m.BacklogListComponent)
-      },
-      {
-        path: 'backlog/new',
-        loadComponent: () => import('./pages/backlog-input/backlog-input.component').then(m => m.BacklogInputComponent)
-      },
-      {
         path: 'backlog/:id/edit',
         loadComponent: () => import('./pages/backlog-input/backlog-input.component').then(m => m.BacklogInputComponent)
       },
@@ -29,22 +21,6 @@ export const routes: Routes = [
       {
         path: 'roadmap',
         loadComponent: () => import('./pages/roadmap/roadmap.component').then(m => m.RoadmapComponent)
-      },
-      {
-        path: 'impact-analysis',
-        loadComponent: () => import('./pages/impact-analysis/impact-analysis.component').then(m => m.ImpactAnalysisComponent)
-      },
-      {
-        path: 'prd-draft',
-        loadComponent: () => import('./pages/prd-draft/prd-draft.component').then(m => m.PrdDraftComponent)
-      },
-      {
-        path: 'prd-draft/:backlogId',
-        loadComponent: () => import('./pages/prd-draft/prd-draft.component').then(m => m.PrdDraftComponent)
-      },
-      {
-        path: 'pmo-submission',
-        loadComponent: () => import('./pages/pmo-submission/pmo-submission.component').then(m => m.PmoSubmissionComponent)
       },
       {
         path: 'audit-trail',

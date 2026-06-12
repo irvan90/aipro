@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Backlog, BacklogStatus, ImpactArea, Quarter, MoSCoW, EvidenceType } from '../models/backlog.model';
+import { AgentId, Backlog, BacklogStatus, ImpactArea, Quarter, MoSCoW, EvidenceType } from '../models/backlog.model';
 import { Product } from '../models/product.model';
 import { User, UserRole } from '../models/user.model';
-import { Roadmap } from '../models/roadmap.model';
 import { Activity } from '../models/activity.model';
 import { Notification } from '../models/notification.model';
 import { ImpactAnalysisResult } from '../models/ai-result.model';
@@ -146,6 +145,7 @@ export const MOCK_BACKLOGS: Backlog[] = [
       promptVersion: 'v1.2.3',
       scoredAt: new Date('2025-12-10T10:00:00'),
     },
+    source: 'internal',
     createdBy: 'user-po-001',
     createdAt: new Date('2025-12-01T09:00:00'),
     updatedAt: new Date('2026-02-15T14:00:00'),
@@ -186,6 +186,7 @@ export const MOCK_BACKLOGS: Backlog[] = [
       promptVersion: 'v1.2.3',
       scoredAt: new Date('2025-11-20T11:00:00'),
     },
+    source: 'internal',
     createdBy: 'user-apo-001',
     createdAt: new Date('2025-11-15T10:00:00'),
     updatedAt: new Date('2026-03-20T09:00:00'),
@@ -226,6 +227,7 @@ export const MOCK_BACKLOGS: Backlog[] = [
       promptVersion: 'v1.2.3',
       scoredAt: new Date('2025-12-05T14:00:00'),
     },
+    source: 'internal',
     createdBy: 'user-po-001',
     createdAt: new Date('2025-12-01T11:00:00'),
     updatedAt: new Date('2026-03-28T10:00:00'),
@@ -266,7 +268,46 @@ export const MOCK_BACKLOGS: Backlog[] = [
       confidenceLevel: 80,
       promptVersion: 'v1.2.3',
       scoredAt: new Date('2026-04-10T14:30:00'),
+      agentFindings: [
+        {
+          agentId: 'external-research', agentName: 'External Product Research', role: 'Riset produk sejenis', icon: '🔍',
+          summary: 'GoPay & OVO sudah punya one-tap checkout untuk merchant tersimpan; gap kompetitif nyata untuk repeat payment.',
+          contributesTo: ['Impact', 'Confidence'],
+          evidence: ['Competitor Feature Analysis Q1 2026', 'App Store Review GoPay/OVO'],
+        },
+        {
+          agentId: 'internal-data', agentName: 'Internal Data Analyst', role: 'Analisis data internal', icon: '📊',
+          summary: '55K user terhubung ke 3+ merchant; checkout friction muncul di 18% sesi pembayaran merchant.',
+          contributesTo: ['Reach', 'Impact'],
+          evidence: ['Merchant Partner Analytics Q1 2026', 'Payment Funnel Dashboard'],
+        },
+        {
+          agentId: 'compliance-risk', agentName: 'Compliance & Risk Assessor', role: 'Cek regulasi & risiko', icon: '🛡️',
+          summary: 'Tidak ada regulasi baru yang relevan; penyimpanan kredensial merchant mengikuti standar tokenisasi existing.',
+          contributesTo: ['MoSCoW'],
+          evidence: ['PBI Sistem Pembayaran', 'Internal Tokenization Standard'],
+        },
+        {
+          agentId: 'effort-estimator', agentName: 'Effort Estimator', role: 'Estimasi effort teknis', icon: '⚙️',
+          summary: 'Merchant API sudah terintegrasi — pekerjaan dominan di lapisan UX; estimasi 10 SP.',
+          contributesTo: ['Effort'],
+          evidence: ['Merchant API Docs', 'Delivery History: fitur payment UX'],
+        },
+        {
+          agentId: 'product-fit', agentName: 'Product Fit Checker', role: 'Kesesuaian strategi produk', icon: '🎯',
+          summary: 'Selaras langsung dengan KPI transaction volume & objective digital engagement myBCA.',
+          contributesTo: ['Impact', 'MoSCoW'],
+          evidence: ['Product Context: myBCA Mobile KPI'],
+        },
+        {
+          agentId: 'synthesizer', agentName: 'Scoring Synthesizer', role: 'Sintesis skor final', icon: '🧮',
+          summary: 'Semua agent konsisten: prioritas tinggi. RICE 13.800, MoSCoW Must Have, confidence 80%.',
+          contributesTo: ['Reach', 'Impact', 'Confidence', 'Effort', 'MoSCoW'],
+          evidence: ['Gabungan temuan 5 agent'],
+        },
+      ],
     },
+    source: 'internal',
     createdBy: 'user-po-001',
     createdAt: new Date('2026-03-20T09:00:00'),
     updatedAt: new Date('2026-04-10T14:30:00'),
@@ -307,6 +348,7 @@ export const MOCK_BACKLOGS: Backlog[] = [
       promptVersion: 'v1.2.3',
       scoredAt: new Date('2026-04-15T11:00:00'),
     },
+    source: 'internal',
     createdBy: 'user-apo-001',
     createdAt: new Date('2026-04-01T10:00:00'),
     updatedAt: new Date('2026-04-15T11:00:00'),
@@ -328,6 +370,7 @@ export const MOCK_BACKLOGS: Backlog[] = [
     completenessScore: 55,
     status: 'draft',
     isEmergency: false,
+    source: 'internal',
     createdBy: 'user-apo-001',
     createdAt: new Date('2026-05-10T09:00:00'),
     updatedAt: new Date('2026-05-10T09:00:00'),
@@ -367,8 +410,47 @@ export const MOCK_BACKLOGS: Backlog[] = [
       },
       confidenceLevel: 80,
       promptVersion: 'v1.2.3',
-      scoredAt: new Date('2025-05-24T14:30:00')
+      scoredAt: new Date('2025-05-24T14:30:00'),
+      agentFindings: [
+        {
+          agentId: 'external-research', agentName: 'External Product Research', role: 'Riset produk sejenis', icon: '🔍',
+          summary: 'Kompetitor (GoPay, DANA) memiliki auto-retry QRIS dengan success rate 99%+; fitur ini sudah jadi standar pasar.',
+          contributesTo: ['Impact', 'Confidence'],
+          evidence: ['QRIS Benchmark Study 2025', 'Bank Indonesia QRIS Statistics'],
+        },
+        {
+          agentId: 'internal-data', agentName: 'Internal Data Analyst', role: 'Analisis data internal', icon: '📊',
+          summary: '50K user QRIS bulanan; 1,2 juta transaksi gagal/bulan dan QRIS jadi topik komplain #1 sejak Maret.',
+          contributesTo: ['Reach', 'Impact'],
+          evidence: ['QRIS Analytics Q2 2025', 'Customer Complaint Report May 2025'],
+        },
+        {
+          agentId: 'compliance-risk', agentName: 'Compliance & Risk Assessor', role: 'Cek regulasi & risiko', icon: '🛡️',
+          summary: 'Tidak ada isu kepatuhan; retry mengikuti standar QRIS BI, tanpa akses data pribadi baru.',
+          contributesTo: ['MoSCoW'],
+          evidence: ['PADG QRIS Bank Indonesia'],
+        },
+        {
+          agentId: 'effort-estimator', agentName: 'Effort Estimator', role: 'Estimasi effort teknis', icon: '⚙️',
+          summary: 'Infrastruktur payment existing dapat diperluas; tanpa sistem baru — 8 SP.',
+          contributesTo: ['Effort'],
+          evidence: ['Payment Gateway v3 Architecture', 'Delivery History: QRIS enhancements'],
+        },
+        {
+          agentId: 'product-fit', agentName: 'Product Fit Checker', role: 'Kesesuaian strategi produk', icon: '🎯',
+          summary: 'Langsung mendukung KPI utama "Transaction success rate > 99%" dan menjawab challenge "High QRIS failure rate".',
+          contributesTo: ['Impact', 'MoSCoW'],
+          evidence: ['Product Context: myBCA Mobile KPI & Challenges'],
+        },
+        {
+          agentId: 'synthesizer', agentName: 'Scoring Synthesizer', role: 'Sintesis skor final', icon: '🧮',
+          summary: 'Skor tertinggi portfolio: RICE 15.000, Must Have, confidence 80%. Direkomendasikan tetap di Q3.',
+          contributesTo: ['Reach', 'Impact', 'Confidence', 'Effort', 'MoSCoW'],
+          evidence: ['Gabungan temuan 5 agent'],
+        },
+      ],
     },
+    source: 'internal',
     createdBy: 'user-po-001',
     createdAt: new Date('2025-05-20T09:00:00'),
     updatedAt: new Date('2025-05-24T14:30:00'),
@@ -409,6 +491,7 @@ export const MOCK_BACKLOGS: Backlog[] = [
       promptVersion: 'v1.2.3',
       scoredAt: new Date('2025-05-24T14:35:00')
     },
+    source: 'internal',
     createdBy: 'user-po-001',
     createdAt: new Date('2025-05-21T10:00:00'),
     updatedAt: new Date('2025-05-24T14:35:00'),
@@ -449,6 +532,7 @@ export const MOCK_BACKLOGS: Backlog[] = [
       promptVersion: 'v1.2.3',
       scoredAt: new Date('2025-05-23T11:00:00')
     },
+    source: 'internal',
     createdBy: 'user-apo-001',
     createdAt: new Date('2025-05-22T08:00:00'),
     updatedAt: new Date('2025-05-23T11:00:00'),
@@ -489,6 +573,7 @@ export const MOCK_BACKLOGS: Backlog[] = [
       promptVersion: 'v1.2.3',
       scoredAt: new Date('2025-05-22T15:00:00')
     },
+    source: 'internal',
     createdBy: 'user-po-001',
     createdAt: new Date('2025-05-19T14:00:00'),
     updatedAt: new Date('2025-05-22T15:00:00'),
@@ -529,6 +614,7 @@ export const MOCK_BACKLOGS: Backlog[] = [
       promptVersion: 'v1.2.3',
       scoredAt: new Date('2025-05-21T16:00:00')
     },
+    source: 'internal',
     createdBy: 'user-po-001',
     createdAt: new Date('2025-05-18T10:00:00'),
     updatedAt: new Date('2025-05-21T16:00:00'),
@@ -550,54 +636,217 @@ export const MOCK_BACKLOGS: Backlog[] = [
     completenessScore: 45,
     status: 'draft',
     isEmergency: false,
+    source: 'internal',
     createdBy: 'user-apo-001',
     createdAt: new Date('2025-05-24T10:00:00'),
     updatedAt: new Date('2025-05-24T10:00:00'),
     productId: 'prod-001'
   },
+  // ── Baru masuk dari myService (belum diproses) ────────────────────────────
+  {
+    id: 'bl-ms-001',
+    title: 'Pembayaran Tagihan PDAM',
+    description: 'Penambahan biller PDAM nasional agar nasabah dapat membayar tagihan air langsung dari myBCA Mobile.',
+    businessObjective: '',
+    targetUsers: '',
+    impactArea: [],
+    supportingEvidence: [],
+    estimatedImpact: '',
+    riskIfNotImplemented: '',
+    effortEstimation: '',
+    targetQuarter: 'Unplanned',
+    dependency: [],
+    completenessScore: 35,
+    status: 'new',
+    isEmergency: false,
+    source: 'myservice',
+    myService: {
+      myServiceId: 'MS-2026-0412',
+      businessProposalType: 'New Feature',
+      featureInitiator: 'Divisi Layanan Digital',
+      category: 'Payment',
+      epic: 'Bill Payment Expansion',
+      timeToMarketMonths: 3,
+      existingCondition: 'Pembayaran PDAM saat ini hanya tersedia di kanal ATM dan KlikBCA.',
+      customerValue: 'Nasabah dapat membayar tagihan PDAM seluruh daerah langsung dari aplikasi tanpa pindah kanal.',
+      functionalRequirement: 'Integrasi biller PDAM nasional: inquiry tagihan, pembayaran, dan riwayat transaksi.',
+      concern: 'Cakupan biller PDAM daerah belum merata.',
+      userType: 'Nasabah individu',
+      valuegraphValue: 'High',
+      valuegraphEffort: 'Low',
+      involvementDWH: false,
+      involvementRPA: false,
+      personalDataAccess: false,
+      createdBy: 'Rina Kusuma',
+      createdOn: new Date('2026-06-08T09:30:00'),
+    },
+    createdBy: 'myservice',
+    createdAt: new Date('2026-06-08T09:30:00'),
+    updatedAt: new Date('2026-06-08T09:30:00'),
+    productId: 'prod-001',
+  },
+  {
+    id: 'bl-ms-002',
+    title: 'Notifikasi Limit Kartu Kredit',
+    description: 'Notifikasi proaktif saat pemakaian kartu kredit mendekati limit, dengan pengaturan threshold oleh nasabah.',
+    businessObjective: '',
+    targetUsers: '',
+    impactArea: [],
+    supportingEvidence: [],
+    estimatedImpact: '',
+    riskIfNotImplemented: '',
+    effortEstimation: '',
+    targetQuarter: 'Unplanned',
+    dependency: [],
+    completenessScore: 40,
+    status: 'new',
+    isEmergency: false,
+    source: 'myservice',
+    myService: {
+      myServiceId: 'MS-2026-0418',
+      businessProposalType: 'Enhancement',
+      featureInitiator: 'Divisi Kartu Kredit',
+      category: 'Cards',
+      epic: 'Credit Card Experience',
+      timeToMarketMonths: 6,
+      existingCondition: 'Nasabah baru mengetahui pemakaian mendekati limit saat transaksi ditolak.',
+      customerValue: 'Nasabah terhindar dari transaksi gagal dan dapat mengatur pemakaian kartu lebih baik.',
+      functionalRequirement: 'Monitoring outstanding real-time dari sistem kartu, pengaturan threshold, push notification.',
+      concern: 'Memerlukan akses data outstanding kartu kredit near-real-time dari DWH.',
+      userType: 'Nasabah pemegang kartu kredit',
+      valuegraphValue: 'High',
+      valuegraphEffort: 'High',
+      involvementDWH: true,
+      involvementRPA: false,
+      personalDataAccess: true,
+      createdBy: 'Hendra Gunawan',
+      createdOn: new Date('2026-06-09T14:15:00'),
+    },
+    createdBy: 'myservice',
+    createdAt: new Date('2026-06-09T14:15:00'),
+    updatedAt: new Date('2026-06-09T14:15:00'),
+    productId: 'prod-001',
+  },
+  {
+    id: 'bl-ms-003',
+    title: 'e-Statement Bulanan Otomatis',
+    description: 'Pengiriman e-statement bulanan otomatis ke email nasabah dengan opsi unduh dari aplikasi.',
+    businessObjective: '',
+    targetUsers: '',
+    impactArea: [],
+    supportingEvidence: [],
+    estimatedImpact: '',
+    riskIfNotImplemented: '',
+    effortEstimation: '',
+    targetQuarter: 'Unplanned',
+    dependency: [],
+    completenessScore: 30,
+    status: 'new',
+    isEmergency: false,
+    source: 'myservice',
+    myService: {
+      myServiceId: 'MS-2026-0421',
+      businessProposalType: 'Process Improvement',
+      featureInitiator: 'Divisi Operations',
+      category: 'Operations',
+      epic: 'Statement Digitalization',
+      timeToMarketMonths: 2,
+      existingCondition: 'Nasabah harus request e-statement manual via call center atau cabang.',
+      customerValue: 'Nasabah menerima e-statement otomatis setiap bulan tanpa perlu request.',
+      functionalRequirement: 'Penjadwalan otomatis pembuatan statement, pengiriman email, arsip unduhan di aplikasi.',
+      concern: 'Volume email bulanan besar, perlu kapasitas mail server.',
+      userType: 'Seluruh nasabah individu',
+      valuegraphValue: 'Low',
+      valuegraphEffort: 'Low',
+      involvementDWH: false,
+      involvementRPA: true,
+      personalDataAccess: false,
+      createdBy: 'Maya Sari',
+      createdOn: new Date('2026-06-10T08:45:00'),
+    },
+    createdBy: 'myservice',
+    createdAt: new Date('2026-06-10T08:45:00'),
+    updatedAt: new Date('2026-06-10T08:45:00'),
+    productId: 'prod-001',
+  },
 ];
 
-export const MOCK_ROADMAP: Roadmap = {
-  id: 'rm-001',
-  productId: 'prod-001',
-  year: 2026,
-  quarters: [
-    {
-      quarter: 'Q1',
-      backlogIds: ['bl-q1-001', 'bl-q1-002', 'bl-q1-003'],
-      status: 'completed',
-      submissionReadiness: 100,
-      readyCount: 3,
-      totalCount: 3,
-    },
-    {
-      quarter: 'Q2',
-      backlogIds: ['bl-q2-001', 'bl-q2-002', 'bl-q2-003'],
-      status: 'draft',
-      submissionReadiness: 60,
-      readyCount: 2,
-      totalCount: 3,
-    },
-    {
-      quarter: 'Q3',
-      backlogIds: ['bl-001', 'bl-002', 'bl-003', 'bl-004', 'bl-005'],
-      status: 'shadow',
-      submissionReadiness: 40,
-      readyCount: 2,
-      totalCount: 5,
-    },
-    {
-      quarter: 'Q4',
-      backlogIds: ['bl-006'],
-      status: 'shadow',
-      submissionReadiness: 0,
-      readyCount: 0,
-      totalCount: 1,
-    },
-  ],
-  status: 'draft',
-  lastModifiedAt: new Date('2026-05-26T09:00:00'),
-};
+export interface AgentDefinition {
+  id: AgentId;
+  name: string;
+  role: string;
+  icon: string;
+  steps: string[];
+}
+
+export const AGENT_DEFINITIONS: AgentDefinition[] = [
+  {
+    id: 'external-research',
+    name: 'External Product Research',
+    role: 'Mencari & membandingkan dengan produk sejenis di pasar',
+    icon: '🔍',
+    steps: [
+      'Mencari produk & fitur sejenis di pasar...',
+      'Membandingkan fitur kompetitor (GoPay, OVO, Jago, blu)...',
+      'Merangkum posisi kompetitif...',
+    ],
+  },
+  {
+    id: 'internal-data',
+    name: 'Internal Data Analyst',
+    role: 'Menganalisis analytics, komplain & survey internal',
+    icon: '📊',
+    steps: [
+      'Membaca data analytics penggunaan fitur...',
+      'Menganalisis volume komplain & hasil survey...',
+      'Mengestimasi Reach & Impact...',
+    ],
+  },
+  {
+    id: 'compliance-risk',
+    name: 'Compliance & Risk Assessor',
+    role: 'Memeriksa regulasi OJK/BI & risiko data pribadi',
+    icon: '🛡️',
+    steps: [
+      'Memeriksa keterkaitan regulasi OJK/BI...',
+      'Mengecek akses data pribadi (ROPA/DPIA)...',
+      'Menilai risiko keamanan & kepatuhan...',
+    ],
+  },
+  {
+    id: 'effort-estimator',
+    name: 'Effort Estimator',
+    role: 'Menilai kompleksitas teknis dari Valuegraph & sinyal teknis',
+    icon: '⚙️',
+    steps: [
+      'Membaca Valuegraph Effort dari myService...',
+      'Menilai keterlibatan DWH/RPA & dependency teknis...',
+      'Mengkalibrasi estimasi effort...',
+    ],
+  },
+  {
+    id: 'product-fit',
+    name: 'Product Fit Checker',
+    role: 'Mengecek kesesuaian backlog dengan konteks & strategi produk',
+    icon: '🎯',
+    steps: [
+      'Membaca Product Context & KPI produk...',
+      'Menilai keselarasan backlog dengan objective...',
+      'Menandai overlap dengan fitur existing...',
+    ],
+  },
+  {
+    id: 'synthesizer',
+    name: 'Scoring Synthesizer',
+    role: 'Menggabungkan temuan semua agent menjadi skor final',
+    icon: '🧮',
+    steps: [
+      'Menggabungkan temuan semua agent...',
+      'Menghitung RICE & menurunkan MoSCoW...',
+      'Menyusun reasoning & confidence final...',
+    ],
+  },
+];
 
 export const MOCK_ACTIVITIES: Activity[] = [
   {
@@ -650,13 +899,11 @@ export const MOCK_ACTIVITIES: Activity[] = [
   },
   {
     id: 'act-005',
-    type: 'prd_generated',
-    actor: 'COMPASS AI',
+    type: 'backlog_added',
+    actor: 'myService',
     actorRole: 'PO',
-    description: 'Generated PRD draft for Notifikasi Realtime',
-    subDescription: 'For: Notifikasi Transaksi Real-time',
-    backlogId: 'bl-003',
-    backlogTitle: 'Notifikasi Transaksi Real-time',
+    description: '3 backlog baru masuk dari myService',
+    subDescription: 'Pembayaran PDAM · Notifikasi Limit Kartu Kredit · e-Statement Otomatis',
     timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000),
     productId: 'prod-001'
   },
@@ -674,11 +921,11 @@ export const MOCK_NOTIFICATIONS: Notification[] = [
   },
   {
     id: 'notif-002',
-    type: 'deadline',
-    title: 'Submission Deadline Approaching',
-    body: 'Q3 submission due in 18 days — 4 backlogs pending',
+    type: 'myservice_new',
+    title: 'Backlog Baru dari myService',
+    body: 'Notifikasi Limit Kartu Kredit — Divisi Kartu Kredit',
     isRead: false,
-    actionUrl: '/pmo-submission',
+    actionUrl: '/dashboard',
     timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
   },
   {
@@ -687,17 +934,17 @@ export const MOCK_NOTIFICATIONS: Notification[] = [
     title: 'Dependency Conflict Detected',
     body: 'Biometrik ↔ Identity Service v2',
     isRead: false,
-    actionUrl: '/impact-analysis',
+    actionUrl: '/roadmap',
     timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000),
   },
   {
     id: 'notif-004',
-    type: 'pmo_comment',
-    title: 'PMO Comment',
-    body: 'PMO commented on your Q2 submission',
-    isRead: true,
-    actionUrl: '/pmo-submission',
-    timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000),
+    type: 'myservice_new',
+    title: 'Backlog Baru dari myService',
+    body: 'Pembayaran Tagihan PDAM — Divisi Layanan Digital',
+    isRead: false,
+    actionUrl: '/dashboard',
+    timestamp: new Date(Date.now() - 26 * 60 * 60 * 1000),
   },
 ];
 
@@ -743,69 +990,13 @@ export const MOCK_IMPACT_RESULT: ImpactAnalysisResult = {
   recommendedAction: 'keep',
 };
 
-export const MOCK_PRD_CONTENT = `## Problem Statement
-The current QRIS transaction flow has a high failure rate of approximately 8.5%, causing significant revenue loss and customer frustration. Users who experience failed transactions often abandon the payment entirely, leading to churn.
-
-## Business Objective  
-Reduce failed QRIS transactions by 30% in Q3 2025, improving transaction success rate from 91.5% to above 99%.
-
-## User Stories
-- As a myBCA Mobile user, I want QRIS payments to automatically retry when they fail, so that I don't have to manually retry the transaction
-- As a myBCA Mobile user, I want to see clear feedback when a retry is happening, so that I know the app is working
-- As a myBCA Mobile user, I want to receive a notification if a retry ultimately fails, so that I can take action
-
-## Scope & Features
-**In Scope:**
-- Automatic retry mechanism (up to 3 attempts)
-- Retry progress indicator in UI
-- Smart retry timing with exponential backoff
-- Failure notification after all retries exhausted
-- Audit log for retry attempts
-
-**Out of Scope:**
-- Manual retry button (covered by existing flow)
-- Retry for non-QRIS payment methods
-
-## Acceptance Criteria
-1. System automatically retries failed QRIS transactions up to 3 times
-2. Each retry uses exponential backoff: 1s, 3s, 9s
-3. User sees retry progress indicator during retries
-4. If all retries fail, user receives push notification
-5. All retry attempts are logged in audit trail
-6. Success rate of QRIS transactions improves by at least 30%
-
-## Non-Functional Requirements
-- Retry mechanism must not impact performance for successful transactions
-- Maximum additional latency: 50ms for the retry logic
-- Must work on both iOS 14+ and Android 9+
-
-## Dependencies
-- Payment Gateway v3 API stability
-- Push Notification Service for failure alerts
-- QRIS transaction logging system
-
-## Open Questions
-1. What is the fallback if retry fails 3 times and push notification service is down?
-2. Should we show the retry count to the user (e.g., "Retrying 2/3...")?`;
-
-export const MOCK_PRD_SECTIONS = {
-  overview: `QRIS Retry Mechanism is a feature that automatically retries failed QRIS transactions in myBCA Mobile. The goal is to reduce failed transactions from 8.5% to below 1%, directly improving the Q3 revenue target and customer satisfaction.`,
-  problemStatement: `The current QRIS transaction flow has a high failure rate of approximately 8.5%, causing significant revenue loss and customer frustration. Users who experience failed transactions often abandon the payment entirely, leading to churn.`,
-  goalsAndKPIs: `Primary Goal: Reduce failed QRIS transactions by 30% in Q3 2025.\n\nKPIs:\n- Transaction success rate: 91.5% → above 99%\n- Customer retry abandonment: reduce by 50%\n- Revenue impact: +Rp 4.2B projected for Q3`,
-  scope: `In Scope:\n- Automatic retry mechanism (up to 3 attempts)\n- Retry progress indicator in UI\n- Smart retry timing with exponential backoff\n- Failure notification after all retries exhausted\n- Audit log for retry attempts\n\nOut of Scope:\n- Manual retry button (covered by existing flow)\n- Retry for non-QRIS payment methods`,
-  requirements: `Functional Requirements:\n1. System automatically retries failed QRIS transactions up to 3 times\n2. Each retry uses exponential backoff: 1s, 3s, 9s\n3. User sees retry progress indicator during retries\n4. If all retries fail, user receives push notification\n5. All retry attempts are logged in audit trail\n\nNon-Functional Requirements:\n- Maximum additional latency: 50ms for the retry logic\n- Must work on iOS 14+ and Android 9+\n- Zero impact on successful transactions`,
-  risks: `1. Payment Gateway v3 Dependency\n   Risk: Retry mechanism depends on PGW v3 stability\n   Mitigation: Fallback to PGW v2 with graceful degradation\n\n2. User Experience During Retry\n   Risk: Users may cancel during retry window\n   Mitigation: Clear progress indicator with estimated wait time\n\n3. Audit Log Volume\n   Risk: 3x increase in transaction log volume\n   Mitigation: Log compression + archival after 90 days`,
-};
-
 @Injectable({ providedIn: 'root' })
 export class MockDataService {
   getBacklogs(): Backlog[] { return [...MOCK_BACKLOGS]; }
   getUsers(): User[] { return [...MOCK_USERS]; }
   getProducts(): Product[] { return [...MOCK_PRODUCTS]; }
-  getRoadmap(): Roadmap { return { ...MOCK_ROADMAP }; }
   getActivities(): Activity[] { return [...MOCK_ACTIVITIES]; }
   getNotifications(): Notification[] { return [...MOCK_NOTIFICATIONS]; }
   getCurrentUser(): User { return { ...MOCK_CURRENT_USER }; }
   getImpactResult(): ImpactAnalysisResult { return { ...MOCK_IMPACT_RESULT }; }
-  getPRDContent(): string { return MOCK_PRD_CONTENT; }
 }

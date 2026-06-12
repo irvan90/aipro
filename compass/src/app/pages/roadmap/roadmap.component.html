@@ -4,65 +4,12 @@
   <!-- ── Header ──────────────────────────────────────────────────────────── -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
     <div>
-      <h1 class="text-2xl font-bold text-gray-900">Roadmap Planning</h1>
+      <h1 class="text-2xl font-bold text-gray-900">Roadmap 2026</h1>
       <p class="text-sm text-gray-500 mt-1">
-        @if (viewMode() === 'shadow') {
-          Drafting 2026 roadmap · Q2 is the active quarter · Lock each quarter to submit to Final
-        } @else {
-          Final 2026 roadmap · {{ submittedCount() }} of 4 quarters committed · Expired quarters are permanently locked
-        }
+        Q2 is the active quarter · Drag backlogs between quarters — every move runs an AI impact analysis
       </p>
     </div>
-
-    <!-- Mode toggle -->
-    <div class="flex items-center rounded-xl overflow-hidden border border-gray-200 w-fit self-start sm:self-auto">
-      <button (click)="viewMode.set('shadow')" class="mode-toggle-btn"
-        [class.mode-toggle-btn--shadow-active]="viewMode() === 'shadow'"
-        [class.mode-toggle-btn--inactive]="viewMode() !== 'shadow'">
-        <span>✏️</span> Shadow
-      </button>
-      <button (click)="viewMode.set('final')" class="mode-toggle-btn"
-        [class.mode-toggle-btn--final-active]="viewMode() === 'final'"
-        [class.mode-toggle-btn--inactive]="viewMode() !== 'final'">
-        <span>📋</span> Final
-      </button>
-    </div>
   </div>
-
-  <!-- ── Mode banner ─────────────────────────────────────────────────────── -->
-  @if (viewMode() === 'shadow') {
-    <div class="shadow-banner rounded-2xl px-5 py-4 flex items-center gap-4">
-      <div class="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center flex-shrink-0 text-xl">✏️</div>
-      <div class="flex-1 min-w-0">
-        <p class="text-sm font-bold text-amber-900">Shadow Roadmap — Drafting Mode</p>
-        <p class="text-xs text-amber-700 mt-0.5">
-          Arrange backlogs freely. Lock each quarter when the draft is ready, then submit to Final.
-          Expired quarters (Q1) are permanently archived.
-        </p>
-      </div>
-      <div class="flex-shrink-0 text-right hidden sm:block">
-        <p class="text-lg font-bold text-amber-800">{{ submittedCount() }}/4</p>
-        <p class="text-xs text-amber-600">submitted</p>
-      </div>
-    </div>
-  } @else {
-    <div class="final-banner rounded-2xl px-5 py-4 flex items-center gap-4">
-      <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0 text-xl">📋</div>
-      <div class="flex-1 min-w-0">
-        <p class="text-sm font-bold text-white">Final Roadmap — Committed Plan</p>
-        <p class="text-xs text-blue-100 mt-0.5">
-          {{ submittedCount() }} of 4 quarters promoted. Expired quarters are permanently locked.
-          Active/future quarters can be reverted to draft before PMO submission.
-        </p>
-      </div>
-      @if (submittedCount() > 0) {
-        <a routerLink="/pmo-submission"
-          class="flex-shrink-0 px-4 py-2 rounded-xl text-sm font-semibold bg-white text-bca-primary hover:bg-blue-50 transition-colors hidden sm:flex">
-          PMO Submission →
-        </a>
-      }
-    </div>
-  }
 
   <!-- ── Quarter swimlanes ───────────────────────────────────────────────── -->
   <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
@@ -75,7 +22,6 @@
             <span class="quarter-badge" [ngClass]="getQuarterBadgeClass(quarter)">{{ quarter }}</span>
             <span class="text-xs text-gray-400">{{ getQuarterLabel(quarter) }}</span>
           </div>
-          <!-- Expired chip on right side of header -->
           @if (isQuarterExpired(quarter)) {
             <span class="state-chip state-chip--expired">Archived</span>
           } @else if (isCurrentQuarter(quarter)) {
@@ -83,81 +29,11 @@
           }
         </div>
 
-        <!-- Count + status row -->
+        <!-- Count row -->
         <div class="flex items-center gap-2 mb-2 flex-wrap">
           <span class="text-xs text-gray-500">{{ getQuarterCount(quarter) }} items</span>
-          @if (isQuarterSubmitted(quarter)) {
-            <span class="state-chip state-chip--submitted">
-              <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-              </svg>
-              {{ isQuarterExpired(quarter) ? 'Completed' : 'Final' }}
-            </span>
-          } @else if (isQuarterLocked(quarter) && viewMode() === 'shadow') {
-            <span class="state-chip state-chip--locked">🔒 Locked</span>
-          } @else if (viewMode() === 'final' && !isQuarterExpired(quarter)) {
-            <span class="state-chip state-chip--pending">Pending</span>
-          }
-        </div>
-
-        <!-- Action bar -->
-        <div class="mb-2 h-8 flex items-center gap-2">
-          @if (viewMode() === 'shadow') {
-
-            @if (isQuarterExpired(quarter)) {
-              <!-- Expired in shadow: no actions, just archive label -->
-              <span class="text-xs text-gray-400 italic">Past quarter — read only</span>
-
-            } @else if (isQuarterSubmitted(quarter)) {
-              <span class="flex items-center gap-1 text-xs text-emerald-600 font-medium">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                Submitted to Final
-              </span>
-
-            } @else if (isQuarterLocked(quarter)) {
-              <button (click)="submitQuarterToFinal(quarter)"
-                class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-bca-primary text-white hover:bg-bca-hover transition-colors shadow-sm">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                Submit to Final
-              </button>
-              <button (click)="unlockQuarter(quarter)"
-                class="text-xs text-gray-400 hover:text-gray-600 underline underline-offset-2 transition-colors">
-                Unlock
-              </button>
-
-            } @else {
-              <button (click)="lockQuarter(quarter)"
-                [disabled]="getQuarterCount(quarter) === 0"
-                class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border border-amber-300 text-amber-700 bg-white hover:bg-amber-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                </svg>
-                Lock {{ quarter }}
-              </button>
-            }
-
-          } @else {
-            <!-- Final mode actions -->
-            @if (canRevertToDraft(quarter)) {
-              <button (click)="revertToDraft(quarter)"
-                class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border border-gray-300 text-gray-600 bg-white hover:bg-gray-50 hover:border-gray-400 transition-colors">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
-                </svg>
-                Revert to Draft
-              </button>
-            } @else if (isQuarterExpired(quarter) && isQuarterSubmitted(quarter)) {
-              <span class="text-xs text-gray-400 italic flex items-center gap-1">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                </svg>
-                Quarter expired — permanently locked
-              </span>
-            }
+          @if (isQuarterExpired(quarter)) {
+            <span class="text-xs text-gray-400 italic">read only</span>
           }
         </div>
 
@@ -167,15 +43,11 @@
           [id]="'quarter-' + quarter"
           [cdkDropListData]="getQuarterBacklogs(quarter)"
           [cdkDropListConnectedTo]="connectedLists"
-          [cdkDropListDisabled]="!isQuarterEditable(quarter) || isQuarterExpired(quarter)"
+          [cdkDropListDisabled]="!isQuarterEditable(quarter)"
           (cdkDropListDropped)="onDrop($event, quarter)"
           class="quarter-drop-zone flex-1 min-h-48 rounded-xl p-3 space-y-2 transition-all duration-200"
           [class.dz--archived]="isQuarterExpired(quarter)"
-          [class.dz--shadow-edit]="!isQuarterExpired(quarter) && viewMode() === 'shadow' && !isQuarterLocked(quarter) && !isQuarterSubmitted(quarter)"
-          [class.dz--shadow-lock]="!isQuarterExpired(quarter) && viewMode() === 'shadow' && isQuarterLocked(quarter) && !isQuarterSubmitted(quarter)"
-          [class.dz--shadow-done]="!isQuarterExpired(quarter) && isQuarterSubmitted(quarter) && viewMode() === 'shadow'"
-          [class.dz--final-done]="isQuarterSubmitted(quarter) && viewMode() === 'final'"
-          [class.dz--final-pend]="!isQuarterSubmitted(quarter) && viewMode() === 'final'">
+          [class.dz--editable]="!isQuarterExpired(quarter)">
 
           @for (backlog of getQuarterBacklogs(quarter); track backlog.id) {
             <div
@@ -200,8 +72,6 @@
                             <circle cx="7" cy="16" r="1.5"/><circle cx="13" cy="16" r="1.5"/>
                           </svg>
                         </div>
-                      } @else if (!isQuarterEditable(quarter) && !isQuarterExpired(quarter)) {
-                        <span class="text-xs opacity-30">🔒</span>
                       }
                       <a [routerLink]="['/backlog', backlog.id]"
                         class="w-6 h-6 rounded-lg bg-gray-100 hover:bg-bca-accent flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
@@ -228,7 +98,7 @@
                       <span class="text-xs text-yellow-600">{{ backlog.dependency.length }} dep.</span>
                     </div>
                   }
-                  <!-- Archived badge for Q1 items -->
+                  <!-- Archived badge for delivered Q1 items -->
                   @if (isQuarterExpired(quarter) && backlog.status === 'submitted') {
                     <div class="mt-2">
                       <span class="inline-flex items-center gap-1 text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
@@ -252,9 +122,7 @@
 
           @if (getQuarterBacklogs(quarter).length === 0) {
             <div class="h-full min-h-32 flex flex-col items-center justify-center text-center px-2">
-              @if (viewMode() === 'final' && !isQuarterSubmitted(quarter)) {
-                <p class="text-xs text-gray-300 leading-relaxed">Not submitted from Shadow yet</p>
-              } @else if (isQuarterExpired(quarter)) {
+              @if (isQuarterExpired(quarter)) {
                 <p class="text-xs text-gray-300">No items delivered in {{ quarter }}</p>
               } @else {
                 <div class="w-8 h-8 rounded-xl bg-gray-100 flex items-center justify-center mb-2">
@@ -262,9 +130,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                   </svg>
                 </div>
-                <p class="text-xs text-gray-400">
-                  @if (isQuarterEditable(quarter)) { Drop items here } @else { Empty }
-                </p>
+                <p class="text-xs text-gray-400">Drop items here</p>
               }
             </div>
           }
@@ -273,100 +139,50 @@
     }
   </div>
 
-  <!-- ── Unplanned Pool (shadow only) ───────────────────────────────────── -->
-  @if (viewMode() === 'shadow') {
-    <div class="bg-white rounded-2xl shadow-card border border-gray-100 overflow-hidden">
-      <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-          </svg>
-          <h3 class="text-sm font-semibold text-gray-800">Unplanned Pool</h3>
-          <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">{{ unplannedBacklogs().length }}</span>
-        </div>
-        <p class="text-xs text-gray-400">Items not yet assigned to a quarter</p>
-      </div>
-      <div
-        cdkDropList
-        id="unplanned-pool"
-        [cdkDropListData]="unplannedBacklogs()"
-        [cdkDropListConnectedTo]="connectedLists"
-        (cdkDropListDropped)="onDropToUnplanned($event)"
-        class="p-4 min-h-16">
-        @if (unplannedBacklogs().length > 0) {
-          <div class="flex flex-wrap gap-2">
-            @for (backlog of unplannedBacklogs(); track backlog.id) {
-              <div
-                cdkDrag
-                [cdkDragData]="backlog"
-                class="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 cursor-grab hover:border-amber-400 hover:bg-amber-50 transition-colors">
-                <div class="w-1.5 h-1.5 rounded-full bg-gray-400"></div>
-                <span class="text-xs font-medium text-gray-700 max-w-32 truncate">{{ backlog.title }}</span>
-                <span class="text-xs text-gray-400">{{ backlog.aiResult?.riceScore ?? '—' }}</span>
-                <div *cdkDragPlaceholder class="h-8 w-36 bg-amber-50 rounded-xl border-2 border-dashed border-amber-300"></div>
-              </div>
-            }
-          </div>
-        } @else {
-          <p class="text-center text-xs text-gray-400 py-3">All backlogs assigned to quarters</p>
-        }
-      </div>
-    </div>
-  }
-
-  <!-- ── Q3 Readiness (final mode, Q3 submitted) ────────────────────────── -->
-  @if (viewMode() === 'final' && isQuarterSubmitted('Q3')) {
-    <div class="bg-white rounded-2xl shadow-card border border-gray-100 p-5">
-      <div class="flex items-center justify-between mb-4">
-        <div>
-          <h3 class="text-sm font-semibold text-gray-800">Q3 Submission Readiness</h3>
-          <p class="text-xs text-gray-500 mt-0.5">{{ readyCount() }} of {{ q3Count() }} items ready for PMO</p>
-        </div>
-        <div class="text-right">
-          <p class="text-2xl font-bold text-bca-primary">{{ readinessPercent() }}%</p>
-          <p class="text-xs text-gray-500">Complete</p>
-        </div>
-      </div>
-      <div class="h-2 bg-gray-100 rounded-full overflow-hidden mb-4">
-        <div class="h-full rounded-full transition-all duration-700"
-          [class.bg-green-500]="readinessPercent() >= 75"
-          [class.bg-yellow-500]="readinessPercent() >= 50 && readinessPercent() < 75"
-          [class.bg-red-400]="readinessPercent() < 50"
-          [style.width.%]="readinessPercent()">
-        </div>
-      </div>
-      <div class="grid grid-cols-2 gap-2 mb-4">
-        @for (check of readinessChecklist(); track check.label) {
-          <div class="flex items-center gap-2">
-            <div class="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
-              [class.bg-green-100]="check.met" [class.bg-gray-100]="!check.met">
-              @if (check.met) {
-                <svg class="w-3 h-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
-                </svg>
-              } @else {
-                <div class="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
-              }
-            </div>
-            <span class="text-xs" [class.text-gray-700]="check.met" [class.text-gray-400]="!check.met">{{ check.label }}</span>
-          </div>
-        }
-      </div>
-      <a routerLink="/pmo-submission"
-        class="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-semibold bg-bca-primary text-white hover:bg-bca-hover transition-colors">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+  <!-- ── Unplanned Pool ─────────────────────────────────────────────────── -->
+  <div class="bg-white rounded-2xl shadow-card border border-gray-100 overflow-hidden">
+    <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
         </svg>
-        Go to PMO Submission →
-      </a>
+        <h3 class="text-sm font-semibold text-gray-800">Unplanned Pool</h3>
+        <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">{{ unplannedBacklogs().length }}</span>
+      </div>
+      <p class="text-xs text-gray-400">Items not yet assigned to a quarter</p>
     </div>
-  }
+    <div
+      cdkDropList
+      id="unplanned-pool"
+      [cdkDropListData]="unplannedBacklogs()"
+      [cdkDropListConnectedTo]="connectedLists"
+      (cdkDropListDropped)="onDropToUnplanned($event)"
+      class="p-4 min-h-16">
+      @if (unplannedBacklogs().length > 0) {
+        <div class="flex flex-wrap gap-2">
+          @for (backlog of unplannedBacklogs(); track backlog.id) {
+            <div
+              cdkDrag
+              [cdkDragData]="backlog"
+              class="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 cursor-grab hover:border-amber-400 hover:bg-amber-50 transition-colors">
+              <div class="w-1.5 h-1.5 rounded-full bg-gray-400"></div>
+              <span class="text-xs font-medium text-gray-700 max-w-32 truncate">{{ backlog.title }}</span>
+              <span class="text-xs text-gray-400">{{ backlog.aiResult?.riceScore ?? '—' }}</span>
+              <div *cdkDragPlaceholder class="h-8 w-36 bg-amber-50 rounded-xl border-2 border-dashed border-amber-300"></div>
+            </div>
+          }
+        </div>
+      } @else {
+        <p class="text-center text-xs text-gray-400 py-3">All backlogs assigned to quarters</p>
+      }
+    </div>
+  </div>
 
   <!-- ── Cross-Quarter Impact Modal ─────────────────────────────────────── -->
   @if (showImpactModal()) {
     <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" (click)="cancelDrop()"></div>
-      <div class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 animate-modal-in">
+      <div class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 animate-modal-in max-h-[85vh] overflow-y-auto">
         <div class="flex items-center gap-3 mb-4">
           <div class="w-10 h-10 rounded-xl bg-yellow-100 flex items-center justify-center">
             <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -375,7 +191,7 @@
           </div>
           <div>
             <h3 class="text-base font-semibold text-gray-800">Cross-Quarter Move</h3>
-            <p class="text-xs text-gray-500">Review potential impact before confirming</p>
+            <p class="text-xs text-gray-500">AI impact analysis runs before you confirm</p>
           </div>
         </div>
         <div class="bg-gray-50 rounded-xl p-4 mb-4">
@@ -389,13 +205,44 @@
             <span class="text-xs px-2 py-0.5 bg-bca-accent rounded-full text-bca-primary font-semibold">{{ pendingMove()?.toQuarter }}</span>
           </div>
         </div>
+
+        <!-- Inline impact analysis -->
         <div class="space-y-2 mb-5">
-          <div class="flex items-start gap-2 p-3 bg-yellow-50 rounded-xl">
-            <div class="w-4 h-4 rounded-full bg-yellow-400 flex items-center justify-center flex-shrink-0 mt-0.5">
-              <span class="text-white text-xs font-bold leading-none">!</span>
+          @if (impactLoading()) {
+            <div class="flex items-center gap-3 p-4 bg-bca-accent/40 rounded-xl">
+              <div class="w-5 h-5 border-2 border-bca-primary border-t-transparent rounded-full animate-spin flex-shrink-0"></div>
+              <p class="text-xs text-bca-primary font-medium">{{ aiLoadingStep() }}</p>
             </div>
-            <p class="text-xs text-yellow-800">Dependencies may be affected. Run Impact Analysis to see full consequences.</p>
-          </div>
+          } @else if (dragImpact(); as impact) {
+            <!-- Affected backlogs -->
+            @for (ri of impact.roadmapImpacts; track ri.affectedBacklogId) {
+              <div [class]="getSeverityClass(ri.severity)" class="flex items-start gap-2 p-3 rounded-xl">
+                <span class="text-xs font-bold uppercase flex-shrink-0 mt-0.5">{{ ri.severity }}</span>
+                <p class="text-xs"><span class="font-semibold">{{ ri.affectedBacklogTitle }}</span> — {{ ri.description }}</p>
+              </div>
+            }
+            <!-- KPI impacts -->
+            @for (ki of impact.kpiImpacts; track ki.kpi) {
+              <div [class]="getSeverityClass(ki.severity)" class="flex items-start gap-2 p-3 rounded-xl">
+                <span class="text-xs flex-shrink-0 mt-0.5">📉</span>
+                <p class="text-xs"><span class="font-semibold">{{ ki.kpi }}</span> — {{ ki.description }}</p>
+              </div>
+            }
+            <!-- Delay estimate -->
+            <div class="flex items-start gap-2 p-3 bg-yellow-50 rounded-xl">
+              <span class="text-xs flex-shrink-0 mt-0.5">⏱️</span>
+              <p class="text-xs text-yellow-800">Estimasi delay <span class="font-bold">{{ impact.estimatedDelayInSprints }} sprint</span></p>
+            </div>
+            <!-- AI recommendation -->
+            <div class="p-3 rounded-xl border"
+                 [class]="impact.recommendedAction === 'keep' ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'">
+              <p class="text-[10px] font-bold uppercase tracking-wider mb-1"
+                 [class]="impact.recommendedAction === 'keep' ? 'text-red-600' : 'text-green-600'">
+                🤖 AI Recommendation: {{ impact.recommendedAction === 'keep' ? 'Keep — don\'t move' : 'Move' }}
+              </p>
+              <p class="text-xs text-gray-700 leading-relaxed">{{ impact.aiRecommendation }}</p>
+            </div>
+          }
           @if (pendingMove()?.backlog?.aiResult?.moscow === 'Must Have') {
             <div class="flex items-start gap-2 p-3 bg-red-50 rounded-xl">
               <div class="w-4 h-4 rounded-full bg-red-400 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -405,13 +252,14 @@
             </div>
           }
         </div>
+
         <div class="flex gap-3">
           <button (click)="cancelDrop()"
             class="flex-1 py-2.5 rounded-xl text-sm font-medium border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors">
             Cancel
           </button>
-          <button (click)="confirmDrop()"
-            class="flex-1 py-2.5 rounded-xl text-sm font-semibold bg-bca-primary text-white hover:bg-bca-hover transition-colors">
+          <button (click)="confirmDrop()" [disabled]="impactLoading()"
+            class="flex-1 py-2.5 rounded-xl text-sm font-semibold bg-bca-primary text-white hover:bg-bca-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
             Confirm Move
           </button>
         </div>

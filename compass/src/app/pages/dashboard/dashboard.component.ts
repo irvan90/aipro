@@ -1,102 +1,82 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { NgClass, NgFor, NgIf, DecimalPipe } from '@angular/common';
-import { appStore } from '../../core/stores/app.store';
-import { backlogStore } from '../../core/stores/backlog.store';
-import { roadmapStore } from '../../core/stores/roadmap.store';
+import { DecimalPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { backlogStore, CURRENT_QUARTER } from '../../core/stores/backlog.store';
 import { MOCK_ACTIVITIES } from '../../core/services/mock-data.service';
+import { Backlog, valueEffortQuadrant, ValueEffortQuadrantInfo } from '../../core/models/backlog.model';
+import { BacklogService } from '../../core/services/backlog.service';
 import { StatCardComponent } from '../../shared/components/stat-card/stat-card.component';
-import { AiInsightCardComponent, AIInsight } from '../../shared/components/ai-insight-card/ai-insight-card.component';
 import { MoscowTagComponent } from '../../shared/components/moscow-tag/moscow-tag.component';
 import { StatusDotComponent } from '../../shared/components/status-dot/status-dot.component';
+import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { RelativeTimePipe } from '../../shared/pipes/relative-time.pipe';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [
-    RouterLink, NgClass, NgFor, NgIf, DecimalPipe,
-    StatCardComponent, AiInsightCardComponent,
-    MoscowTagComponent, StatusDotComponent, RelativeTimePipe,
+    RouterLink, DecimalPipe, FormsModule,
+    StatCardComponent, MoscowTagComponent, StatusDotComponent,
+    EmptyStateComponent, RelativeTimePipe,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
 })
 export class DashboardComponent {
   backlog = backlogStore;
-  store = appStore;
-  roadmap = roadmapStore;
+  currentQuarter = CURRENT_QUARTER;
   activities = MOCK_ACTIVITIES;
 
-  topBacklogs = computed(() =>
-    [...backlogStore.all()]
-      .filter(b => b.aiResult)
-      .sort((a, b) => (b.aiResult?.riceScore ?? 0) - (a.aiResult?.riceScore ?? 0))
-      .slice(0, 5)
+  filtered = computed(() => backlogStore.filtered());
+  newFromMyService = computed(() => backlogStore.newFromMyService());
+  newInitiators = computed(() =>
+    [...new Set(this.newFromMyService().map(b => b.myService?.featureInitiator).filter(Boolean))].join(' · ')
   );
 
-  maxRice = computed(() => backlogStore.maxRiceScore());
-  readyCount = computed(() => roadmapStore.readyCount());
-  totalQ3 = computed(() => roadmapStore.totalQ3Count());
-  submissionPct = computed(() => roadmapStore.submissionReadiness());
-  roadmapQuarters = computed(() => roadmapStore.quarters());
+  searchValue = '';
+  filterStatusValue = 'all';
+  filterQuarterValue = 'all';
+  sortByValue = 'rice';
 
-  aiInsights: AIInsight[] = [
-    {
-      type: 'Impact Alert',
-      title: 'QRIS Retry dependency may delay Login Biometrik',
-      body: 'Login Biometrik depends on Identity Service v2 which is at risk if QRIS Retry moves to Q4.',
-      chips: [{ label: 'Revenue Risk', color: 'danger' }, { label: 'Q3', color: 'info' }],
-      actionLabel: 'Lihat Impact Analysis →',
-      actionRoute: '/impact-analysis',
-    },
-    {
-      type: 'Recommendation',
-      title: 'OTP Compliance needs completion before scoring',
-      body: 'OTP Compliance backlog is at 45% completeness. Add supporting evidence to enable AI scoring.',
-      chips: [{ label: 'Completeness: 45%', color: 'warning' }, { label: 'Compliance', color: 'info' }],
-      actionLabel: 'Lengkapi Sekarang →',
-      actionRoute: '/backlog/bl-006',
-    },
-    {
-      type: 'Planning',
-      title: '3 backlogs not ready for Q3 submission',
-      body: 'Q3 submission readiness is 75%. Review remaining backlogs to meet PMO deadline.',
-      chips: [{ label: '18 days left', color: 'warning' }, { label: 'Q3', color: 'info' }],
-      actionLabel: 'Review Roadmap →',
-      actionRoute: '/roadmap',
-    },
-  ];
+  constructor(private backlogService: BacklogService) {}
 
-  getBacklogTitle(id: string): string {
-    const b = backlogStore.all().find(bl => bl.id === id);
-    return b?.title?.split(' ').slice(0, 3).join(' ') ?? id;
+  onSearch(q: string): void { backlogStore.searchQuery.set(q); }
+  onFilterStatus(v: string): void { backlogStore.filterStatus.set(v as any); }
+  onFilterQuarter(v: string): void { backlogStore.filterQuarter.set(v as any); }
+  onSortChange(v: string): void { backlogStore.sortBy.set(v as any); }
+
+  hasFilters(): boolean {
+    return this.searchValue !== '' ||
+      this.filterStatusValue !== 'all' ||
+      this.filterQuarterValue !== 'all';
   }
 
-  getChipClass(status: string): string {
-    return status === 'completed' || status === 'submitted'
-      ? 'bg-blue-100 text-blue-800'
-      : 'bg-gray-100 text-gray-600';
+  clearFilters(): void {
+    this.searchValue = '';
+    this.filterStatusValue = 'all';
+    this.filterQuarterValue = 'all';
+    backlogStore.searchQuery.set('');
+    backlogStore.filterStatus.set('all');
+    backlogStore.filterQuarter.set('all');
   }
 
-  getStatusBadgeClass(status: string): string {
-    const classes: Record<string, string> = {
-      completed: 'bg-success-bg text-success',
-      submitted: 'bg-success-bg text-success',
-      draft: 'bg-warning-bg text-warning',
-      shadow: 'bg-gray-100 text-gray-500',
-    };
-    return classes[status] ?? 'bg-gray-100 text-gray-500';
+  showNewBacklogs(): void {
+    this.clearFilters();
+    this.filterStatusValue = 'new';
+    backlogStore.filterStatus.set('new');
   }
 
-  getStatusLabel(status: string): string {
-    const labels: Record<string, string> = {
-      completed: '✅ Final',
-      submitted: '✅ Submitted',
-      draft: '⏳ Draft',
-      shadow: '💭 Shadow',
-    };
-    return labels[status] ?? status;
+  quadrant(b: Backlog): ValueEffortQuadrantInfo | null {
+    return b.myService
+      ? valueEffortQuadrant(b.myService.valuegraphValue, b.myService.valuegraphEffort)
+      : null;
+  }
+
+  markDelivered(id: string, event: Event): void {
+    event.stopPropagation();
+    event.preventDefault();
+    this.backlogService.markDelivered(id);
   }
 
   getActivityIcon(type: string): string {
@@ -104,9 +84,7 @@ export class DashboardComponent {
       ai_scored: '🤖',
       human_override: '👤',
       dependency_conflict: '⚠️',
-      backlog_added: '➕',
-      prd_generated: '📄',
-      submission: '📤',
+      backlog_added: '📥',
       warning: '⚠️',
     };
     return icons[type] ?? '📋';
@@ -117,9 +95,7 @@ export class DashboardComponent {
       ai_scored: 'bg-bca-accent',
       human_override: 'bg-success-bg',
       dependency_conflict: 'bg-warning-bg',
-      backlog_added: 'bg-gray-100',
-      prd_generated: 'bg-purple-bg',
-      submission: 'bg-purple-bg',
+      backlog_added: 'bg-bca-accent',
       warning: 'bg-warning-bg',
     };
     return bgs[type] ?? 'bg-gray-100';

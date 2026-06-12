@@ -2,8 +2,6 @@ import { Component, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgClass, NgIf } from '@angular/common';
 import { appStore } from '../../core/stores/app.store';
-import { backlogStore } from '../../core/stores/backlog.store';
-import { roadmapStore } from '../../core/stores/roadmap.store';
 import { ToastService } from '../../core/services/toast.service';
 
 @Component({
@@ -43,10 +41,9 @@ export class TopbarComponent {
     const icons: Record<string, string> = {
       ai_scored: '🤖',
       deadline: '⏰',
-      pmo_comment: '💬',
+      myservice_new: '📥',
       dependency_conflict: '⚠️',
       emergency_approval: '🚨',
-      submission_confirmed: '✅',
     };
     return icons[type] ?? '🔔';
   }
@@ -55,10 +52,9 @@ export class TopbarComponent {
     const bgs: Record<string, string> = {
       ai_scored: 'bg-bca-accent',
       deadline: 'bg-warning-bg',
-      pmo_comment: 'bg-purple-bg',
+      myservice_new: 'bg-bca-accent',
       dependency_conflict: 'bg-danger-bg',
       emergency_approval: 'bg-danger-bg',
-      submission_confirmed: 'bg-success-bg',
     };
     return bgs[type] ?? 'bg-gray-100';
   }

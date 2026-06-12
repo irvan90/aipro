@@ -11,9 +11,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 export class BottomNavComponent {
   navItems = [
     { label: 'Home', route: '/dashboard', icon: '⊞', exact: true },
-    { label: 'Backlog', route: '/backlog', icon: '☰', exact: false },
     { label: 'Roadmap', route: '/roadmap', icon: '◫', exact: false },
-    { label: 'Impact', route: '/impact-analysis', icon: '⚡', exact: false },
-    { label: 'PMO', route: '/pmo-submission', icon: '📤', exact: false },
+    { label: 'Audit', route: '/audit-trail', icon: '📋', exact: false },
   ];
 }

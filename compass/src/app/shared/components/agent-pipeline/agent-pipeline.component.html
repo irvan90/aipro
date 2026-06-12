@@ -1,0 +1,32 @@
+<div class="space-y-1">
+  @for (agent of agentStates(); track agent.agentId) {
+    <div class="flex items-start gap-3 p-2.5 rounded-xl transition-colors"
+         [class.bg-bca-accent]="agent.status === 'running'"
+         [class.opacity-50]="agent.status === 'pending'">
+      <!-- Status indicator -->
+      <div class="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-sm"
+           [class]="agent.status === 'done' ? 'bg-success-bg' : agent.status === 'running' ? 'bg-white' : 'bg-gray-100'">
+        @if (agent.status === 'done') {
+          <svg class="w-3.5 h-3.5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+          </svg>
+        } @else if (agent.status === 'running') {
+          <span class="animate-pulse">{{ agent.icon }}</span>
+        } @else {
+          <span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
+        }
+      </div>
+      <div class="flex-1 min-w-0 pt-0.5">
+        <p class="text-xs font-semibold"
+           [class]="agent.status === 'pending' ? 'text-gray-400' : 'text-gray-800'">
+          {{ agent.icon }} {{ agent.name }}
+        </p>
+        @if (agent.status === 'running') {
+          <p class="text-[11px] text-bca-primary mt-0.5 animate-pulse">{{ loadingStep() }}</p>
+        } @else if (agent.status === 'done' && agent.finding) {
+          <p class="text-[11px] text-gray-500 mt-0.5 leading-relaxed">{{ agent.finding.summary }}</p>
+        }
+      </div>
+    </div>
+  }
+</div>
