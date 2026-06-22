@@ -1,4 +1,4 @@
-# COMPASS — Design Handoff Document
+# AIPRO — Design Handoff Document
 
 ## For UI/UX Mockup Creation
 
@@ -6,8 +6,8 @@
 
 ## 1. PLATFORM OVERVIEW
 
-**Name:** COMPASS
-**Full Name:** Cognitive Orchestration & Management for Product Agile Scoring System
+**Name:** AIPRO
+**Full Name:** AI Driven Backlog Prioritization & Recommendation
 **Tagline:** *“Navigate your product priorities with confidence.”*
 **Type:** Enterprise Internal SaaS — AI-Assisted Product Planning & Prioritization Platform
 **Owner:** PMO (Project Management Office) — Bank Central Asia (BCA)
@@ -145,7 +145,7 @@ Micro         : 10px, weight 500
 ```
 Top:
 → Logo: BCA icon (36px, white bg, #083767 text) 
-        + "COMPASS" text (white, bold)
+        + "AIPRO" text (white, bold)
         + "Product Planning Platform" subtitle (muted)
 
 Navigation Sections:
@@ -783,11 +783,11 @@ Example entries:
    "Strategic initiative Q4 BCA campaign"
    Prompt v1.2.3
 
-🤖 COMPASS AI · 23 min ago  
+🤖 AIPRO AI · 23 min ago  
    Scoring: Login Biometrik — RICE 13,200
    Confidence: 80%
 
-⚠️ COMPASS AI · 1 hour ago
+⚠️ AIPRO AI · 1 hour ago
    Dependency conflict: Biometrik ↔ Identity Service v2
 ```
 
@@ -978,7 +978,7 @@ Raycast          → Clean search, command palette
 -----
 
 *Document prepared for design handoff.*
-*Platform: COMPASS — Cognitive Orchestration & Management for Product Agile Scoring System*
+*Platform: AIPRO — AI Driven Backlog Prioritization & Recommendation*
 *Brand: Bank Central Asia (BCA) Internal Platform*
 *Primary Blue: #0d5cab*
 *Font: To be finalized by designer*

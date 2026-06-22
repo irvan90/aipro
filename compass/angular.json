@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "compass": {
+    "aipro": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -20,7 +20,7 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "outputPath": "dist/compass",
+            "outputPath": "dist/aipro",
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
@@ -62,10 +62,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "compass:build:production"
+              "buildTarget": "aipro:build:production"
             },
             "development": {
-              "buildTarget": "compass:build:development"
+              "buildTarget": "aipro:build:development"
             }
           },
           "defaultConfiguration": "development"

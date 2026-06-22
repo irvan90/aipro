@@ -329,19 +329,19 @@ export const AGENT_DEFINITIONS: AgentDefinition[] = [
 
 export const MOCK_ACTIVITIES: Activity[] = [
   {
-    id: 'act-pocket-001', type: 'ai_scored', actor: 'COMPASS AI', actorRole: 'PO',
+    id: 'act-pocket-001', type: 'ai_scored', actor: 'AIPRO AI', actorRole: 'PO',
     description: 'Priority mismatch detected: Pocket BCA',
     subDescription: 'PO Low → AI Must Have · RICE 15.000 · confidence 75%',
     backlogId: 'pocket-bca', backlogTitle: 'Pocket BCA', timestamp: new Date('2026-06-20T10:00:00'), productId: 'prod-001',
   },
   {
     id: 'act-pocket-002', type: 'human_override', actor: 'Budi Santoso', actorRole: 'PO',
-    description: 'Reviewed COMPASS recommendation for Pocket BCA',
+    description: 'Reviewed AIPRO recommendation for Pocket BCA',
     subDescription: 'Human decision required before roadmap change',
     backlogId: 'pocket-bca', backlogTitle: 'Pocket BCA', timestamp: new Date('2026-06-20T10:05:00'), productId: 'prod-001',
   },
   {
-    id: 'act-login-001', type: 'dependency_conflict', actor: 'COMPASS AI', actorRole: 'PO',
+    id: 'act-login-001', type: 'dependency_conflict', actor: 'AIPRO AI', actorRole: 'PO',
     description: 'Login Biometrik deferred',
     subDescription: 'Blocked by Identity Service v2',
     backlogId: 'login-biometric', backlogTitle: 'Login Biometrik', timestamp: new Date('2026-06-19T15:00:00'), productId: 'prod-001',

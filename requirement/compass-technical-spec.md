@@ -1,4 +1,4 @@
-# COMPASS — Technical Spec for Claude Code
+# AIPRO — Technical Spec for Claude Code
 
 ## Angular 21 + Signals + Standalone + Tailwind
 
@@ -6,7 +6,7 @@
 
 ## 1. PROJECT OVERVIEW
 
-**Platform:** COMPASS — Cognitive Orchestration & Management for Product Agile Scoring System
+**Platform:** AIPRO — AI Driven Backlog Prioritization & Recommendation
 **Type:** Internal SaaS — AI-Assisted Product Planning & Prioritization
 **Primary User:** Product Owner (PO)
 **Mode:** Frontend prototype only — no backend, all mock data
@@ -34,7 +34,7 @@ Build           : Angular CLI + Vite
 ## 3. PROJECT STRUCTURE
 
 ```
-compass/
+aipro/
 ├── src/
 │   ├── app/
 │   │   ├── core/
@@ -875,7 +875,7 @@ export const MOCK_ACTIVITIES: Activity[] = [
   {
     id: 'act-002',
     type: 'ai_scored',
-    actor: 'COMPASS AI',
+    actor: 'AIPRO AI',
     actorRole: 'PO',
     description: 'Scored Login Biometrik',
     subDescription: 'RICE: 13,200 · Confidence: 80% · Prompt v1.2.3',
@@ -887,7 +887,7 @@ export const MOCK_ACTIVITIES: Activity[] = [
   {
     id: 'act-003',
     type: 'dependency_conflict',
-    actor: 'COMPASS AI',
+    actor: 'AIPRO AI',
     actorRole: 'PO',
     description: 'Detected dependency conflict',
     subDescription: 'Biometrik ↔ Identity Service v2',
@@ -911,7 +911,7 @@ export const MOCK_ACTIVITIES: Activity[] = [
   {
     id: 'act-005',
     type: 'prd_generated',
-    actor: 'COMPASS AI',
+    actor: 'AIPRO AI',
     actorRole: 'PO',
     description: 'Generated PRD draft for Notifikasi Realtime',
     subDescription: 'For: Notifikasi Transaksi Real-time',
@@ -1260,7 +1260,7 @@ cancelDrop() {
 Saat memulai sesi Claude Code, gunakan prompt ini:
 
 ```
-Saya ingin membangun COMPASS — sebuah AI-Assisted 
+Saya ingin membangun AIPRO — sebuah AI-Assisted 
 Product Planning & Prioritization Platform untuk internal BCA.
 
 Tech stack:
@@ -1291,5 +1291,5 @@ sidebar → topbar → dashboard page
 
 -----
 
-*Technical Spec untuk COMPASS Angular Prototype*
+*Technical Spec untuk AIPRO Angular Prototype*
 *Siap untuk handoff ke Claude Code*

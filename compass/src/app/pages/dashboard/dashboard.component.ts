@@ -48,7 +48,7 @@ export class DashboardComponent {
   dailyInsights: DailyInsight[] = [
     {
       type: 'market', eyebrow: 'Internet signal · High', title: 'Pocket BCA tertinggal dari ekspektasi pasar',
-      body: 'Pemantauan fitur publik menemukan pola pocket/goal saving telah digunakan Jenius dan blu. COMPASS merekomendasikan review prioritas.',
+      body: 'Pemantauan fitur publik menemukan pola pocket/goal saving telah digunakan Jenius dan blu. AIPRO merekomendasikan review prioritas.',
       source: 'Public product pages · dipindai hari ini', severity: 'high', backlogId: 'pocket-bca',
     },
     {

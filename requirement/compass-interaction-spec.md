@@ -1,4 +1,4 @@
-# COMPASS — Interaction & Clickable Spec
+# AIPRO — Interaction & Clickable Spec
 
 ## Mockup Interaksi per Halaman
 
@@ -36,7 +36,7 @@ Warna: #3174b8 (lebih muted dari normal)
 Panel kanan muncul dengan loading state:
 
 ┌─────────────────────────────────────┐
-│ 🤖 COMPASS AI                       │
+│ 🤖 AIPRO AI                       │
 │ ─────────────────────────────────── │
 │ ⠋ Reading backlog context...        │
 │                                     │
@@ -787,7 +787,7 @@ Override modal (khusus):
 
 -----
 
-*Dokumen ini untuk keperluan spesifikasi interaksi mockup COMPASS.*
+*Dokumen ini untuk keperluan spesifikasi interaksi mockup AIPRO.*
 *Setiap halaman dirancang untuk demo 5–7 menit kepada juri.*
 *AI progress animation adalah elemen kunci yang membuat demo terasa real.*
 
@@ -1446,7 +1446,7 @@ Dari Notification Panel:
 ✅ Semua dead ends sudah di-resolve
 ```
 
-*Dokumen interaction spec COMPASS — updated dengan halaman lengkap dan resolusi dead ends.*
+*Dokumen interaction spec AIPRO — updated dengan halaman lengkap dan resolusi dead ends.*
 
 -----
 
@@ -1618,7 +1618,7 @@ Completeness bar: terisi
 Panel kanan muncul dengan skeleton:
 
 ┌─────────────────────────────────────┐
-│ 🤖 COMPASS AI                      │
+│ 🤖 AIPRO AI                      │
 │ ─────────────────────────────────── │
 │ ◌ Reading backlog context...        │
 │                                     │
@@ -1877,7 +1877,7 @@ Full-screen overlay:
 │                                         │
 │ [PDF preview area — read only]         │
 │                                         │
-│ Header: COMPASS · myBCA Mobile         │
+│ Header: AIPRO · myBCA Mobile         │
 │ Q3 2025 Roadmap Submission             │
 │ Submitted by: Budi Santoso (PO)        │
 │                                         │
@@ -1942,7 +1942,7 @@ Topbar: normal
 Content area:
 
         🧭
-   Welcome to COMPASS
+   Welcome to AIPRO
    
    Start by setting up your
    product context so AI can
@@ -2252,6 +2252,6 @@ TOTAL: 55 frames
 
 -----
 
-*Level 2 Full Prototype Spec — COMPASS*
+*Level 2 Full Prototype Spec — AIPRO*
 *Includes drag & drop, all modals, empty/success/error states*
 *Ready for Claude Design handoff*

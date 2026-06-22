@@ -30,7 +30,7 @@
             </div>
             <span class="text-xl text-white/35">→</span>
             <div class="px-4 py-3 rounded-xl bg-amber-300 text-bca-navy min-w-32 shadow-sm">
-              <div class="text-[9px] uppercase tracking-wider font-bold text-bca-navy/55">COMPASS</div>
+              <div class="text-[9px] uppercase tracking-wider font-bold text-bca-navy/55">AIPRO</div>
               <div class="text-lg font-black mt-0.5">{{ item.aiResult?.moscow }}</div>
             </div>
           </div>
@@ -39,7 +39,7 @@
 
       <div class="grid lg:grid-cols-[0.9fr_1.35fr]">
         <aside class="p-5 lg:p-6 bg-gray-50 border-b lg:border-b-0 lg:border-r border-gray-200">
-          <div class="text-[10px] uppercase tracking-[0.16em] font-bold text-gray-400">How COMPASS reached this</div>
+          <div class="text-[10px] uppercase tracking-[0.16em] font-bold text-gray-400">How AIPRO reached this</div>
 
           @if (isAnalyzing()) {
             <div class="mt-4 p-3 bg-white rounded-xl border border-blue-100 shadow-sm">
@@ -64,7 +64,7 @@
 
           <button (click)="runAnalysis()" [disabled]="isAnalyzing()"
                   class="w-full mt-4 px-4 py-3 rounded-xl bg-bca-primary text-white text-sm font-bold hover:bg-bca-hover transition-colors disabled:opacity-50">
-            @if (isAnalyzing()) { Analyzing… } @else if (analysisComplete()) { Run analysis again } @else { Run full COMPASS analysis }
+            @if (isAnalyzing()) { Analyzing… } @else if (analysisComplete()) { Run analysis again } @else { Run full AIPRO analysis }
           </button>
           <p class="text-[10px] text-gray-400 leading-relaxed mt-2 text-center">Tiga tahap · sekitar 3 detik · keputusan tetap pada PO</p>
         </aside>

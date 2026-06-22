@@ -1,6 +1,6 @@
-# COMPASS
+# AIPRO
 
-**Cognitive Orchestration & Management for Product Agile Scoring System**
+**AI Driven Backlog Prioritization & Recommendation**
 
 > *"Navigate your product priorities with confidence."*
 
@@ -39,7 +39,7 @@ The app will run at `http://localhost:4200`
 npm run build
 ```
 
-Output goes to `dist/compass/browser/`
+Output goes to `dist/aipro/browser/`
 
 ## Project Structure
 
