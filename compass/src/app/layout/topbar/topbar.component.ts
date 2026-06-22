@@ -1,13 +1,11 @@
 import { Component, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { NgClass, NgIf } from '@angular/common';
 import { appStore } from '../../core/stores/app.store';
-import { ToastService } from '../../core/services/toast.service';
 
 @Component({
   selector: 'app-topbar',
   standalone: true,
-  imports: [RouterLink, NgClass, NgIf],
+  imports: [RouterLink],
   templateUrl: './topbar.component.html',
   styleUrl: './topbar.component.scss',
 })
@@ -15,58 +13,16 @@ export class TopbarComponent {
   store = appStore;
   unreadCount = computed(() => appStore.unreadCount());
 
-  constructor(private toast: ToastService) {}
-
   toggleNotifications(): void {
-    appStore.showNotificationPanel.update(v => !v);
-  }
-
-  closeNotifications(): void {
-    appStore.showNotificationPanel.set(false);
+    appStore.showNotificationPanel.update(value => !value);
   }
 
   markAllRead(): void {
-    appStore.notifications.update(notifs => notifs.map(n => ({ ...n, isRead: true })));
-    this.toast.show('success', 'All notifications marked as read');
+    appStore.notifications.update(items => items.map(item => ({ ...item, isRead: true })));
   }
 
-  handleNotifClick(notif: any): void {
-    appStore.notifications.update(notifs =>
-      notifs.map(n => n.id === notif.id ? { ...n, isRead: true } : n)
-    );
-    this.closeNotifications();
-  }
-
-  getNotifIcon(type: string): string {
-    const icons: Record<string, string> = {
-      ai_scored: '🤖',
-      deadline: '⏰',
-      myservice_new: '📥',
-      dependency_conflict: '⚠️',
-      emergency_approval: '🚨',
-    };
-    return icons[type] ?? '🔔';
-  }
-
-  getNotifIconBg(type: string): string {
-    const bgs: Record<string, string> = {
-      ai_scored: 'bg-bca-accent',
-      deadline: 'bg-warning-bg',
-      myservice_new: 'bg-bca-accent',
-      dependency_conflict: 'bg-danger-bg',
-      emergency_approval: 'bg-danger-bg',
-    };
-    return bgs[type] ?? 'bg-gray-100';
-  }
-
-  getRelativeTime(date: Date): string {
-    const diff = Date.now() - new Date(date).getTime();
-    const mins = Math.floor(diff / 60000);
-    if (mins < 1) return 'just now';
-    if (mins < 60) return `${mins} min ago`;
-    const hours = Math.floor(mins / 60);
-    if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-    const days = Math.floor(hours / 24);
-    return `${days} day${days > 1 ? 's' : ''} ago`;
+  markRead(id: string): void {
+    appStore.notifications.update(items => items.map(item => item.id === id ? { ...item, isRead: true } : item));
+    appStore.showNotificationPanel.set(false);
   }
 }

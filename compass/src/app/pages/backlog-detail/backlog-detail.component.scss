@@ -1,0 +1,63 @@
+.decision-header {
+  background:
+    radial-gradient(circle at 82% 15%, rgba(255, 214, 92, 0.16), transparent 28%),
+    linear-gradient(135deg, #083767 0%, #0d5cab 100%);
+}
+
+.signal-card {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.9rem;
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+  background: white;
+  color: #6b7280;
+  font-size: 0.7rem;
+  line-height: 1.45;
+}
+
+.signal-index {
+  color: #0d5cab;
+  font-size: 0.65rem;
+  font-weight: 800;
+}
+
+.signal-title {
+  color: #111827;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+}
+
+.metric-pill {
+  min-width: 76px;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.7rem;
+  background: #f9fafb;
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-pill span {
+  color: #9ca3af;
+  font-size: 0.55rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.metric-pill strong {
+  color: #083767;
+  font-size: 0.85rem;
+  margin-top: 0.1rem;
+}
+
+.result-reveal {
+  animation: result-in 320ms ease-out both;
+}
+
+@keyframes result-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}

@@ -1,103 +1,88 @@
-import { Component, computed } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { DecimalPipe } from '@angular/common';
+import { Component, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { backlogStore, CURRENT_QUARTER } from '../../core/stores/backlog.store';
-import { MOCK_ACTIVITIES } from '../../core/services/mock-data.service';
-import { Backlog, valueEffortQuadrant, ValueEffortQuadrantInfo } from '../../core/models/backlog.model';
-import { BacklogService } from '../../core/services/backlog.service';
-import { StatCardComponent } from '../../shared/components/stat-card/stat-card.component';
-import { MoscowTagComponent } from '../../shared/components/moscow-tag/moscow-tag.component';
-import { StatusDotComponent } from '../../shared/components/status-dot/status-dot.component';
-import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
-import { RelativeTimePipe } from '../../shared/pipes/relative-time.pipe';
+import { RouterLink } from '@angular/router';
+import { Backlog, BacklogStatus } from '../../core/models/backlog.model';
+import { backlogStore } from '../../core/stores/backlog.store';
+
+interface DailyInsight {
+  type: 'market' | 'dependency' | 'performance';
+  eyebrow: string;
+  title: string;
+  body: string;
+  source: string;
+  severity: 'high' | 'medium' | 'info';
+  backlogId: string;
+}
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [
-    RouterLink, DecimalPipe, FormsModule,
-    StatCardComponent, MoscowTagComponent, StatusDotComponent,
-    EmptyStateComponent, RelativeTimePipe,
-  ],
+  imports: [FormsModule, RouterLink],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
 })
 export class DashboardComponent {
-  backlog = backlogStore;
-  currentQuarter = CURRENT_QUARTER;
-  activities = MOCK_ACTIVITIES;
+  searchValue = signal('');
+  statusFilter = signal<BacklogStatus | 'all'>('all');
+  sortBy = signal<'rice' | 'date'>('rice');
 
-  filtered = computed(() => backlogStore.filtered());
-  newFromMyService = computed(() => backlogStore.newFromMyService());
-  newInitiators = computed(() =>
-    [...new Set(this.newFromMyService().map(b => b.myService?.featureInitiator).filter(Boolean))].join(' · ')
-  );
+  allBacklogs = backlogStore.all;
+  fromMyService = computed(() => this.allBacklogs().filter(item => item.source === 'myservice'));
+  totalCount = computed(() => this.allBacklogs().length);
+  doneCount = computed(() => this.allBacklogs().filter(item => item.status === 'delivered' || item.status === 'submitted').length);
+  onProgressCount = computed(() => this.totalCount() - this.doneCount());
 
-  searchValue = '';
-  filterStatusValue = 'all';
-  filterQuarterValue = 'all';
-  sortByValue = 'rice';
+  filteredBacklogs = computed(() => {
+    const query = this.searchValue().trim().toLowerCase();
+    const status = this.statusFilter();
+    let items = this.allBacklogs().filter(item => {
+      const matchesQuery = !query || `${item.title} ${item.description}`.toLowerCase().includes(query);
+      const matchesStatus = status === 'all' || item.status === status;
+      return matchesQuery && matchesStatus;
+    });
+    return [...items].sort((a, b) => this.sortBy() === 'rice'
+      ? (b.aiResult?.riceScore ?? 0) - (a.aiResult?.riceScore ?? 0)
+      : b.updatedAt.getTime() - a.updatedAt.getTime());
+  });
 
-  constructor(private backlogService: BacklogService) {}
+  dailyInsights: DailyInsight[] = [
+    {
+      type: 'market', eyebrow: 'Internet signal · High', title: 'Pocket BCA tertinggal dari ekspektasi pasar',
+      body: 'Pemantauan fitur publik menemukan pola pocket/goal saving telah digunakan Jenius dan blu. COMPASS merekomendasikan review prioritas.',
+      source: 'Public product pages · dipindai hari ini', severity: 'high', backlogId: 'pocket-bca',
+    },
+    {
+      type: 'dependency', eyebrow: 'Dependency monitor · Medium', title: 'Login Biometrik masih memiliki blocker',
+      body: 'Identity Service v2 belum siap. Memajukan delivery sekarang berisiko menambah dua sprint rework.',
+      source: 'Roadmap dependency graph', severity: 'medium', backlogId: 'login-biometric',
+    },
+    {
+      type: 'performance', eyebrow: 'KPI monitor · Stable', title: 'QRIS Retry masuk fase pemantauan',
+      body: 'Backlog sudah delivered. AI akan memantau transaction success rate sebelum dampaknya dinyatakan tercapai.',
+      source: 'Product KPI context', severity: 'info', backlogId: 'qris-retry',
+    },
+  ];
 
-  onSearch(q: string): void { backlogStore.searchQuery.set(q); }
-  onFilterStatus(v: string): void { backlogStore.filterStatus.set(v as any); }
-  onFilterQuarter(v: string): void { backlogStore.filterQuarter.set(v as any); }
-  onSortChange(v: string): void { backlogStore.sortBy.set(v as any); }
-
-  hasFilters(): boolean {
-    return this.searchValue !== '' ||
-      this.filterStatusValue !== 'all' ||
-      this.filterQuarterValue !== 'all';
+  statusLabel(status: BacklogStatus): string {
+    return {
+      new: 'New', draft: 'Draft', ai_scored: 'AI Scored', ready: 'Ready', not_ready: 'Not Ready',
+      submitted: 'Submitted', archived: 'Archived', delivered: 'Done',
+    }[status];
   }
 
-  clearFilters(): void {
-    this.searchValue = '';
-    this.filterStatusValue = 'all';
-    this.filterQuarterValue = 'all';
-    backlogStore.searchQuery.set('');
-    backlogStore.filterStatus.set('all');
-    backlogStore.filterQuarter.set('all');
+  statusClass(status: BacklogStatus): string {
+    if (status === 'delivered' || status === 'submitted') return 'bg-emerald-50 text-emerald-700 border-emerald-200';
+    if (status === 'ai_scored' || status === 'ready') return 'bg-blue-50 text-bca-primary border-blue-200';
+    return 'bg-gray-100 text-gray-600 border-gray-200';
   }
 
-  showNewBacklogs(): void {
-    this.clearFilters();
-    this.filterStatusValue = 'new';
-    backlogStore.filterStatus.set('new');
+  insightClass(severity: DailyInsight['severity']): string {
+    return {
+      high: 'border-red-200 bg-red-50/60',
+      medium: 'border-amber-200 bg-amber-50/60',
+      info: 'border-blue-200 bg-blue-50/60',
+    }[severity];
   }
 
-  quadrant(b: Backlog): ValueEffortQuadrantInfo | null {
-    return b.myService
-      ? valueEffortQuadrant(b.myService.valuegraphValue, b.myService.valuegraphEffort)
-      : null;
-  }
-
-  markDelivered(id: string, event: Event): void {
-    event.stopPropagation();
-    event.preventDefault();
-    this.backlogService.markDelivered(id);
-  }
-
-  getActivityIcon(type: string): string {
-    const icons: Record<string, string> = {
-      ai_scored: '🤖',
-      human_override: '👤',
-      dependency_conflict: '⚠️',
-      backlog_added: '📥',
-      warning: '⚠️',
-    };
-    return icons[type] ?? '📋';
-  }
-
-  getActivityIconBg(type: string): string {
-    const bgs: Record<string, string> = {
-      ai_scored: 'bg-bca-accent',
-      human_override: 'bg-success-bg',
-      dependency_conflict: 'bg-warning-bg',
-      backlog_added: 'bg-bca-accent',
-      warning: 'bg-warning-bg',
-    };
-    return bgs[type] ?? 'bg-gray-100';
-  }
+  trackByBacklog(_: number, backlog: Backlog): string { return backlog.id; }
 }

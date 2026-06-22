@@ -1,374 +1,151 @@
+<div class="max-w-6xl mx-auto animate-fade-up">
+  @if (backlog(); as item) {
+    <div class="flex items-center justify-between gap-3 mb-4">
+      <div class="flex items-center gap-2 text-xs text-gray-400">
+        <a routerLink="/dashboard" class="hover:text-bca-primary">Prioritas</a>
+        <span>/</span>
+        <span class="text-gray-700 font-semibold">Decision brief</span>
+      </div>
+      <a [routerLink]="['/backlog', item.id, 'edit']" class="text-xs font-bold text-bca-primary hover:underline">Edit backlog</a>
+    </div>
 
-    <div class="animate-fade-up">
-      @if (backlog()) {
-        <!-- Breadcrumb -->
-        <div class="flex items-center gap-2 text-xs text-gray-500 mb-4">
-          <a routerLink="/dashboard" class="hover:text-bca-primary transition-colors">Dashboard</a>
-          <span>/</span>
-          <span class="text-gray-900 font-medium truncate max-w-xs">{{ backlog()!.title }}</span>
+    <section class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+      <div class="decision-header p-5 lg:p-7 text-white">
+        <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-5">
+          <div class="max-w-2xl">
+            <div class="flex items-center gap-2 flex-wrap mb-3">
+              @if (item.isHistoricalScenario) {
+                <span class="px-2.5 py-1 bg-white/10 border border-white/15 rounded-full text-[10px] font-bold uppercase tracking-wider">Historical reconstruction</span>
+              }
+              <span class="text-[10px] text-white/50">Pre-launch prioritization</span>
+            </div>
+            <h1 class="text-2xl lg:text-3xl font-black tracking-tight">{{ item.title }}</h1>
+            <p class="text-sm text-white/70 leading-relaxed mt-2">{{ item.description }}</p>
+          </div>
+
+          <div class="flex items-center gap-2 flex-shrink-0">
+            <div class="px-4 py-3 rounded-xl bg-white/10 border border-white/10 min-w-28">
+              <div class="text-[9px] uppercase tracking-wider font-bold text-white/45">PO priority</div>
+              <div class="text-lg font-black mt-0.5">{{ item.initialPriority }}</div>
+            </div>
+            <span class="text-xl text-white/35">→</span>
+            <div class="px-4 py-3 rounded-xl bg-amber-300 text-bca-navy min-w-32 shadow-sm">
+              <div class="text-[9px] uppercase tracking-wider font-bold text-bca-navy/55">COMPASS</div>
+              <div class="text-lg font-black mt-0.5">{{ item.aiResult?.moscow }}</div>
+            </div>
+          </div>
         </div>
+      </div>
 
-        <!-- myService new arrival strip -->
-        @if (backlog()!.source === 'myservice' && backlog()!.status === 'new') {
-          <div class="flex items-center gap-3 bg-bca-accent border border-bca-primary/20 rounded-card px-4 py-3 mb-4 flex-wrap">
-            <span class="text-lg">📥</span>
-            <p class="text-xs text-bca-navy flex-1 min-w-48">
-              <span class="font-bold">Backlog ini masuk dari myService dengan data minimal.</span>
-              AI tetap bisa langsung scoring (confidence awal rendah) — atau lengkapi data dulu untuk hasil lebih akurat.
-            </p>
-            <div class="flex items-center gap-2">
-              <button (click)="reanalyze()" [disabled]="isScoring()"
-                      class="px-3 py-2 text-xs font-semibold bg-bca-primary text-white rounded-btn hover:bg-bca-hover transition-colors disabled:opacity-50">
-                ⚡ Jalankan AI Scoring
+      <div class="grid lg:grid-cols-[0.9fr_1.35fr]">
+        <aside class="p-5 lg:p-6 bg-gray-50 border-b lg:border-b-0 lg:border-r border-gray-200">
+          <div class="text-[10px] uppercase tracking-[0.16em] font-bold text-gray-400">How COMPASS reached this</div>
+
+          @if (isAnalyzing()) {
+            <div class="mt-4 p-3 bg-white rounded-xl border border-blue-100 shadow-sm">
+              <app-agent-pipeline />
+            </div>
+          } @else {
+            <div class="mt-4 space-y-2">
+              <div class="signal-card">
+                <span class="signal-index">01</span>
+                <div><div class="signal-title">Market Gap</div><p>Apakah fitur sudah menjadi ekspektasi pengguna?</p></div>
+              </div>
+              <div class="signal-card">
+                <span class="signal-index">02</span>
+                <div><div class="signal-title">Customer & Business Impact</div><p>Berapa opportunity yang berisiko terlewat?</p></div>
+              </div>
+              <div class="signal-card">
+                <span class="signal-index">03</span>
+                <div><div class="signal-title">Feasibility & Risk</div><p>Apakah dampak sebanding dengan effort?</p></div>
+              </div>
+            </div>
+          }
+
+          <button (click)="runAnalysis()" [disabled]="isAnalyzing()"
+                  class="w-full mt-4 px-4 py-3 rounded-xl bg-bca-primary text-white text-sm font-bold hover:bg-bca-hover transition-colors disabled:opacity-50">
+            @if (isAnalyzing()) { Analyzing… } @else if (analysisComplete()) { Run analysis again } @else { Run full COMPASS analysis }
+          </button>
+          <p class="text-[10px] text-gray-400 leading-relaxed mt-2 text-center">Tiga tahap · sekitar 3 detik · keputusan tetap pada PO</p>
+        </aside>
+
+        <div class="p-5 lg:p-6">
+          @if (!analysisComplete()) {
+            <div class="analysis-placeholder min-h-80 flex flex-col justify-center items-center text-center rounded-2xl border border-dashed border-gray-200 bg-gray-50/60 p-8">
+              <div class="w-12 h-12 rounded-2xl bg-blue-50 text-bca-primary flex items-center justify-center text-xl font-black">↗</div>
+              <h2 class="text-lg font-bold text-gray-900 mt-4">Siap menjelaskan priority mismatch</h2>
+              <p class="text-sm text-gray-500 mt-2 max-w-md">Jalankan analisis untuk membuka market signal, opportunity estimate, dan rekomendasi roadmap.</p>
+            </div>
+          } @else if (analysisResult(); as result) {
+            <div class="result-reveal">
+              <div class="flex items-center justify-between gap-3 flex-wrap">
+                <div>
+                  <div class="text-[10px] uppercase tracking-[0.16em] font-bold text-bca-primary">Recommendation ready</div>
+                  <h2 class="text-xl font-black text-gray-950 mt-1">Promote this backlog.</h2>
+                </div>
+                <div class="flex gap-2">
+                  <div class="metric-pill"><span>RICE</span><strong>{{ result.riceScore | number }}</strong></div>
+                  <div class="metric-pill"><span>Confidence</span><strong>{{ result.confidenceLevel }}%</strong></div>
+                </div>
+              </div>
+
+              @if (item.opportunityAtRisk; as opportunity) {
+                <div class="mt-5 p-5 rounded-2xl bg-amber-50 border border-amber-200">
+                  <div class="text-[10px] uppercase tracking-[0.14em] font-bold text-amber-700">Opportunity at risk</div>
+                  <div class="text-2xl font-black text-gray-950 mt-1">{{ opportunity.label }}</div>
+                  <p class="text-xs text-gray-600 mt-2">{{ opportunity.formula }}</p>
+                  <div class="inline-flex items-center gap-1.5 mt-3 px-2.5 py-1 rounded-full bg-white border border-amber-200 text-[10px] font-bold text-amber-800">ⓘ Estimasi skenario demo—bukan kerugian aktual</div>
+                </div>
+              }
+
+              <div class="grid sm:grid-cols-3 gap-3 mt-5">
+                @for (finding of result.agentFindings; track finding.agentId) {
+                  <div class="p-4 rounded-xl border border-gray-200 bg-white">
+                    <div class="text-lg text-bca-primary font-black">{{ finding.icon }}</div>
+                    <div class="text-xs font-bold text-gray-900 mt-2">{{ finding.agentName }}</div>
+                    <p class="text-[11px] text-gray-500 leading-relaxed mt-1.5">{{ finding.summary }}</p>
+                  </div>
+                }
+              </div>
+
+              <button (click)="showEvidence.set(!showEvidence())"
+                      class="w-full flex items-center justify-between mt-4 px-4 py-3 rounded-xl border border-gray-200 text-xs font-bold text-gray-700 hover:bg-gray-50">
+                <span>Asumsi & evidence</span><span>{{ showEvidence() ? '−' : '+' }}</span>
               </button>
-              <a [routerLink]="['/backlog', backlog()!.id, 'edit']"
-                 class="px-3 py-2 text-xs font-semibold text-bca-primary border border-bca-primary rounded-btn hover:bg-white transition-colors">
-                Lengkapi Data
-              </a>
-            </div>
-          </div>
-        }
 
-        <!-- Header Card -->
-        <div class="bg-white rounded-card border border-gray-200 p-5 mb-4">
-          <div class="flex items-start justify-between gap-4 flex-wrap">
-            <div class="flex-1 min-w-0">
-              <h1 class="text-base font-bold text-gray-900 mb-2">{{ backlog()!.title }}</h1>
-              <div class="flex items-center flex-wrap gap-2 mb-3">
-                <app-status-dot [status]="backlog()!.status" />
-                @if (backlog()!.source === 'myservice') {
-                  <span class="text-[10px] font-bold px-2 py-0.5 bg-bca-accent text-bca-primary rounded-full">myService</span>
-                }
-                @if (backlog()!.aiResult?.moscow) {
-                  <app-moscow-tag [moscow]="backlog()!.aiResult!.moscow" />
-                }
-                @if (quadrantInfo(); as q) {
-                  <span [class]="q.colorClass" class="text-[10px] font-bold px-2 py-0.5 rounded-full" [title]="'Valuegraph myService — ' + q.detail">
-                    {{ q.label }}
-                  </span>
-                }
-                <span class="text-xs px-2 py-0.5 bg-bca-accent text-bca-primary rounded-full font-semibold">{{ backlog()!.targetQuarter }}</span>
-                @if (backlog()!.isEmergency) {
-                  <span class="text-xs px-2 py-0.5 bg-danger-bg text-danger rounded-full font-bold">🚨 Emergency</span>
-                }
-              </div>
-              <app-completeness-bar [score]="backlog()!.completenessScore" />
-            </div>
-            @if (backlog()!.aiResult) {
-              <div class="text-right flex-shrink-0">
-                <div class="text-3xl font-black text-bca-navy">{{ backlog()!.aiResult!.riceScore | number }}</div>
-                <div class="text-xs text-gray-400 mt-0.5">RICE Score</div>
-              </div>
-            }
-          </div>
-
-          <div class="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100 flex-wrap">
-            <a [routerLink]="['/backlog', backlog()!.id, 'edit']"
-               class="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-bca-primary border border-bca-primary rounded-btn hover:bg-bca-accent transition-colors">
-              ✏️ Edit Backlog
-            </a>
-            <button (click)="reanalyze()" [disabled]="isScoring()"
-                    class="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-gray-600 border border-gray-200 rounded-btn hover:bg-gray-50 transition-colors disabled:opacity-50">
-              🤖 {{ backlog()!.aiResult ? 'Re-score with AI' : 'Score with AI' }}
-            </button>
-          </div>
-        </div>
-
-        <!-- Tabs -->
-        <div class="flex gap-0 bg-white rounded-t-card border border-gray-200 border-b-0 overflow-x-auto">
-          @for (tab of tabs; track tab) {
-            <button (click)="activeTab.set(tab)"
-                    [class]="activeTab() === tab ? 'border-b-2 border-bca-primary text-bca-primary bg-bca-accent/30' : 'text-gray-500 hover:text-gray-700'"
-                    class="px-4 py-3 text-xs font-semibold transition-colors whitespace-nowrap flex-shrink-0">
-              {{ tab }}
-            </button>
-          }
-        </div>
-
-        <!-- Tab Content -->
-        <div class="bg-white rounded-b-card border border-gray-200 border-t-0 p-5">
-
-          @if (activeTab() === 'Overview') {
-            <div class="space-y-4">
-              <div><label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Description</label>
-                <p class="text-sm text-gray-700 mt-1 leading-relaxed">{{ backlog()!.description }}</p></div>
-              @if (backlog()!.businessObjective) {
-                <div><label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Business Objective</label>
-                  <p class="text-sm text-gray-700 mt-1 leading-relaxed">{{ backlog()!.businessObjective }}</p></div>
-              }
-              @if (backlog()!.targetUsers) {
-                <div><label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Target Users</label>
-                  <p class="text-sm text-gray-700 mt-1">{{ backlog()!.targetUsers }}</p></div>
-              }
-              @if (backlog()!.impactArea.length > 0) {
-                <div>
-                  <label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Impact Area</label>
-                  <div class="flex flex-wrap gap-2 mt-1">
-                    @for (area of backlog()!.impactArea; track area) {
-                      <span class="text-xs px-2.5 py-1 bg-purple-bg text-purple rounded-full font-medium">{{ area }}</span>
-                    }
-                  </div>
-                </div>
-              }
-              @if (backlog()!.supportingEvidence.length > 0) {
-                <div>
-                  <label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Supporting Evidence</label>
-                  <div class="flex flex-wrap gap-2 mt-1">
-                    @for (ev of backlog()!.supportingEvidence; track ev) {
-                      <span class="text-xs px-2.5 py-1 bg-success-bg text-success rounded-full font-medium">{{ ev }}</span>
-                    }
-                  </div>
-                </div>
-              }
-              @if (backlog()!.estimatedImpact) {
-                <div><label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Estimated Business Impact</label>
-                  <p class="text-sm text-gray-700 mt-1">{{ backlog()!.estimatedImpact }}</p></div>
-              }
-              @if (backlog()!.dependency.length > 0) {
-                <div>
-                  <label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Dependencies</label>
-                  <div class="flex flex-wrap gap-2 mt-1">
-                    @for (depId of backlog()!.dependency; track depId) {
-                      <a [routerLink]="['/backlog', depId]"
-                         class="text-xs px-2.5 py-1 bg-bca-accent text-bca-primary rounded-full font-medium hover:underline">
-                        {{ getDependencyTitle(depId) }}
-                      </a>
-                    }
-                  </div>
-                </div>
-              }
-
-              <!-- Data myService -->
-              @if (backlog()!.myService; as ms) {
-                <div class="border-t border-gray-100 pt-4">
-                  <div class="flex items-center gap-2 mb-3">
-                    <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Data myService</h4>
-                    <span class="text-[10px] px-2 py-0.5 bg-bca-accent text-bca-primary rounded-full font-bold">{{ ms.myServiceId }}</span>
-                  </div>
-
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="space-y-3">
-                      <div><label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Feature Initiator</label>
-                        <p class="text-sm text-gray-700 mt-0.5">{{ ms.featureInitiator }}</p></div>
-                      @if (ms.category) {
-                        <div><label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Category / Epic</label>
-                          <p class="text-sm text-gray-700 mt-0.5">{{ ms.epic ? ms.category + ' · ' + ms.epic : ms.category }}</p></div>
-                      }
-                      @if (ms.timeToMarketMonths) {
-                        <div><label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Time to Market</label>
-                          <p class="text-sm text-gray-700 mt-0.5">{{ ms.timeToMarketMonths }} bulan</p></div>
-                      }
-                      @if (ms.existingCondition) {
-                        <div><label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Existing Condition</label>
-                          <p class="text-sm text-gray-700 mt-0.5 leading-relaxed">{{ ms.existingCondition }}</p></div>
-                      }
-                      @if (ms.customerValue) {
-                        <div><label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Value untuk Nasabah</label>
-                          <p class="text-sm text-gray-700 mt-0.5 leading-relaxed">{{ ms.customerValue }}</p></div>
-                      }
-                      @if (ms.functionalRequirement) {
-                        <div><label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Functional Requirement</label>
-                          <p class="text-sm text-gray-700 mt-0.5 leading-relaxed">{{ ms.functionalRequirement }}</p></div>
-                      }
-                      @if (ms.concern) {
-                        <div><label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Concern</label>
-                          <p class="text-sm text-gray-700 mt-0.5 leading-relaxed">{{ ms.concern }}</p></div>
-                      }
-                      <div class="flex flex-wrap gap-2">
-                        @if (ms.involvementDWH) {
-                          <span class="text-[10px] px-2 py-0.5 bg-warning-bg text-warning rounded-full font-bold">DWH</span>
-                        }
-                        @if (ms.involvementRPA) {
-                          <span class="text-[10px] px-2 py-0.5 bg-warning-bg text-warning rounded-full font-bold">RPA</span>
-                        }
-                        @if (ms.personalDataAccess) {
-                          <span class="text-[10px] px-2 py-0.5 bg-danger-bg text-danger rounded-full font-bold">🛡️ Personal Data — ROPA/DPIA</span>
-                        }
+              @if (showEvidence()) {
+                <div class="mt-2 rounded-xl border border-gray-200 divide-y divide-gray-100 overflow-hidden">
+                  @for (signal of item.evidenceSignals ?? []; track signal.label) {
+                    <div class="p-3.5 bg-gray-50/50">
+                      <div class="flex items-center justify-between gap-2">
+                        <span class="text-xs font-bold text-gray-800">{{ signal.label }}</span>
+                        <span class="text-[9px] text-gray-400">{{ signal.observedAt }}</span>
                       </div>
-                    </div>
-
-                    <!-- Value/Effort quadrant card -->
-                    @if (quadrantInfo(); as q) {
-                      <div class="bg-gray-50 rounded-xl p-4">
-                        <div class="flex items-center justify-between mb-3">
-                          <h5 class="text-xs font-semibold text-gray-700">Value / Effort</h5>
-                          <span [class]="q.colorClass" class="text-[10px] font-bold px-2 py-0.5 rounded-full">{{ q.label }}</span>
-                        </div>
-                        <div class="grid grid-cols-2 gap-1.5 text-center">
-                          <div class="rounded-lg py-3 text-[10px] font-semibold"
-                               [class]="q.label === 'Quick Win' ? 'bg-success text-white' : 'bg-white text-gray-400 border border-gray-200'">
-                            Quick Win<br><span class="font-normal opacity-80">V↑ E↓</span>
-                          </div>
-                          <div class="rounded-lg py-3 text-[10px] font-semibold"
-                               [class]="q.label === 'Big Bet' ? 'bg-bca-primary text-white' : 'bg-white text-gray-400 border border-gray-200'">
-                            Big Bet<br><span class="font-normal opacity-80">V↑ E↑</span>
-                          </div>
-                          <div class="rounded-lg py-3 text-[10px] font-semibold"
-                               [class]="q.label === 'Fill-in' ? 'bg-gray-500 text-white' : 'bg-white text-gray-400 border border-gray-200'">
-                            Fill-in<br><span class="font-normal opacity-80">V↓ E↓</span>
-                          </div>
-                          <div class="rounded-lg py-3 text-[10px] font-semibold"
-                               [class]="q.label === 'Money Pit' ? 'bg-danger text-white' : 'bg-white text-gray-400 border border-gray-200'">
-                            Money Pit<br><span class="font-normal opacity-80">V↓ E↑</span>
-                          </div>
-                        </div>
-                        <p class="text-[10px] text-gray-500 mt-2">Value: <strong>{{ ms.valuegraphValue }}</strong> · Effort: <strong>{{ ms.valuegraphEffort }}</strong></p>
-                        <p class="text-[10px] text-gray-400 mt-1 italic">Sumber: Valuegraph myService (bukan penilaian AI)</p>
-                      </div>
-                    }
-                  </div>
-                </div>
-              }
-            </div>
-          }
-
-          @if (activeTab() === 'AI Scoring') {
-            @if (isScoring()) {
-              <div class="space-y-4">
-                <div class="text-center pb-2">
-                  <p class="text-sm font-bold text-gray-800">🤖 Agentic AI Scoring berjalan…</p>
-                  <p class="text-[11px] text-gray-400 mt-1">6 agent menganalisis backlog ini secara berurutan</p>
-                </div>
-                <app-agent-pipeline />
-              </div>
-            } @else if (backlog()!.aiResult) {
-              <div class="space-y-5">
-                <div class="text-center p-5 bg-bca-accent/50 rounded-xl">
-                  <div class="text-4xl font-black text-bca-navy mb-1">{{ backlog()!.aiResult!.riceScore | number }}</div>
-                  <div class="text-sm text-gray-600 mb-3">RICE Score</div>
-                  <span class="inline-block px-4 py-1.5 bg-blue-100 text-blue-800 text-sm font-bold rounded-full">{{ backlog()!.aiResult!.moscow }}</span>
-                  <div class="mt-2 flex items-center justify-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full"
-                          [class]="backlog()!.aiResult!.confidenceLevel < 60 ? 'bg-warning' : 'bg-success'"></span>
-                    <span class="text-xs text-gray-500">{{ backlog()!.aiResult!.confidenceLevel }}% Confidence · {{ backlog()!.aiResult!.promptVersion }}</span>
-                  </div>
-                </div>
-
-                <!-- Low confidence callout -->
-                @if (backlog()!.aiResult!.confidenceLevel < 60 && backlog()!.aiResult!.missingFields?.length) {
-                  <div class="flex items-start gap-3 p-4 bg-warning-bg border border-warning/30 rounded-xl">
-                    <span class="text-lg flex-shrink-0">⚠️</span>
-                    <div class="flex-1">
-                      <p class="text-xs font-bold text-warning">Confidence rendah ({{ backlog()!.aiResult!.confidenceLevel }}%)</p>
-                      <p class="text-xs text-gray-600 mt-1">
-                        Lengkapi <span class="font-semibold">{{ backlog()!.aiResult!.missingFields!.join(', ') }}</span> untuk meningkatkan confidence, lalu re-score.
-                      </p>
-                      <a [routerLink]="['/backlog', backlog()!.id, 'edit']"
-                         class="inline-block mt-2 text-xs font-semibold text-bca-primary hover:underline">Lengkapi Data →</a>
-                    </div>
-                  </div>
-                }
-
-                <div class="space-y-3">
-                  @for (dim of getDimensions(); track dim.label) {
-                    <div>
-                      <div class="flex items-center justify-between mb-1">
-                        <span class="text-xs font-semibold text-gray-700">{{ dim.label }}</span>
-                        <span class="text-xs font-bold text-bca-navy">{{ dim.dimLabel }}</span>
-                      </div>
-                      <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
-                        <div [style.width.%]="dim.pct" class="h-full bg-bca-primary rounded-full transition-all duration-700 animate-bar-in" style="transform-origin:left"></div>
-                      </div>
-                      <p class="text-[11px] text-gray-400 mt-0.5 leading-relaxed">{{ dim.reasoning }}</p>
+                      <p class="text-[11px] text-gray-500 mt-1">{{ signal.detail }}</p>
+                      <p class="text-[9px] text-gray-400 mt-1.5">Source: {{ signal.source }}</p>
                     </div>
                   }
-                </div>
-
-                <!-- Agent Findings -->
-                @if (backlog()!.aiResult!.agentFindings?.length) {
-                  <div class="border-t border-gray-100 pt-4">
-                    <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Agent Findings</h4>
-                    <div class="space-y-2">
-                      @for (f of backlog()!.aiResult!.agentFindings!; track f.agentId) {
-                        <div class="bg-gray-50 rounded-xl p-3">
-                          <div class="flex items-center gap-2 mb-1 flex-wrap">
-                            <span class="text-sm">{{ f.icon }}</span>
-                            <span class="text-xs font-bold text-gray-800">{{ f.agentName }}</span>
-                            <span class="text-[10px] text-gray-400">{{ f.role }}</span>
-                            <div class="flex gap-1 ml-auto">
-                              @for (c of f.contributesTo; track c) {
-                                <span class="text-[9px] font-bold px-1.5 py-0.5 bg-bca-accent text-bca-primary rounded-full">{{ c }}</span>
-                              }
-                            </div>
-                          </div>
-                          <p class="text-[11px] text-gray-600 leading-relaxed">{{ f.summary }}</p>
-                          <div class="flex flex-wrap gap-1 mt-1.5">
-                            @for (ev of f.evidence; track ev) {
-                              <span class="text-[9px] px-1.5 py-0.5 bg-white border border-gray-200 text-gray-500 rounded-full">📎 {{ ev }}</span>
-                            }
-                          </div>
-                        </div>
-                      }
-                    </div>
-                  </div>
-                }
-
-                <button (click)="showReasoning.set(!showReasoning())"
-                        class="flex items-center gap-2 text-xs font-semibold text-bca-primary py-2 border-t border-gray-100 w-full">
-                  {{ showReasoning() ? '▲' : '▼' }} Full AI Reasoning
-                </button>
-                @if (showReasoning()) {
-                  <div class="p-4 bg-gray-50 rounded-xl space-y-2 text-[11px] text-gray-600">
-                    <p class="font-semibold text-gray-800">{{ backlog()!.aiResult!.reasoning.summary }}</p>
-                    <p><strong>Reach:</strong> {{ backlog()!.aiResult!.reasoning.reach }}</p>
-                    <p><strong>Impact:</strong> {{ backlog()!.aiResult!.reasoning.impact }}</p>
-                    <p><strong>Confidence:</strong> {{ backlog()!.aiResult!.reasoning.confidence }}</p>
-                    <p><strong>Effort:</strong> {{ backlog()!.aiResult!.reasoning.effort }}</p>
-                    @if (backlog()!.aiResult!.reasoning.evidenceRefs.length > 0) {
-                      <div class="flex flex-wrap gap-1 mt-2">
-                        @for (ref of backlog()!.aiResult!.reasoning.evidenceRefs; track ref) {
-                          <span class="px-2 py-0.5 bg-bca-accent text-bca-primary text-[10px] rounded-full">{{ ref }}</span>
-                        }
-                      </div>
-                    }
-                  </div>
-                }
-
-                <div class="flex gap-2 pt-2">
-                  <button (click)="reanalyze()" [disabled]="isScoring()"
-                          class="flex-1 py-2 text-xs font-semibold border border-bca-primary text-bca-primary rounded-btn hover:bg-bca-accent transition-colors disabled:opacity-50">
-                    🔄 Re-analyze with AI
-                  </button>
-                </div>
-              </div>
-            } @else {
-              <div class="text-center py-8">
-                <div class="text-3xl mb-2">🤖</div>
-                <p class="text-sm text-gray-500 mb-1">Belum ada skor AI untuk backlog ini.</p>
-                <p class="text-xs text-gray-400 mb-4">Scoring bisa langsung dijalankan — confidence awal mungkin rendah jika data belum lengkap.</p>
-                <button (click)="reanalyze()"
-                        class="px-4 py-2 text-sm bg-bca-primary text-white rounded-btn hover:bg-bca-hover transition-colors">
-                  ⚡ Score sekarang dengan AI
-                </button>
-              </div>
-            }
-          }
-
-          @if (activeTab() === 'Audit Trail') {
-            <div class="space-y-3">
-              @for (act of filteredActivities(); track act.id) {
-                <div class="flex items-start gap-3 py-2 border-b border-gray-50 last:border-0">
-                  <div class="w-2 h-2 rounded-full bg-bca-primary mt-1.5 flex-shrink-0"></div>
-                  <div class="flex-1 min-w-0">
-                    <p class="text-xs font-semibold text-gray-700">{{ act.description }}</p>
-                    @if (act.subDescription) {
-                      <p class="text-[11px] text-gray-400 italic mt-0.5">{{ act.subDescription }}</p>
-                    }
-                    <p class="text-[10px] text-gray-400 mt-0.5">{{ act.actor }} · {{ act.timestamp | relativeTime }}</p>
-                  </div>
+                  @for (assumption of item.opportunityAtRisk?.assumptions ?? []; track assumption) {
+                    <div class="px-3.5 py-2.5 text-[11px] text-gray-600 bg-white">✓ {{ assumption }}</div>
+                  }
                 </div>
               }
-              @if (filteredActivities().length === 0) {
-                <p class="text-xs text-gray-400 text-center py-6">No activity recorded for this backlog yet</p>
+
+              @if (item.recommendation === 'promote') {
+                <button (click)="reviewRoadmap()"
+                        class="w-full mt-5 px-4 py-3.5 rounded-xl bg-bca-primary text-white text-sm font-bold hover:bg-bca-hover transition-colors shadow-sm">
+                  Promote to recommended roadmap →
+                </button>
               }
-              <a routerLink="/audit-trail" class="text-xs text-bca-primary hover:underline block text-center mt-2">View in Audit Trail →</a>
             </div>
           }
         </div>
-      } @else {
-        <div class="text-center py-16">
-          <p class="text-gray-500">Backlog not found.</p>
-          <a routerLink="/dashboard" class="mt-4 inline-block text-bca-primary hover:underline text-sm">← Back to Dashboard</a>
-        </div>
-      }
+      </div>
+    </section>
+  } @else {
+    <div class="p-10 text-center bg-white rounded-2xl border border-gray-200">
+      <p class="text-gray-500">Backlog tidak ditemukan.</p>
+      <a routerLink="/dashboard" class="text-bca-primary font-bold text-sm mt-3 inline-block">Kembali ke prioritas</a>
     </div>
+  }
+</div>

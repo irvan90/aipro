@@ -1,0 +1,57 @@
+.myservice-banner {
+  background: linear-gradient(135deg, #083767 0%, #0d5cab 100%);
+}
+
+.summary-card {
+  position: relative;
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(8, 55, 103, 0.04);
+}
+
+.summary-accent {
+  width: 0.25rem;
+  border-radius: 999px;
+}
+
+.summary-label {
+  color: #6b7280;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.summary-value {
+  color: #083767;
+  font-size: 1.55rem;
+  font-weight: 900;
+  line-height: 1.1;
+  margin-top: 0.15rem;
+}
+
+.summary-card p {
+  color: #9ca3af;
+  font-size: 0.58rem;
+  margin-top: 0.2rem;
+}
+
+.backlog-row {
+  min-height: 62px;
+  transition: background 120ms ease;
+}
+
+.ai-running {
+  animation: radar-pulse 1.6s ease-out infinite;
+}
+
+@keyframes radar-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.45); }
+  70% { box-shadow: 0 0 0 7px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}

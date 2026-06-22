@@ -5,6 +5,28 @@ export type BacklogStatus = 'new' | 'draft' | 'ai_scored' | 'ready' | 'not_ready
 export type EvidenceType = 'Analytics' | 'Complaint Data' | 'Survey' | 'Incident Report' | 'Business Request';
 export type BacklogSource = 'myservice' | 'internal';
 export type ValueEffortLevel = 'Low' | 'Medium' | 'High';
+export type PriorityLevel = 'High' | 'Medium' | 'Low';
+export type PriorityRecommendation = 'promote' | 'keep' | 'defer';
+export type RoadmapLane = 'Now' | 'Next' | 'Later';
+
+export interface OpportunityRange {
+  metric: 'retained_balance';
+  min: number;
+  max: number;
+  currency: 'IDR';
+  label: string;
+  formula: string;
+  assumptions: string[];
+  isDemoEstimate: true;
+}
+
+export interface EvidenceSignal {
+  type: 'competitive' | 'customer' | 'business' | 'delivery';
+  label: string;
+  detail: string;
+  source: string;
+  observedAt: string;
+}
 
 export interface MyServiceData {
   myServiceId: string;
@@ -76,6 +98,13 @@ export interface Backlog {
   createdAt: Date;
   updatedAt: Date;
   productId: string;
+  initialPriority?: PriorityLevel;
+  recommendation?: PriorityRecommendation;
+  priorityChangeReason?: string;
+  roadmapLane?: RoadmapLane;
+  opportunityAtRisk?: OpportunityRange;
+  evidenceSignals?: EvidenceSignal[];
+  isHistoricalScenario?: boolean;
 }
 
 export interface AIResult {
@@ -93,8 +122,7 @@ export interface AIResult {
   missingFields?: string[];
 }
 
-export type AgentId = 'external-research' | 'internal-data' | 'compliance-risk'
-  | 'effort-estimator' | 'product-fit' | 'synthesizer';
+export type AgentId = 'market-gap' | 'business-impact' | 'feasibility-risk';
 
 export interface AgentFinding {
   agentId: AgentId;

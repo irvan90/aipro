@@ -23,16 +23,16 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/roadmap/roadmap.component').then(m => m.RoadmapComponent)
       },
       {
-        path: 'audit-trail',
-        loadComponent: () => import('./pages/audit-trail/audit-trail.component').then(m => m.AuditTrailComponent)
-      },
-      {
         path: 'team-members',
         loadComponent: () => import('./pages/team-members/team-members.component').then(m => m.TeamMembersComponent)
       },
       {
         path: 'product-context',
         loadComponent: () => import('./pages/product-context/product-context.component').then(m => m.ProductContextComponent)
+      },
+      {
+        path: 'audit-trail',
+        loadComponent: () => import('./pages/audit-trail/audit-trail.component').then(m => m.AuditTrailComponent)
       },
     ]
   },

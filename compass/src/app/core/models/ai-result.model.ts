@@ -1,14 +1,14 @@
-import { Quarter } from './backlog.model';
+import { Quarter, RoadmapLane } from './backlog.model';
 
 export interface ImpactAnalysisResult {
   backlogId: string;
-  targetQuarter: Quarter;
+  targetLane: RoadmapLane | Quarter;
   roadmapImpacts: RoadmapImpact[];
   dependencyImpacts: DependencyImpact[];
   kpiImpacts: KPIImpact[];
   estimatedDelayInSprints: number;
   aiRecommendation: string;
-  recommendedAction: 'keep' | 'move';
+  recommendedAction: 'promote' | 'keep' | 'defer';
 }
 
 export interface RoadmapImpact {

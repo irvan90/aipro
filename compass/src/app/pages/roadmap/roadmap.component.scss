@@ -1,117 +1,41 @@
-// ── Quarter badge ─────────────────────────────────────────────────────────────
-.quarter-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 10px;
-  border-radius: 7px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-
-  &.badge-q1 { background: #1e293b; color: white; }
-  &.badge-q2 { background: #2563eb; color: white; }
-  &.badge-q3 { background: #083767; color: white; }
-  &.badge-q4 { background: #7c3aed; color: white; }
+.quarter-column {
+  min-width: 0;
 }
 
-// ── State chips ───────────────────────────────────────────────────────────────
-.state-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  padding: 2px 8px;
+.quarter-dot {
+  width: 0.5rem;
+  height: 0.5rem;
   border-radius: 999px;
-  font-size: 10px;
-  font-weight: 600;
-
-  &--expired {
-    background: #f1f5f9;
-    color: #64748b;
-    border: 1px solid #e2e8f0;
-  }
-
-  &--current {
-    background: #dbeafe;
-    color: #1d4ed8;
-    animation: pulse-chip 2s ease-in-out infinite;
-  }
+  display: inline-block;
 }
 
-@keyframes pulse-chip {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.6; }
+.quarter-drop-zone.cdk-drop-list-dragging {
+  background: rgba(13, 92, 171, 0.06);
 }
 
-// ── Drop zones ────────────────────────────────────────────────────────────────
-.quarter-drop-zone {
-  position: relative;
-  overflow: hidden;
-
-  // Archived — expired quarter (gray, desaturated)
-  &.dz--archived {
-    background: #f8fafc;
-    border: 2px solid #e2e8f0;
-    opacity: 0.8;
-
-    .roadmap-card {
-      filter: saturate(0.55) brightness(1.02);
-    }
-  }
-
-  // Editable quarter (dashed blue)
-  &.dz--editable {
-    background: rgba(231, 239, 247, 0.45);
-    border: 2px dashed #93c5fd;
-
-    &.cdk-drop-list-receiving {
-      background: rgba(219, 234, 254, 0.9) !important;
-      border-color: #0d5cab !important;
-      border-style: solid !important;
-    }
-
-    &.cdk-drop-list-dragging {
-      background: rgba(231, 239, 247, 0.8);
-    }
-  }
-}
-
-// ── Roadmap cards ─────────────────────────────────────────────────────────────
 .roadmap-card {
-  &.roadmap-card--grab {
-    cursor: grab;
-
-    &:hover {
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.10);
-      transform: translateY(-1px);
-      border-color: #d1d5db;
-    }
-
-    &:active { cursor: grabbing; }
-  }
-
-  &.roadmap-card--static {
-    cursor: default;
-  }
+  transition: transform 150ms ease, box-shadow 150ms ease, opacity 150ms ease;
 }
 
-// Drag handle dots — visible on card hover
-.drag-handle {
-  opacity: 0;
-  transition: opacity 120ms ease;
-  cursor: grab;
-
-  .roadmap-card:hover & {
-    opacity: 1;
-  }
+.roadmap-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(8, 55, 103, 0.08);
 }
 
-// ── CDK drag elements ─────────────────────────────────────────────────────────
-.drag-placeholder {
-  min-height: 64px;
-  background: linear-gradient(135deg, #e7eff7 0%, #dbeafe 100%);
-  border: 2px dashed rgba(13, 92, 171, 0.35);
+.roadmap-card.cdk-drag-preview {
+  box-shadow: 0 18px 36px rgba(8, 55, 103, 0.18);
+  transform: rotate(1deg);
 }
 
-.drag-preview {
-  border: 1.5px solid rgba(13, 92, 171, 0.25);
+.roadmap-card.cdk-drag-animating {
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.modal-in {
+  animation: modal-in 180ms ease-out both;
+}
+
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }

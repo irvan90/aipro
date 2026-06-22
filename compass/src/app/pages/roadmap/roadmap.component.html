@@ -1,270 +1,114 @@
-
-<div class="p-4 md:p-6 space-y-5 animate-fade-up">
-
-  <!-- ── Header ──────────────────────────────────────────────────────────── -->
-  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div class="max-w-[1440px] mx-auto space-y-4 animate-fade-up">
+  <section class="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
     <div>
-      <h1 class="text-2xl font-bold text-gray-900">Roadmap 2026</h1>
-      <p class="text-sm text-gray-500 mt-1">
-        Q2 is the active quarter · Drag backlogs between quarters — every move runs an AI impact analysis
-      </p>
+      <div class="text-[10px] font-bold uppercase tracking-[0.18em] text-bca-primary mb-1.5">Quarterly planning</div>
+      <h1 class="text-2xl font-black text-gray-950 tracking-tight">Roadmap 2026</h1>
+      <p class="text-xs text-gray-500 mt-1.5">Kanban per quarter · drag backlog untuk menjalankan AI impact analysis sebelum perubahan disimpan.</p>
     </div>
-  </div>
+    <a routerLink="/dashboard" class="text-xs font-bold text-bca-primary hover:underline">← Kembali ke dashboard</a>
+  </section>
 
-  <!-- ── Quarter swimlanes ───────────────────────────────────────────────── -->
-  <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
-    @for (quarter of quarters; track quarter) {
-      <div class="flex flex-col">
+  @if (decisionApplied()) {
+    <div class="flex items-center gap-3 px-4 py-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800">
+      <div class="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-black">✓</div>
+      <div><div class="text-sm font-bold">Roadmap updated</div><p class="text-xs mt-0.5">{{ selected()?.title }} dipindahkan ke {{ targetQuarter() }} setelah disetujui PO.</p></div>
+    </div>
+  }
 
-        <!-- Quarter header -->
-        <div class="flex items-center justify-between mb-2 min-h-8">
-          <div class="flex items-center gap-2 flex-wrap">
-            <span class="quarter-badge" [ngClass]="getQuarterBadgeClass(quarter)">{{ quarter }}</span>
-            <span class="text-xs text-gray-400">{{ getQuarterLabel(quarter) }}</span>
-          </div>
-          @if (isQuarterExpired(quarter)) {
-            <span class="state-chip state-chip--expired">Archived</span>
-          } @else if (isCurrentQuarter(quarter)) {
-            <span class="state-chip state-chip--current">Now</span>
-          }
-        </div>
-
-        <!-- Count row -->
-        <div class="flex items-center gap-2 mb-2 flex-wrap">
-          <span class="text-xs text-gray-500">{{ getQuarterCount(quarter) }} items</span>
-          @if (isQuarterExpired(quarter)) {
-            <span class="text-xs text-gray-400 italic">read only</span>
-          }
-        </div>
-
-        <!-- Drop Zone -->
-        <div
-          cdkDropList
-          [id]="'quarter-' + quarter"
-          [cdkDropListData]="getQuarterBacklogs(quarter)"
-          [cdkDropListConnectedTo]="connectedLists"
-          [cdkDropListDisabled]="!isQuarterEditable(quarter)"
-          (cdkDropListDropped)="onDrop($event, quarter)"
-          class="quarter-drop-zone flex-1 min-h-48 rounded-xl p-3 space-y-2 transition-all duration-200"
-          [class.dz--archived]="isQuarterExpired(quarter)"
-          [class.dz--editable]="!isQuarterExpired(quarter)">
-
-          @for (backlog of getQuarterBacklogs(quarter); track backlog.id) {
-            <div
-              cdkDrag
-              [cdkDragData]="backlog"
-              [cdkDragDisabled]="!isQuarterEditable(quarter)"
-              class="roadmap-card bg-white rounded-xl border border-gray-200 shadow-sm transition-all duration-150 group"
-              [class.roadmap-card--grab]="isQuarterEditable(quarter)"
-              [class.roadmap-card--static]="!isQuarterEditable(quarter)">
-
-              <div class="flex overflow-hidden rounded-xl">
-                <div class="w-1 flex-shrink-0" [ngClass]="getRiceBorderClass(backlog)"></div>
-                <div class="flex-1 p-3">
-                  <div class="flex items-start justify-between gap-2 mb-2">
-                    <p class="text-xs font-semibold text-gray-800 line-clamp-2 flex-1 leading-snug">{{ backlog.title }}</p>
-                    <div class="flex items-center gap-1 flex-shrink-0">
-                      @if (isQuarterEditable(quarter)) {
-                        <div class="drag-handle w-5 h-5 rounded flex items-center justify-center text-gray-300 group-hover:text-gray-500 transition-colors">
-                          <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                            <circle cx="7" cy="4"  r="1.5"/><circle cx="13" cy="4"  r="1.5"/>
-                            <circle cx="7" cy="10" r="1.5"/><circle cx="13" cy="10" r="1.5"/>
-                            <circle cx="7" cy="16" r="1.5"/><circle cx="13" cy="16" r="1.5"/>
-                          </svg>
-                        </div>
-                      }
-                      <a [routerLink]="['/backlog', backlog.id]"
-                        class="w-6 h-6 rounded-lg bg-gray-100 hover:bg-bca-accent flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                        (click)="$event.stopPropagation()">
-                        <svg class="w-3 h-3 text-gray-500 hover:text-bca-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-                        </svg>
-                      </a>
-                    </div>
-                  </div>
-                  <div class="flex items-center justify-between">
-                    <app-moscow-tag [moscow]="backlog.aiResult?.moscow ?? 'Should Have'"></app-moscow-tag>
-                    @if (backlog.aiResult?.riceScore) {
-                      <span class="text-xs font-bold text-gray-500">{{ backlog.aiResult!.riceScore | number:'1.0-0' }}</span>
-                    } @else {
-                      <span class="text-xs text-gray-300">—</span>
-                    }
-                  </div>
-                  @if (backlog.dependency.length > 0) {
-                    <div class="mt-1.5 flex items-center gap-1">
-                      <svg class="w-3 h-3 text-yellow-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.876c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                      </svg>
-                      <span class="text-xs text-yellow-600">{{ backlog.dependency.length }} dep.</span>
-                    </div>
-                  }
-                  <!-- Archived badge for delivered Q1 items -->
-                  @if (isQuarterExpired(quarter) && backlog.status === 'submitted') {
-                    <div class="mt-2">
-                      <span class="inline-flex items-center gap-1 text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
-                        <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
-                          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                        </svg>
-                        Delivered
-                      </span>
-                    </div>
-                  }
-                </div>
-              </div>
-
-              <div *cdkDragPlaceholder class="drag-placeholder rounded-xl"></div>
-              <div *cdkDragPreview class="drag-preview bg-white rounded-xl border-2 border-bca-primary/40 p-3 w-52 shadow-xl">
-                <p class="text-xs font-semibold text-gray-800 truncate">{{ backlog.title }}</p>
-                <span class="text-xs text-bca-primary font-medium mt-0.5 block">↕ Moving…</span>
-              </div>
+  <section class="grid md:grid-cols-2 xl:grid-cols-4 gap-3">
+    @for (group of quarterData(); track group.quarter) {
+      <div class="quarter-column rounded-2xl border overflow-hidden" [class]="isCurrent(group.quarter) ? 'border-blue-300 bg-blue-50/30' : isExpired(group.quarter) ? 'border-gray-200 bg-gray-100/60' : 'border-gray-200 bg-gray-50/70'">
+        <header class="p-3.5 bg-white border-b border-gray-200">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <span class="quarter-dot" [class]="isCurrent(group.quarter) ? 'bg-bca-primary' : isExpired(group.quarter) ? 'bg-gray-300' : 'bg-emerald-500'"></span>
+              <h2 class="text-sm font-black text-gray-900">{{ group.quarter }}</h2>
+              <span class="text-[9px] text-gray-400">{{ quarterLabel(group.quarter) }}</span>
             </div>
+            <span class="text-[9px] font-bold px-2 py-0.5 rounded-full" [class]="isCurrent(group.quarter) ? 'bg-blue-50 text-bca-primary' : isExpired(group.quarter) ? 'bg-gray-100 text-gray-400' : 'bg-emerald-50 text-emerald-700'">
+              {{ isCurrent(group.quarter) ? 'Current' : isExpired(group.quarter) ? 'Archived' : group.items.length + ' items' }}
+            </span>
+          </div>
+        </header>
+
+        <div cdkDropList
+             [id]="'quarter-' + group.quarter"
+             [cdkDropListData]="group.items"
+             [cdkDropListConnectedTo]="connectedLists"
+             [cdkDropListDisabled]="isExpired(group.quarter)"
+             (cdkDropListDropped)="onDrop($event, group.quarter)"
+             class="quarter-drop-zone p-3 space-y-3 min-h-[420px]">
+          @for (item of group.items; track item.id) {
+            <article cdkDrag [cdkDragData]="item" [cdkDragDisabled]="isExpired(group.quarter)"
+                     class="roadmap-card bg-white rounded-xl border p-3.5 shadow-sm"
+                     [class]="item.id === 'pocket-bca' ? 'border-amber-300 ring-2 ring-amber-100' : 'border-gray-200'">
+              <div class="flex items-start justify-between gap-2">
+                <div class="min-w-0">
+                  <div class="flex items-center gap-1.5 flex-wrap">
+                    <h3 class="text-xs font-bold text-gray-900">{{ item.title }}</h3>
+                    @if (item.id === 'pocket-bca') { <span class="px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 text-[8px] font-black">MISMATCH</span> }
+                  </div>
+                  <p class="text-[10px] text-gray-500 leading-relaxed mt-1.5 line-clamp-2">{{ item.priorityChangeReason }}</p>
+                </div>
+                @if (!isExpired(group.quarter)) { <div class="drag-handle text-gray-300 text-sm cursor-grab">⠿</div> }
+              </div>
+
+              <div class="grid grid-cols-2 gap-2 mt-3">
+                <div class="rounded-lg bg-gray-50 p-2"><div class="text-[8px] uppercase font-bold text-gray-400">RICE</div><div class="text-xs font-black text-bca-navy">{{ item.aiResult?.riceScore ?? '—' }}</div></div>
+                <div class="rounded-lg bg-gray-50 p-2"><div class="text-[8px] uppercase font-bold text-gray-400">Priority</div><div class="text-[10px] font-black text-bca-primary">{{ item.aiResult?.moscow }}</div></div>
+              </div>
+
+              <div class="flex items-center justify-between gap-2 mt-3 pt-2.5 border-t border-gray-100">
+                <span class="text-[9px] text-gray-400">PO {{ item.initialPriority }} → COMPASS {{ item.recommendation }}</span>
+                <a [routerLink]="['/backlog', item.id]" (click)="$event.stopPropagation()" class="text-[9px] font-bold text-bca-primary hover:underline">Detail</a>
+              </div>
+
+              @if (item.recommendation === 'promote' && item.targetQuarter !== 'Q3') {
+                <button (click)="reviewRecommendation(item, 'Q3'); $event.stopPropagation()" class="w-full mt-2.5 py-2 rounded-lg bg-bca-primary text-white text-[10px] font-bold hover:bg-bca-hover">Review move to Q3</button>
+              }
+              <div *cdkDragPlaceholder class="drag-placeholder h-28 rounded-xl border-2 border-dashed border-blue-300 bg-blue-50"></div>
+            </article>
           }
 
-          @if (getQuarterBacklogs(quarter).length === 0) {
-            <div class="h-full min-h-32 flex flex-col items-center justify-center text-center px-2">
-              @if (isQuarterExpired(quarter)) {
-                <p class="text-xs text-gray-300">No items delivered in {{ quarter }}</p>
-              } @else {
-                <div class="w-8 h-8 rounded-xl bg-gray-100 flex items-center justify-center mb-2">
-                  <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                  </svg>
-                </div>
-                <p class="text-xs text-gray-400">Drop items here</p>
-              }
+          @if (group.items.length === 0) {
+            <div class="h-32 rounded-xl border border-dashed border-gray-200 flex flex-col items-center justify-center text-center">
+              <span class="text-lg text-gray-300">+</span><p class="text-[10px] text-gray-400 mt-1">{{ isExpired(group.quarter) ? 'Tidak ada backlog' : 'Drop backlog ke sini' }}</p>
             </div>
           }
         </div>
       </div>
     }
-  </div>
+  </section>
 
-  <!-- ── Unplanned Pool ─────────────────────────────────────────────────── -->
-  <div class="bg-white rounded-2xl shadow-card border border-gray-100 overflow-hidden">
-    <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-        </svg>
-        <h3 class="text-sm font-semibold text-gray-800">Unplanned Pool</h3>
-        <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">{{ unplannedBacklogs().length }}</span>
-      </div>
-      <p class="text-xs text-gray-400">Items not yet assigned to a quarter</p>
-    </div>
-    <div
-      cdkDropList
-      id="unplanned-pool"
-      [cdkDropListData]="unplannedBacklogs()"
-      [cdkDropListConnectedTo]="connectedLists"
-      (cdkDropListDropped)="onDropToUnplanned($event)"
-      class="p-4 min-h-16">
-      @if (unplannedBacklogs().length > 0) {
-        <div class="flex flex-wrap gap-2">
-          @for (backlog of unplannedBacklogs(); track backlog.id) {
-            <div
-              cdkDrag
-              [cdkDragData]="backlog"
-              class="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 cursor-grab hover:border-amber-400 hover:bg-amber-50 transition-colors">
-              <div class="w-1.5 h-1.5 rounded-full bg-gray-400"></div>
-              <span class="text-xs font-medium text-gray-700 max-w-32 truncate">{{ backlog.title }}</span>
-              <span class="text-xs text-gray-400">{{ backlog.aiResult?.riceScore ?? '—' }}</span>
-              <div *cdkDragPlaceholder class="h-8 w-36 bg-amber-50 rounded-xl border-2 border-dashed border-amber-300"></div>
-            </div>
-          }
-        </div>
-      } @else {
-        <p class="text-center text-xs text-gray-400 py-3">All backlogs assigned to quarters</p>
-      }
-    </div>
-  </div>
-
-  <!-- ── Cross-Quarter Impact Modal ─────────────────────────────────────── -->
-  @if (showImpactModal()) {
-    <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" (click)="cancelDrop()"></div>
-      <div class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 animate-modal-in max-h-[85vh] overflow-y-auto">
-        <div class="flex items-center gap-3 mb-4">
-          <div class="w-10 h-10 rounded-xl bg-yellow-100 flex items-center justify-center">
-            <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-            </svg>
-          </div>
-          <div>
-            <h3 class="text-base font-semibold text-gray-800">Cross-Quarter Move</h3>
-            <p class="text-xs text-gray-500">AI impact analysis runs before you confirm</p>
-          </div>
-        </div>
-        <div class="bg-gray-50 rounded-xl p-4 mb-4">
-          <p class="text-xs font-medium text-gray-500 mb-1">Moving</p>
-          <p class="text-sm font-semibold text-gray-800">{{ pendingMove()?.backlog?.title }}</p>
-          <div class="flex items-center gap-2 mt-2">
-            <span class="text-xs px-2 py-0.5 bg-gray-200 rounded-full text-gray-600">{{ pendingMove()?.fromQuarter }}</span>
-            <svg class="w-4 h-4 text-bca-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
-            </svg>
-            <span class="text-xs px-2 py-0.5 bg-bca-accent rounded-full text-bca-primary font-semibold">{{ pendingMove()?.toQuarter }}</span>
-          </div>
-        </div>
-
-        <!-- Inline impact analysis -->
-        <div class="space-y-2 mb-5">
-          @if (impactLoading()) {
-            <div class="flex items-center gap-3 p-4 bg-bca-accent/40 rounded-xl">
-              <div class="w-5 h-5 border-2 border-bca-primary border-t-transparent rounded-full animate-spin flex-shrink-0"></div>
-              <p class="text-xs text-bca-primary font-medium">{{ aiLoadingStep() }}</p>
-            </div>
-          } @else if (dragImpact(); as impact) {
-            <!-- Affected backlogs -->
-            @for (ri of impact.roadmapImpacts; track ri.affectedBacklogId) {
-              <div [class]="getSeverityClass(ri.severity)" class="flex items-start gap-2 p-3 rounded-xl">
-                <span class="text-xs font-bold uppercase flex-shrink-0 mt-0.5">{{ ri.severity }}</span>
-                <p class="text-xs"><span class="font-semibold">{{ ri.affectedBacklogTitle }}</span> — {{ ri.description }}</p>
-              </div>
-            }
-            <!-- KPI impacts -->
-            @for (ki of impact.kpiImpacts; track ki.kpi) {
-              <div [class]="getSeverityClass(ki.severity)" class="flex items-start gap-2 p-3 rounded-xl">
-                <span class="text-xs flex-shrink-0 mt-0.5">📉</span>
-                <p class="text-xs"><span class="font-semibold">{{ ki.kpi }}</span> — {{ ki.description }}</p>
-              </div>
-            }
-            <!-- Delay estimate -->
-            <div class="flex items-start gap-2 p-3 bg-yellow-50 rounded-xl">
-              <span class="text-xs flex-shrink-0 mt-0.5">⏱️</span>
-              <p class="text-xs text-yellow-800">Estimasi delay <span class="font-bold">{{ impact.estimatedDelayInSprints }} sprint</span></p>
-            </div>
-            <!-- AI recommendation -->
-            <div class="p-3 rounded-xl border"
-                 [class]="impact.recommendedAction === 'keep' ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'">
-              <p class="text-[10px] font-bold uppercase tracking-wider mb-1"
-                 [class]="impact.recommendedAction === 'keep' ? 'text-red-600' : 'text-green-600'">
-                🤖 AI Recommendation: {{ impact.recommendedAction === 'keep' ? 'Keep — don\'t move' : 'Move' }}
-              </p>
-              <p class="text-xs text-gray-700 leading-relaxed">{{ impact.aiRecommendation }}</p>
-            </div>
-          }
-          @if (pendingMove()?.backlog?.aiResult?.moscow === 'Must Have') {
-            <div class="flex items-start gap-2 p-3 bg-red-50 rounded-xl">
-              <div class="w-4 h-4 rounded-full bg-red-400 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span class="text-white text-xs font-bold leading-none">!</span>
-              </div>
-              <p class="text-xs text-red-800">This is a Must Have item — moving it may impact critical commitments.</p>
-            </div>
-          }
-        </div>
-
-        <div class="flex gap-3">
-          <button (click)="cancelDrop()"
-            class="flex-1 py-2.5 rounded-xl text-sm font-medium border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors">
-            Cancel
-          </button>
-          <button (click)="confirmDrop()" [disabled]="impactLoading()"
-            class="flex-1 py-2.5 rounded-xl text-sm font-semibold bg-bca-primary text-white hover:bg-bca-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-            Confirm Move
-          </button>
-        </div>
-      </div>
-    </div>
-  }
-
+  <div class="text-center text-[10px] text-gray-400">Setiap perpindahan antar-quarter membutuhkan impact review dan persetujuan Product Owner.</div>
 </div>
+
+@if (showReview()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <button aria-label="Close" class="absolute inset-0 bg-bca-navy/55 backdrop-blur-sm" (click)="cancelRecommendation()"></button>
+    <section class="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden modal-in">
+      <div class="px-5 py-4 border-b border-gray-100 flex items-start justify-between gap-4">
+        <div><div class="text-[10px] font-bold uppercase tracking-[0.16em] text-bca-primary">Cross-quarter impact review</div><h2 class="text-lg font-black text-gray-950 mt-1">Move {{ selected()?.title }} to {{ targetQuarter() }}?</h2><p class="text-[10px] text-gray-400 mt-1">{{ selected()?.targetQuarter }} → {{ targetQuarter() }}</p></div>
+        <button (click)="cancelRecommendation()" class="text-gray-400 hover:text-gray-700 text-xl">×</button>
+      </div>
+
+      <div class="p-5">
+        @if (impactLoading()) {
+          <div class="py-10 flex flex-col items-center text-center"><div class="w-8 h-8 rounded-full border-2 border-bca-primary border-t-transparent animate-spin"></div><p class="text-xs font-semibold text-bca-primary mt-3">{{ aiLoadingStep() }}</p></div>
+        } @else if (impact(); as result) {
+          <div class="p-4 rounded-xl bg-blue-50 border border-blue-100"><div class="text-[10px] font-bold uppercase tracking-wider text-bca-primary">AI Recommendation</div><p class="text-sm text-gray-700 leading-relaxed mt-1.5">{{ result.aiRecommendation }}</p></div>
+          <div class="mt-4 space-y-2">
+            @if (result.kpiImpacts[0]; as kpi) { <div class="flex gap-3 p-3 rounded-xl border border-emerald-200 bg-emerald-50"><span class="text-emerald-700 font-black">+</span><p class="text-xs text-emerald-900"><strong>{{ kpi.kpi }}:</strong> {{ kpi.description }}</p></div> }
+            @if (result.roadmapImpacts[0]; as roadmapImpact) { <div class="flex gap-3 p-3 rounded-xl border border-amber-200 bg-amber-50"><span class="text-amber-700 font-black">−</span><p class="text-xs text-amber-900"><strong>{{ roadmapImpact.affectedBacklogTitle }}:</strong> {{ roadmapImpact.description }}</p></div> }
+            @if (result.dependencyImpacts[0]; as dependency) { <div class="flex gap-3 p-3 rounded-xl border border-red-200 bg-red-50"><span class="text-red-700 font-black">!</span><p class="text-xs text-red-900"><strong>{{ dependency.dependencyTitle }}:</strong> {{ dependency.description }}</p></div> }
+          </div>
+        }
+      </div>
+
+      <div class="px-5 py-4 bg-gray-50 border-t border-gray-100 flex gap-3">
+        <button (click)="cancelRecommendation()" class="flex-1 py-2.5 rounded-xl border border-gray-200 bg-white text-sm font-bold text-gray-600 hover:bg-gray-100">Cancel</button>
+        <button (click)="acceptRecommendation()" [disabled]="impactLoading()" class="flex-1 py-2.5 rounded-xl bg-bca-primary text-white text-sm font-bold hover:bg-bca-hover disabled:opacity-50">Confirm move</button>
+      </div>
+    </section>
+  </div>
+}

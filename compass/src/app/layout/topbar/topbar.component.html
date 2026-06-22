@@ -1,63 +1,33 @@
-<header class="flex items-center gap-4 px-4 lg:px-6 h-14 bg-white border-b border-gray-200 flex-shrink-0 z-30">
-  <!-- Page title -->
-  <div class="flex-1 min-w-0">
-    <h1 class="font-bold text-gray-900 text-sm truncate">COMPASS</h1>
-    <p class="text-xs text-gray-500 hidden sm:block">{{ store.activeProduct().name }} · 2026 Planning</p>
+<header class="h-16 bg-white border-b border-gray-200 px-4 lg:px-6 flex items-center justify-between flex-shrink-0 relative">
+  <div>
+    <div class="text-[10px] uppercase tracking-[0.16em] text-gray-400 font-bold">{{ store.activeProduct().name }}</div>
+    <div class="text-sm font-bold text-gray-900">Priority Decision Room</div>
   </div>
 
-  <!-- Actions -->
-  <div class="flex items-center gap-2 flex-shrink-0">
-    <!-- Bell notification -->
-    <button (click)="toggleNotifications()"
-            class="relative p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-120">
-      <span class="text-lg">🔔</span>
-      @if (unreadCount() > 0) {
-        <span class="absolute top-1 right-1 w-4 h-4 bg-danger text-white text-[9px] font-bold rounded-full flex items-center justify-center">
-          {{ unreadCount() > 9 ? '9+' : unreadCount() }}
-        </span>
-      }
+  <div class="flex items-center gap-2">
+    <div class="hidden md:inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-[10px] font-semibold text-amber-800">
+      <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Historical simulation · pre-launch Pocket BCA
+    </div>
+    <a routerLink="/backlog/pocket-bca/edit" class="hidden sm:inline-flex px-3 py-2 rounded-lg border border-bca-primary text-bca-primary text-xs font-bold hover:bg-blue-50">Edit backlog</a>
+    <button (click)="toggleNotifications()" class="relative w-9 h-9 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50" aria-label="Notifications">
+      <span>⌁</span>
+      @if (unreadCount() > 0) { <span class="absolute -top-1 -right-1 min-w-4 h-4 px-1 rounded-full bg-red-500 text-white text-[8px] font-black flex items-center justify-center">{{ unreadCount() }}</span> }
     </button>
   </div>
-</header>
 
-<!-- Notification Panel -->
-@if (store.showNotificationPanel()) {
-  <div class="fixed inset-0 z-40" (click)="closeNotifications()">
-    <div class="absolute right-0 top-14 w-80 bg-white shadow-blue-md rounded-bl-xl border border-gray-200 overflow-hidden"
-         (click)="$event.stopPropagation()">
-      <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-        <h3 class="font-semibold text-gray-900 text-sm">Notifications</h3>
-        <div class="flex items-center gap-2">
-          <button (click)="markAllRead()" class="text-[11px] text-bca-primary hover:underline">Mark all read</button>
-          <button (click)="closeNotifications()" class="text-gray-400 hover:text-gray-600 text-lg leading-none">✕</button>
-        </div>
+  @if (store.showNotificationPanel()) {
+    <div class="absolute top-14 right-4 z-50 w-80 bg-white rounded-xl border border-gray-200 shadow-xl overflow-hidden">
+      <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+        <div><div class="text-sm font-bold text-gray-900">Notifications</div><div class="text-[10px] text-gray-400">Priority signals & dependencies</div></div>
+        <button (click)="markAllRead()" class="text-[10px] font-bold text-bca-primary">Mark all read</button>
       </div>
-      <div class="max-h-96 overflow-y-auto">
-        @for (notif of store.notifications(); track notif.id) {
-          <div (click)="handleNotifClick(notif)"
-               [class]="notif.isRead ? 'opacity-60' : ''"
-               class="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-50 transition-colors">
-            <div [class]="getNotifIconBg(notif.type)"
-                 class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm">
-              {{ getNotifIcon(notif.type) }}
-            </div>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-1">
-                <span class="text-xs font-semibold text-gray-900">{{ notif.title }}</span>
-                @if (!notif.isRead) {
-                  <span class="w-1.5 h-1.5 bg-bca-primary rounded-full flex-shrink-0"></span>
-                }
-              </div>
-              <p class="text-[11px] text-gray-500 mt-0.5 leading-relaxed">{{ notif.body }}</p>
-              <p class="text-[10px] text-gray-400 mt-1">{{ getRelativeTime(notif.timestamp) }}</p>
-            </div>
-          </div>
+      <div class="divide-y divide-gray-100">
+        @for (notification of store.notifications(); track notification.id) {
+          <a [routerLink]="notification.actionUrl ?? '/dashboard'" (click)="markRead(notification.id)" class="block px-4 py-3 hover:bg-gray-50" [class.bg-blue-50]="!notification.isRead">
+            <div class="flex items-start gap-3"><span class="mt-1 w-2 h-2 rounded-full" [class]="notification.isRead ? 'bg-gray-200' : 'bg-bca-primary'"></span><div><div class="text-xs font-bold text-gray-800">{{ notification.title }}</div><p class="text-[10px] text-gray-500 mt-1 leading-relaxed">{{ notification.body }}</p></div></div>
+          </a>
         }
       </div>
-      <div class="px-4 py-2 border-t border-gray-100">
-        <a routerLink="/audit-trail" (click)="closeNotifications()"
-           class="text-[11px] text-bca-primary hover:underline font-medium">View all in Audit Trail →</a>
-      </div>
     </div>
-  </div>
-}
+  }
+</header>
