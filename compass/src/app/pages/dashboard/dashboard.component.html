@@ -47,7 +47,7 @@
         @for (item of filteredBacklogs(); track item.id) {
           <a [routerLink]="['/backlog', item.id]" class="backlog-row grid md:grid-cols-[1.25fr_0.5fr_0.65fr_0.6fr_0.65fr_0.2fr] gap-2 items-center px-4 py-3 hover:bg-blue-50/35 group">
             <div class="min-w-0"><div class="text-xs font-bold text-gray-900 truncate">{{ item.title }}</div><div class="text-[9px] text-gray-400 mt-1 truncate">{{ item.priorityChangeReason }}</div></div>
-            <div><span class="text-[9px] font-bold px-2 py-1 rounded-full" [class]="item.source === 'myservice' ? 'bg-blue-50 text-bca-primary' : 'bg-gray-100 text-gray-500'">{{ item.source === 'myservice' ? 'myService' : 'Internal' }}</span></div>
+            <div><span class="text-[9px] font-bold px-2 py-1 rounded-full bg-blue-50 text-bca-primary">myService</span></div>
             <div><span class="inline-flex px-2 py-1 rounded-full border text-[9px] font-bold" [class]="statusClass(item.status)">{{ statusLabel(item.status) }}</span></div>
             <div class="text-right text-xs font-black text-bca-navy">{{ item.aiResult?.riceScore ?? '—' }}</div>
             <div class="text-[10px]"><span class="text-gray-400">{{ item.initialPriority }}</span><span class="mx-1 text-gray-300">→</span><strong class="text-bca-primary">{{ item.aiResult?.moscow }}</strong></div>
