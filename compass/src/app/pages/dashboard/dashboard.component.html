@@ -69,7 +69,7 @@
       </div>
 
       <div class="p-3 space-y-2.5">
-        @for (insight of dailyInsights; track insight.title) {
+        @for (insight of dailyInsights(); track insight.title) {
           <a [routerLink]="['/backlog', insight.backlogId]" class="block p-3 rounded-xl border hover:shadow-sm transition-shadow" [class]="insightClass(insight.severity)">
             <div class="text-[9px] font-black uppercase tracking-wider" [class]="insight.severity === 'high' ? 'text-red-600' : insight.severity === 'medium' ? 'text-amber-700' : 'text-bca-primary'">{{ insight.eyebrow }}</div>
             <h3 class="text-xs font-bold text-gray-900 mt-1.5">{{ insight.title }}</h3>

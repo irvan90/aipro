@@ -48,23 +48,39 @@ export class DashboardComponent {
     });
   });
 
-  dailyInsights: DailyInsight[] = [
-    {
-      type: 'market', eyebrow: 'Internet signal · High', title: 'Pocket BCA tertinggal dari ekspektasi pasar',
-      body: 'Pemantauan fitur publik menemukan pola pocket/goal saving telah digunakan Jenius dan blu. AIPRO merekomendasikan review prioritas.',
-      source: 'Public product pages · dipindai hari ini', severity: 'high', backlogId: 'pocket-bca',
-    },
-    {
-      type: 'dependency', eyebrow: 'Dependency monitor · Medium', title: 'Login Biometrik masih memiliki blocker',
-      body: 'Identity Service v2 belum siap. Memajukan delivery sekarang berisiko menambah dua sprint rework.',
-      source: 'Roadmap dependency graph', severity: 'medium', backlogId: 'login-biometric',
-    },
-    {
-      type: 'performance', eyebrow: 'KPI monitor · Stable', title: 'QRIS Retry masuk fase pemantauan',
-      body: 'Backlog sudah delivered. AI akan memantau transaction success rate sebelum dampaknya dinyatakan tercapai.',
-      source: 'Product KPI context', severity: 'info', backlogId: 'qris-retry',
-    },
-  ];
+  dailyInsights = computed<DailyInsight[]>(() => {
+    const insights: DailyInsight[] = [];
+    const pocketRupiah = this.allBacklogs().find(b => b.id === 'pocket-rupiah');
+    
+    if (pocketRupiah && pocketRupiah.status !== 'new' && pocketRupiah.status !== 'draft') {
+      insights.push({
+        type: 'market', eyebrow: 'Internet signal · High', title: 'Pocket Rupiah tertinggal dari ekspektasi pasar',
+        body: 'Pemantauan fitur publik menemukan pola pocket/goal saving telah digunakan Jenius dan blu. AIPRO merekomendasikan review prioritas.',
+        source: 'Public product pages · dipindai hari ini', severity: 'high', backlogId: 'pocket-rupiah',
+      });
+    }
+
+    insights.push({
+      type: 'market', eyebrow: 'News signal · High', title: 'Berita: Fitur Alokasi Dana Semakin Diminati',
+      body: 'Media teknologi melaporkan bahwa fitur tabungan pos/pocket semakin diminati nasabah gen-Z. Blu dan Jenius memimpin tren ini.',
+      source: 'Top tech media · 2 jam yang lalu', severity: 'high', backlogId: 'pocket-rupiah',
+    });
+
+    insights.push(
+      {
+        type: 'dependency', eyebrow: 'Dependency monitor · Medium', title: 'Login Biometrik masih memiliki blocker',
+        body: 'Identity Service v2 belum siap. Memajukan delivery sekarang berisiko menambah dua sprint rework.',
+        source: 'Roadmap dependency graph', severity: 'medium', backlogId: 'login-biometric',
+      },
+      {
+        type: 'performance', eyebrow: 'KPI monitor · Stable', title: 'QRIS Retry masuk fase pemantauan',
+        body: 'Backlog sudah delivered. AI akan memantau transaction success rate sebelum dampaknya dinyatakan tercapai.',
+        source: 'Product KPI context', severity: 'info', backlogId: 'qris-retry',
+      }
+    );
+
+    return insights;
+  });
 
   statusLabel(status: BacklogStatus): string {
     return {
