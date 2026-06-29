@@ -92,7 +92,7 @@ export interface Backlog {
   emergencyReason?: string;
   aiResult?: AIResult;
   humanOverride?: HumanOverride;
-  source: BacklogSource;
+  source?: BacklogSource;
   myService?: MyServiceData;
   createdBy: string;
   createdAt: Date;
@@ -108,11 +108,6 @@ export interface Backlog {
 }
 
 export interface AIResult {
-  riceScore: number;
-  reach: RICEDimension;
-  impact: RICEDimension;
-  confidence: RICEDimension;
-  effort: RICEDimension;
   moscow: MoSCoW;
   reasoning: AIReasoning;
   confidenceLevel: number;
@@ -134,17 +129,11 @@ export interface AgentFinding {
   evidence: string[];
 }
 
-export interface RICEDimension {
-  value: number;
-  label: 'Minimal' | 'Low' | 'Medium' | 'High' | 'Massive';
-  reasoning: string;
-}
-
 export interface AIReasoning {
-  reach: string;
-  impact: string;
-  confidence: string;
-  effort: string;
+  reach?: string;
+  impact?: string;
+  confidence?: string;
+  effort?: string;
   summary: string;
   evidenceRefs: string[];
 }

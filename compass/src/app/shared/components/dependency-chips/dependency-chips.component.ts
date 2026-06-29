@@ -59,10 +59,6 @@ export class DependencyChipsComponent {
   }
 
   getRank(backlog: Backlog): string {
-    const sorted = [...this.allBacklogs()]
-      .filter(b => b.aiResult)
-      .sort((a, b) => (b.aiResult?.riceScore ?? 0) - (a.aiResult?.riceScore ?? 0));
-    const rank = sorted.findIndex(b => b.id === backlog.id) + 1;
-    return rank > 0 ? `#${rank}` : '-';
+    return '-';
   }
 }

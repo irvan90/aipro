@@ -28,8 +28,7 @@ export class RoadmapComponent implements OnInit {
   quarterData = computed(() => this.quarters.map(quarter => ({
     quarter,
     items: backlogStore.all()
-      .filter(item => item.targetQuarter === quarter)
-      .sort((a, b) => (b.aiResult?.riceScore ?? 0) - (a.aiResult?.riceScore ?? 0)),
+      .filter(item => item.targetQuarter === quarter),
   })));
 
   constructor(

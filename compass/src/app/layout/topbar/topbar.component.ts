@@ -1,5 +1,5 @@
-import { Component, computed } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, computed, inject } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 import { appStore } from '../../core/stores/app.store';
 
 @Component({
@@ -11,7 +11,9 @@ import { appStore } from '../../core/stores/app.store';
 })
 export class TopbarComponent {
   store = appStore;
+  private router = inject(Router);
   unreadCount = computed(() => appStore.unreadCount());
+  onBacklogPage = computed(() => this.router.url.startsWith('/backlog/'));
 
   toggleNotifications(): void {
     appStore.showNotificationPanel.update(value => !value);

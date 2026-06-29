@@ -31,7 +31,7 @@
             <span class="text-xl text-white/35">→</span>
             <div class="px-4 py-3 rounded-xl bg-amber-300 text-bca-navy min-w-32 shadow-sm">
               <div class="text-[9px] uppercase tracking-wider font-bold text-bca-navy/55">AIPRO</div>
-              <div class="text-lg font-black mt-0.5">{{ item.aiResult?.moscow }}</div>
+              <div class="text-lg font-black mt-0.5">{{ item.aiResult?.moscow ?? 'Analyze first' }}</div>
             </div>
           </div>
         </div>
@@ -84,7 +84,6 @@
                   <h2 class="text-xl font-black text-gray-950 mt-1">Promote this backlog.</h2>
                 </div>
                 <div class="flex gap-2">
-                  <div class="metric-pill"><span>RICE</span><strong>{{ result.riceScore | number }}</strong></div>
                   <div class="metric-pill"><span>Confidence</span><strong>{{ result.confidenceLevel }}%</strong></div>
                 </div>
               </div>

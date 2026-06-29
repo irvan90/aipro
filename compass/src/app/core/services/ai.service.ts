@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { ImpactAnalysisResult } from '../models/ai-result.model';
 import { AgentFinding, AIResult, Backlog, Quarter, RoadmapLane } from '../models/backlog.model';
 import { backlogStore } from '../stores/backlog.store';
-import { AGENT_DEFINITIONS, MOCK_IMPACT_RESULTS } from './mock-data.service';
+import { AGENT_DEFINITIONS, MOCK_IMPACT_RESULTS, MOCK_POCKET_BCA_AI_RESULT } from './mock-data.service';
 
 const STEP_MS = 400;
 
@@ -73,6 +73,10 @@ export class AiService {
       return backlog.aiResult.agentFindings;
     }
 
+    if (backlog.id === 'pocket-bca') {
+      return MOCK_POCKET_BCA_AI_RESULT.agentFindings!;
+    }
+
     return [
       {
         agentId: 'market-gap', agentName: 'Market Gap', role: 'Membaca ekspektasi pasar', icon: '◎',
@@ -93,6 +97,14 @@ export class AiService {
   }
 
   private resultFor(backlog: Backlog, findings: AgentFinding[]): AIResult {
+    if (backlog.id === 'pocket-bca') {
+      return {
+        ...MOCK_POCKET_BCA_AI_RESULT,
+        agentFindings: findings,
+        scoredAt: new Date(),
+      };
+    }
+
     const result = backlog.aiResult;
     if (!result) {
       throw new Error(`Demo scoring result is not configured for ${backlog.id}`);

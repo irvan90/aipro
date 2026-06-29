@@ -1,5 +1,4 @@
 import { Component, computed, OnInit, signal } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AIResult } from '../../core/models/backlog.model';
 import { AiService } from '../../core/services/ai.service';
@@ -9,7 +8,7 @@ import { AgentPipelineComponent } from '../../shared/components/agent-pipeline/a
 @Component({
   selector: 'app-backlog-detail',
   standalone: true,
-  imports: [RouterLink, DecimalPipe, AgentPipelineComponent],
+  imports: [RouterLink, AgentPipelineComponent],
   templateUrl: './backlog-detail.component.html',
   styleUrl: './backlog-detail.component.scss',
 })

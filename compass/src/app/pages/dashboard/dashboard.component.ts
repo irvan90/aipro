@@ -24,7 +24,7 @@ interface DailyInsight {
 export class DashboardComponent {
   searchValue = signal('');
   statusFilter = signal<BacklogStatus | 'all'>('all');
-  sortBy = signal<'rice' | 'date'>('rice');
+  sortBy = signal<'date'>('date');
 
   allBacklogs = backlogStore.all;
   fromMyService = computed(() => this.allBacklogs().filter(item => item.source === 'myservice'));
@@ -40,9 +40,11 @@ export class DashboardComponent {
       const matchesStatus = status === 'all' || item.status === status;
       return matchesQuery && matchesStatus;
     });
-    return [...items].sort((a, b) => this.sortBy() === 'rice'
-      ? (b.aiResult?.riceScore ?? 0) - (a.aiResult?.riceScore ?? 0)
-      : b.updatedAt.getTime() - a.updatedAt.getTime());
+    return [...items].sort((a, b) => {
+      if (a.status === 'new' && b.status !== 'new') return -1;
+      if (a.status !== 'new' && b.status === 'new') return 1;
+      return b.updatedAt.getTime() - a.updatedAt.getTime();
+    });
   });
 
   dailyInsights: DailyInsight[] = [

@@ -20,7 +20,7 @@ const _filterQuarter = signal<Quarter | 'all'>('all');
 const _filterMoscow = signal<MoSCoW | 'all'>('all');
 const _filterImpactArea = signal<string>('all');
 const _searchQuery = signal('');
-const _sortBy = signal<'rice' | 'date' | 'completeness'>('rice');
+const _sortBy = signal<'date' | 'completeness'>('date');
 const _aiLoadingState = signal<AILoadingState>('idle');
 const _aiLoadingStep = signal<AILoadingStep>('Reading backlog context...');
 const _currentAnalyzingId = signal<string | null>(null);
@@ -57,13 +57,13 @@ export const backlogStore = {
       list = list.filter((b: Backlog) => b.impactArea.includes(_filterImpactArea() as any));
     }
     const sort = _sortBy();
-    if (sort === 'rice') {
-      list = [...list].sort((a: Backlog, b: Backlog) => (b.aiResult?.riceScore ?? 0) - (a.aiResult?.riceScore ?? 0));
-    } else if (sort === 'date') {
-      list = [...list].sort((a: Backlog, b: Backlog) => b.createdAt.getTime() - a.createdAt.getTime());
-    } else if (sort === 'completeness') {
-      list = [...list].sort((a: Backlog, b: Backlog) => b.completenessScore - a.completenessScore);
-    }
+    list = [...list].sort((a: Backlog, b: Backlog) => {
+      if (a.status === 'new' && b.status !== 'new') return -1;
+      if (a.status !== 'new' && b.status === 'new') return 1;
+      if (sort === 'date') return b.createdAt.getTime() - a.createdAt.getTime();
+      if (sort === 'completeness') return b.completenessScore - a.completenessScore;
+      return 0;
+    });
     return list;
   }),
 
@@ -82,9 +82,6 @@ export const backlogStore = {
   ),
   deliveredCount: computed<number>(() =>
     _all().filter((b: Backlog) => b.status === 'delivered' || b.status === 'submitted').length
-  ),
-  maxRiceScore: computed<number>(() =>
-    Math.max(..._all().map((b: Backlog) => b.aiResult?.riceScore ?? 0), 1)
   ),
 
   aiLoadingState: _aiLoadingState,

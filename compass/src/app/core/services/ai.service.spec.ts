@@ -25,7 +25,6 @@ describe('Pocket BCA demo scoring', () => {
     const pocket = MOCK_BACKLOGS[0];
     expect(pocket.initialPriority).toBe('Low');
     expect(pocket.aiResult?.moscow).toBe('Must Have');
-    expect(pocket.aiResult?.riceScore).toBe(15000);
     expect(pocket.opportunityAtRisk?.isDemoEstimate).toBe(true);
     expect(pocket.opportunityAtRisk?.assumptions).toHaveLength(3);
   });
@@ -33,14 +32,15 @@ describe('Pocket BCA demo scoring', () => {
   it('runs exactly three analysis stages and returns the configured result', () => {
     vi.useFakeTimers();
     const pocket = MOCK_BACKLOGS[0];
-    let riceScore = 0;
 
-    service.analyzeBacklog(pocket).subscribe(result => riceScore = result.riceScore);
+    service.analyzeBacklog(pocket).subscribe(result => {
+      expect(result.moscow).toBe('Must Have');
+      expect(result.agentFindings).toHaveLength(3);
+    });
     vi.advanceTimersByTime(2800);
 
     expect(backlogStore.agentStates()).toHaveLength(3);
     expect(backlogStore.agentStates().every(stage => stage.status === 'done')).toBe(true);
-    expect(riceScore).toBe(15000);
   });
 
   it('returns backlog-specific impact instead of the QRIS scenario', () => {

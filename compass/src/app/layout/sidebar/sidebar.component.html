@@ -6,21 +6,23 @@
     </div>
   </div>
 
-  <nav class="flex-1 overflow-y-auto px-3 py-5">
+  <nav class="flex-1 overflow-y-auto nav-scroll px-3 py-5">
     <div class="text-[10px] font-semibold text-white/35 uppercase tracking-[0.18em] px-3 mb-2">Decision flow</div>
     <ul class="space-y-1">
-      @for (item of mainNavItems; track item.route) {
-        <li><a [routerLink]="item.route" routerLinkActive="bg-bca-primary text-white shadow-sm" [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }"
-          class="nav-link"><span class="nav-code">{{ item.icon }}</span><span>{{ item.label }}</span></a></li>
-      }
+      <li><a routerLink="/dashboard" routerLinkActive="bg-bca-primary text-white shadow-sm" [routerLinkActiveOptions]="{ exact: true }" class="nav-link">
+        <span class="nav-code"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span><span>Prioritas</span></a></li>
+      <li><a routerLink="/roadmap" routerLinkActive="bg-bca-primary text-white shadow-sm" class="nav-link">
+        <span class="nav-code"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18M3 15h18M7 3v18M17 3v18"/></svg></span><span>Roadmap</span></a></li>
     </ul>
 
     <div class="text-[10px] font-semibold text-white/35 uppercase tracking-[0.18em] px-3 mb-2 mt-6">Workspace</div>
     <ul class="space-y-1">
-      @for (item of managementNavItems; track item.route) {
-        <li><a [routerLink]="item.route" routerLinkActive="bg-bca-primary text-white shadow-sm" class="nav-link">
-          <span class="nav-code">{{ item.icon }}</span><span>{{ item.label }}</span></a></li>
-      }
+      <li><a routerLink="/team-members" routerLinkActive="bg-bca-primary text-white shadow-sm" class="nav-link">
+        <span class="nav-code"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span>Team & Members</span></a></li>
+      <li><a routerLink="/product-context" routerLinkActive="bg-bca-primary text-white shadow-sm" class="nav-link">
+        <span class="nav-code"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span><span>Product Context</span></a></li>
+      <li><a routerLink="/audit-trail" routerLinkActive="bg-bca-primary text-white shadow-sm" class="nav-link">
+        <span class="nav-code"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></span><span>Audit Trail</span></a></li>
     </ul>
   </nav>
 
