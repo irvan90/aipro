@@ -1,13 +1,16 @@
 <nav class="fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-gray-200 flex items-center justify-around px-2 z-30 lg:hidden">
-  @for (item of navItems; track item.route) {
-    <a [routerLink]="item.route"
-       routerLinkActive="text-bca-primary"
-       [routerLinkActiveOptions]="{ exact: item.exact }"
-       class="flex flex-col items-center gap-1 py-1 px-3 min-w-[44px] text-gray-400 hover:text-bca-primary transition-colors duration-120">
-      <span class="text-xl leading-none">{{ item.icon }}</span>
-      <span class="text-[9px] font-semibold">{{ item.label }}</span>
-    </a>
-  }
+  <a routerLink="/dashboard" routerLinkActive="text-bca-primary" [routerLinkActiveOptions]="{ exact: true }" class="flex flex-col items-center gap-1 py-1 px-3 min-w-[44px] text-gray-400 hover:text-bca-primary transition-colors duration-120">
+    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+    <span class="text-[9px] font-semibold">Prioritas</span>
+  </a>
+  <a routerLink="/roadmap" routerLinkActive="text-bca-primary" [routerLinkActiveOptions]="{ exact: false }" class="flex flex-col items-center gap-1 py-1 px-3 min-w-[44px] text-gray-400 hover:text-bca-primary transition-colors duration-120">
+    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18M3 15h18M7 3v18M17 3v18"/></svg>
+    <span class="text-[9px] font-semibold">Roadmap</span>
+  </a>
+  <a routerLink="/audit-trail" routerLinkActive="text-bca-primary" [routerLinkActiveOptions]="{ exact: false }" class="flex flex-col items-center gap-1 py-1 px-3 min-w-[44px] text-gray-400 hover:text-bca-primary transition-colors duration-120">
+    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+    <span class="text-[9px] font-semibold">Audit</span>
+  </a>
 </nav>
 <!-- Spacer to prevent content overlap -->
 <div class="h-16 lg:hidden"></div>

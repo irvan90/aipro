@@ -10,6 +10,7 @@ export interface AgentState {
   name: string;
   icon: string;
   status: 'pending' | 'running' | 'done';
+  currentStep?: string;
   finding?: AgentFinding;
 }
 
@@ -25,6 +26,8 @@ const _aiLoadingState = signal<AILoadingState>('idle');
 const _aiLoadingStep = signal<AILoadingStep>('Reading backlog context...');
 const _currentAnalyzingId = signal<string | null>(null);
 const _selectedBacklogId = signal<string | null>(null);
+const _thinkingLogs = signal<string[]>([]);
+const _fastForwardAnalysis = signal(false);
 
 export const backlogStore = {
   all: _all,
@@ -93,4 +96,6 @@ export const backlogStore = {
   selectedBacklog: computed<Backlog | null>(() =>
     _all().find((b: Backlog) => b.id === _selectedBacklogId()) ?? null
   ),
+  thinkingLogs: _thinkingLogs,
+  fastForwardAnalysis: _fastForwardAnalysis,
 };

@@ -55,7 +55,7 @@
 
               <div class="grid grid-cols-2 gap-2 mt-3">
                 <div class="rounded-lg bg-gray-50 p-2"><div class="text-[8px] uppercase font-bold text-gray-400">Priority</div><div class="text-[10px] font-black text-bca-primary">{{ item.aiResult?.moscow ?? '—' }}</div></div>
-                <div class="rounded-lg bg-gray-50 p-2"><div class="text-[8px] uppercase font-bold text-gray-400">Effort</div><div class="text-xs font-black text-bca-navy">{{ item.effortEstimation }}</div></div>
+                <div class="rounded-lg bg-gray-50 p-2"><div class="text-[8px] uppercase font-bold text-gray-400">RICE Score</div><div class="text-xs font-black text-bca-navy">{{ item.aiResult?.riceScore?.total ? (item.aiResult?.riceScore?.total | number:'1.0-0') : '—' }}</div></div>
               </div>
 
               <div class="flex items-center justify-between gap-2 mt-3 pt-2.5 border-t border-gray-100">
@@ -63,7 +63,7 @@
                 <a [routerLink]="['/backlog', item.id]" (click)="$event.stopPropagation()" class="text-[9px] font-bold text-bca-primary hover:underline">Detail</a>
               </div>
 
-              @if (item.recommendation === 'promote' && item.targetQuarter !== 'Q3') {
+              @if (item.status === 'ai_scored' && item.recommendation === 'promote' && item.targetQuarter !== 'Q3') {
                 <button (click)="reviewRecommendation(item, 'Q3'); $event.stopPropagation()" class="w-full mt-2.5 py-2 rounded-lg bg-bca-primary text-white text-[10px] font-bold hover:bg-bca-hover">Review move to Q3</button>
               }
               <div *cdkDragPlaceholder class="drag-placeholder h-28 rounded-xl border-2 border-dashed border-blue-300 bg-blue-50"></div>

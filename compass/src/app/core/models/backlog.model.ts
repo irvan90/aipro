@@ -107,12 +107,22 @@ export interface Backlog {
   isHistoricalScenario?: boolean;
 }
 
+export interface RICEScore {
+  reach: number;       // estimated users affected (e.g. 80000)
+  impact: number;      // scale 0.25 | 0.5 | 1 | 2 | 3
+  confidence: number;  // percentage 0-100
+  effort: number;      // person-sprints
+  total: number;       // (Reach × Impact × Confidence%) / Effort
+}
+
 export interface AIResult {
   moscow: MoSCoW;
   reasoning: AIReasoning;
   confidenceLevel: number;
   promptVersion: string;
   scoredAt: Date;
+  riceScore?: RICEScore;
+  valueEffort?: { value: ValueEffortLevel; effort: ValueEffortLevel };
   agentFindings?: AgentFinding[];
   missingFields?: string[];
 }

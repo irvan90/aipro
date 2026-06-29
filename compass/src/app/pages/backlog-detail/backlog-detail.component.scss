@@ -61,3 +61,34 @@
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+.thinking-log-container {
+  animation: result-in 320ms ease-out both;
+}
+
+.thinking-log-entry {
+  opacity: 0;
+  animation: log-appear 200ms ease-out forwards;
+  padding: 2px 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+@keyframes log-appear {
+  from { opacity: 0; transform: translateX(-4px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.animate-blink {
+  animation: blink 0.8s step-end infinite;
+}
+
+.thinking-log-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #374151 transparent;
+}

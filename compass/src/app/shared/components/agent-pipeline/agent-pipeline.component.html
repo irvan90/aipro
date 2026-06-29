@@ -1,9 +1,38 @@
 <div class="space-y-1">
+  <!-- Phase 1: AIPRO Core Engine -->
+  <div class="flex items-start gap-3 p-2.5 rounded-xl transition-colors"
+       [class.bg-bca-accent]="pipelinePhase() === 'core-engine'"
+       [class.opacity-50]="pipelinePhase() === 'idle'">
+    <div class="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-sm"
+         [class]="pipelinePhase() === 'core-engine' ? 'bg-white' : pipelinePhase() !== 'idle' ? 'bg-success-bg' : 'bg-gray-100'">
+      @if (pipelinePhase() !== 'idle' && pipelinePhase() !== 'core-engine') {
+        <svg class="w-3.5 h-3.5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+        </svg>
+      } @else if (pipelinePhase() === 'core-engine') {
+        <span class="animate-pulse">⚡</span>
+      } @else {
+        <span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
+      }
+    </div>
+    <div class="flex-1 min-w-0 pt-0.5">
+      <p class="text-xs font-semibold"
+         [class]="pipelinePhase() === 'idle' ? 'text-gray-400' : 'text-gray-800'">
+        ⚡ AIPRO Core Engine
+      </p>
+      @if (pipelinePhase() === 'core-engine') {
+        <p class="text-[11px] text-bca-primary mt-0.5 animate-pulse">Memproses konteks...</p>
+      } @else if (pipelinePhase() !== 'idle') {
+        <p class="text-[11px] text-gray-500 mt-0.5">Backlog Data Payload diterima</p>
+      }
+    </div>
+  </div>
+
+  <!-- Phase 2: 3 AI Agents (parallel) -->
   @for (agent of agentStates(); track agent.agentId) {
     <div class="flex items-start gap-3 p-2.5 rounded-xl transition-colors"
          [class.bg-bca-accent]="agent.status === 'running'"
          [class.opacity-50]="agent.status === 'pending'">
-      <!-- Status indicator -->
       <div class="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-sm"
            [class]="agent.status === 'done' ? 'bg-success-bg' : agent.status === 'running' ? 'bg-white' : 'bg-gray-100'">
         @if (agent.status === 'done') {
@@ -22,11 +51,34 @@
           {{ agent.icon }} {{ agent.name }}
         </p>
         @if (agent.status === 'running') {
-          <p class="text-[11px] text-bca-primary mt-0.5 animate-pulse">{{ loadingStep() }}</p>
+          <p class="text-[11px] text-bca-primary mt-0.5 animate-pulse">Menganalisa...</p>
         } @else if (agent.status === 'done' && agent.finding) {
           <p class="text-[11px] text-gray-500 mt-0.5 leading-relaxed">{{ agent.finding.summary }}</p>
         }
       </div>
     </div>
   }
+
+  <!-- Phase 3: Central Decision Engine (LLM) -->
+  <div class="flex items-start gap-3 p-2.5 rounded-xl transition-colors"
+       [class.bg-bca-accent]="pipelinePhase() === 'decision-engine'"
+       [class.opacity-50]="pipelinePhase() === 'idle' || pipelinePhase() === 'core-engine' || pipelinePhase() === 'agents'">
+    <div class="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-sm"
+         [class]="pipelinePhase() === 'decision-engine' ? 'bg-white' : 'bg-gray-100'">
+      @if (pipelinePhase() === 'decision-engine') {
+        <span class="animate-pulse">❖</span>
+      } @else {
+        <span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
+      }
+    </div>
+    <div class="flex-1 min-w-0 pt-0.5">
+      <p class="text-xs font-semibold"
+         [class]="pipelinePhase() === 'decision-engine' ? 'text-gray-800' : 'text-gray-400'">
+        ❖ Central Decision Engine
+      </p>
+      @if (pipelinePhase() === 'decision-engine') {
+        <p class="text-[11px] text-bca-primary mt-0.5 animate-pulse">Mengkalkulasi rekomendasi...</p>
+      }
+    </div>
+  </div>
 </div>

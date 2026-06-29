@@ -1,4 +1,5 @@
 import { Component, computed, OnInit, signal } from '@angular/core';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { DragDropModule, CdkDragDrop } from '@angular/cdk/drag-drop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ImpactAnalysisResult } from '../../core/models/ai-result.model';
@@ -10,7 +11,7 @@ import { backlogStore } from '../../core/stores/backlog.store';
 @Component({
   selector: 'app-roadmap',
   standalone: true,
-  imports: [RouterLink, DragDropModule],
+  imports: [RouterLink, DragDropModule, DecimalPipe],
   templateUrl: './roadmap.component.html',
   styleUrl: './roadmap.component.scss',
 })

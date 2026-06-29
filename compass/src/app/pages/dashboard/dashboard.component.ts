@@ -1,4 +1,5 @@
 import { Component, computed, signal } from '@angular/core';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Backlog, BacklogStatus } from '../../core/models/backlog.model';
@@ -17,7 +18,7 @@ interface DailyInsight {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, DecimalPipe],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
 })

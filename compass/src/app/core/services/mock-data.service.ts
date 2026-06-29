@@ -85,6 +85,8 @@ export const MOCK_BACKLOGS: Backlog[] = [
       moscow: 'Must Have',
       reasoning: { summary: 'Prioritas PO sudah tepat.', evidenceRefs: ['QRIS analytics'] },
       confidenceLevel: 85,
+      riceScore: { reach: 120000, impact: 2, confidence: 85, effort: 10, total: 2040 },
+      valueEffort: { value: 'High', effort: 'Medium' },
       promptVersion: 'demo-v3.0',
       scoredAt,
     },
@@ -95,6 +97,20 @@ export const MOCK_BACKLOGS: Backlog[] = [
     createdBy: 'user-po-001',
     createdAt: new Date('2026-04-10'),
     updatedAt: scoredAt,
+        opportunityAtRisk: {
+      metric: 'retained_balance',
+        min: 10000000,
+        max: 50000000,
+        currency: 'IDR',
+        isDemoEstimate: true,
+      label: 'Potensi Penurunan Engagement',
+      formula: 'Berdasarkan data historis fitur serupa',
+      assumptions: ['Asumsi tren pasar berlanjut', 'Kompetitor belum rilis fitur serupa']
+    },
+    evidenceSignals: [
+      { type: 'business', label: 'Analisis internal', detail: 'Fitur direkomendasikan berdasarkan feedback user.', source: 'User Survey', observedAt: 'Bulan lalu' },
+      { type: 'customer', label: 'Data Penggunaan', detail: 'Tingkat drop-off pada tahap awal mencapai 15%.', source: 'Product Analytics', observedAt: 'Minggu lalu' }
+    ],
     productId: 'prod-001',
   },
   {
@@ -117,6 +133,8 @@ export const MOCK_BACKLOGS: Backlog[] = [
       moscow: 'Should Have',
       reasoning: { summary: 'Tahan sampai dependency siap.', evidenceRefs: ['User survey'] },
       confidenceLevel: 80,
+      riceScore: { reach: 95000, impact: 2, confidence: 80, effort: 13, total: 1169 },
+      valueEffort: { value: 'High', effort: 'High' },
       promptVersion: 'demo-v3.0',
       scoredAt,
     },
@@ -127,6 +145,20 @@ export const MOCK_BACKLOGS: Backlog[] = [
     createdBy: 'user-po-001',
     createdAt: new Date('2026-04-15'),
     updatedAt: scoredAt,
+        opportunityAtRisk: {
+      metric: 'retained_balance',
+        min: 10000000,
+        max: 50000000,
+        currency: 'IDR',
+        isDemoEstimate: true,
+      label: 'Potensi Penurunan Engagement',
+      formula: 'Berdasarkan data historis fitur serupa',
+      assumptions: ['Asumsi tren pasar berlanjut', 'Kompetitor belum rilis fitur serupa']
+    },
+    evidenceSignals: [
+      { type: 'business', label: 'Analisis internal', detail: 'Fitur direkomendasikan berdasarkan feedback user.', source: 'User Survey', observedAt: 'Bulan lalu' },
+      { type: 'customer', label: 'Data Penggunaan', detail: 'Tingkat drop-off pada tahap awal mencapai 15%.', source: 'Product Analytics', observedAt: 'Minggu lalu' }
+    ],
     productId: 'prod-001',
   },
   {
@@ -149,6 +181,8 @@ export const MOCK_BACKLOGS: Backlog[] = [
       moscow: 'Could Have',
       reasoning: { summary: 'Defer setelah backlog berdampak langsung.', evidenceRefs: ['Preference survey'] },
       confidenceLevel: 70,
+      riceScore: { reach: 200000, impact: 0.5, confidence: 70, effort: 13, total: 538 },
+      valueEffort: { value: 'Low', effort: 'High' },
       promptVersion: 'demo-v3.0',
       scoredAt,
     },
@@ -159,11 +193,25 @@ export const MOCK_BACKLOGS: Backlog[] = [
     createdBy: 'user-po-001',
     createdAt: new Date('2026-04-20'),
     updatedAt: scoredAt,
+        opportunityAtRisk: {
+      metric: 'retained_balance',
+        min: 10000000,
+        max: 50000000,
+        currency: 'IDR',
+        isDemoEstimate: true,
+      label: 'Potensi Penurunan Engagement',
+      formula: 'Berdasarkan data historis fitur serupa',
+      assumptions: ['Asumsi tren pasar berlanjut', 'Kompetitor belum rilis fitur serupa']
+    },
+    evidenceSignals: [
+      { type: 'business', label: 'Analisis internal', detail: 'Fitur direkomendasikan berdasarkan feedback user.', source: 'User Survey', observedAt: 'Bulan lalu' },
+      { type: 'customer', label: 'Data Penggunaan', detail: 'Tingkat drop-off pada tahap awal mencapai 15%.', source: 'Product Analytics', observedAt: 'Minggu lalu' }
+    ],
     productId: 'prod-001',
   },
   {
-    id: 'pocket-bca',
-    title: 'Pocket BCA',
+    id: 'pocket-rupiah',
+    title: 'Pocket Rupiah',
     description: 'Membagi saldo ke beberapa kantong untuk budgeting harian dan tujuan menabung dalam satu aplikasi.',
     businessObjective: 'Meningkatkan engagement dan mempertahankan saldo nasabah di ekosistem myBCA.',
     targetUsers: '80.000 pengguna aktif yang rutin mengatur anggaran dan tujuan tabungan.',
@@ -265,6 +313,8 @@ export const MOCK_BACKLOGS: Backlog[] = [
       moscow: 'Must Have',
       reasoning: { summary: 'Fitur ekspektasi pasar yang memengaruhi retensi transaksi.', evidenceRefs: ['Competitor autopay analysis', 'User survey'] },
       confidenceLevel: 82,
+      riceScore: { reach: 90000, impact: 2, confidence: 82, effort: 7, total: 2109 },
+      valueEffort: { value: 'High', effort: 'Low' },
       promptVersion: 'demo-v3.0',
       scoredAt,
     },
@@ -275,6 +325,20 @@ export const MOCK_BACKLOGS: Backlog[] = [
     createdBy: 'user-po-001',
     createdAt: new Date('2026-03-15'),
     updatedAt: scoredAt,
+        opportunityAtRisk: {
+      metric: 'retained_balance',
+        min: 10000000,
+        max: 50000000,
+        currency: 'IDR',
+        isDemoEstimate: true,
+      label: 'Potensi Penurunan Engagement',
+      formula: 'Berdasarkan data historis fitur serupa',
+      assumptions: ['Asumsi tren pasar berlanjut', 'Kompetitor belum rilis fitur serupa']
+    },
+    evidenceSignals: [
+      { type: 'business', label: 'Analisis internal', detail: 'Fitur direkomendasikan berdasarkan feedback user.', source: 'User Survey', observedAt: 'Bulan lalu' },
+      { type: 'customer', label: 'Data Penggunaan', detail: 'Tingkat drop-off pada tahap awal mencapai 15%.', source: 'Product Analytics', observedAt: 'Minggu lalu' }
+    ],
     productId: 'prod-001',
   },
   {
@@ -297,6 +361,8 @@ export const MOCK_BACKLOGS: Backlog[] = [
       moscow: 'Must Have',
       reasoning: { summary: 'Komplemen penting untuk money management experience.', evidenceRefs: ['Usage analytics', 'Customer feedback'] },
       confidenceLevel: 78,
+      riceScore: { reach: 150000, impact: 2, confidence: 78, effort: 11, total: 2127 },
+      valueEffort: { value: 'High', effort: 'Medium' },
       promptVersion: 'demo-v3.0',
       scoredAt,
     },
@@ -307,6 +373,20 @@ export const MOCK_BACKLOGS: Backlog[] = [
     createdBy: 'user-po-001',
     createdAt: new Date('2026-04-01'),
     updatedAt: scoredAt,
+        opportunityAtRisk: {
+      metric: 'retained_balance',
+        min: 10000000,
+        max: 50000000,
+        currency: 'IDR',
+        isDemoEstimate: true,
+      label: 'Potensi Penurunan Engagement',
+      formula: 'Berdasarkan data historis fitur serupa',
+      assumptions: ['Asumsi tren pasar berlanjut', 'Kompetitor belum rilis fitur serupa']
+    },
+    evidenceSignals: [
+      { type: 'business', label: 'Analisis internal', detail: 'Fitur direkomendasikan berdasarkan feedback user.', source: 'User Survey', observedAt: 'Bulan lalu' },
+      { type: 'customer', label: 'Data Penggunaan', detail: 'Tingkat drop-off pada tahap awal mencapai 15%.', source: 'Product Analytics', observedAt: 'Minggu lalu' }
+    ],
     productId: 'prod-001',
   },
   {
@@ -329,6 +409,8 @@ export const MOCK_BACKLOGS: Backlog[] = [
       moscow: 'Should Have',
       reasoning: { summary: 'Fitur sosial yang mendukung engagement, tetapi bukan gap kritis.', evidenceRefs: ['Market survey', 'Competitor feature list'] },
       confidenceLevel: 72,
+      riceScore: { reach: 45000, impact: 1, confidence: 72, effort: 9, total: 360 },
+      valueEffort: { value: 'Medium', effort: 'Medium' },
       promptVersion: 'demo-v3.0',
       scoredAt,
     },
@@ -339,6 +421,20 @@ export const MOCK_BACKLOGS: Backlog[] = [
     createdBy: 'user-po-001',
     createdAt: new Date('2026-04-08'),
     updatedAt: scoredAt,
+        opportunityAtRisk: {
+      metric: 'retained_balance',
+        min: 10000000,
+        max: 50000000,
+        currency: 'IDR',
+        isDemoEstimate: true,
+      label: 'Potensi Penurunan Engagement',
+      formula: 'Berdasarkan data historis fitur serupa',
+      assumptions: ['Asumsi tren pasar berlanjut', 'Kompetitor belum rilis fitur serupa']
+    },
+    evidenceSignals: [
+      { type: 'business', label: 'Analisis internal', detail: 'Fitur direkomendasikan berdasarkan feedback user.', source: 'User Survey', observedAt: 'Bulan lalu' },
+      { type: 'customer', label: 'Data Penggunaan', detail: 'Tingkat drop-off pada tahap awal mencapai 15%.', source: 'Product Analytics', observedAt: 'Minggu lalu' }
+    ],
     productId: 'prod-001',
   },
   {
@@ -361,6 +457,8 @@ export const MOCK_BACKLOGS: Backlog[] = [
       moscow: 'Could Have',
       reasoning: { summary: 'Penting untuk risk, tetapi dampak langsung pada growth lebih rendah.', evidenceRefs: ['Complaint trend'] },
       confidenceLevel: 68,
+      riceScore: { reach: 30000, impact: 1, confidence: 68, effort: 8, total: 255 },
+      valueEffort: { value: 'Medium', effort: 'Medium' },
       promptVersion: 'demo-v3.0',
       scoredAt,
     },
@@ -371,6 +469,20 @@ export const MOCK_BACKLOGS: Backlog[] = [
     createdBy: 'user-po-001',
     createdAt: new Date('2026-04-12'),
     updatedAt: scoredAt,
+        opportunityAtRisk: {
+      metric: 'retained_balance',
+        min: 10000000,
+        max: 50000000,
+        currency: 'IDR',
+        isDemoEstimate: true,
+      label: 'Potensi Penurunan Engagement',
+      formula: 'Berdasarkan data historis fitur serupa',
+      assumptions: ['Asumsi tren pasar berlanjut', 'Kompetitor belum rilis fitur serupa']
+    },
+    evidenceSignals: [
+      { type: 'business', label: 'Analisis internal', detail: 'Fitur direkomendasikan berdasarkan feedback user.', source: 'User Survey', observedAt: 'Bulan lalu' },
+      { type: 'customer', label: 'Data Penggunaan', detail: 'Tingkat drop-off pada tahap awal mencapai 15%.', source: 'Product Analytics', observedAt: 'Minggu lalu' }
+    ],
     productId: 'prod-001',
   },
   {
@@ -393,6 +505,8 @@ export const MOCK_BACKLOGS: Backlog[] = [
       moscow: 'Could Have',
       reasoning: { summary: 'Enhancement experience, bukan fitur kritis untuk retensi.', evidenceRefs: ['Loyalty program survey'] },
       confidenceLevel: 65,
+      riceScore: { reach: 25000, impact: 0.5, confidence: 65, effort: 10, total: 81 },
+      valueEffort: { value: 'Low', effort: 'Medium' },
       promptVersion: 'demo-v3.0',
       scoredAt,
     },
@@ -403,6 +517,20 @@ export const MOCK_BACKLOGS: Backlog[] = [
     createdBy: 'user-po-001',
     createdAt: new Date('2026-04-18'),
     updatedAt: scoredAt,
+        opportunityAtRisk: {
+      metric: 'retained_balance',
+        min: 10000000,
+        max: 50000000,
+        currency: 'IDR',
+        isDemoEstimate: true,
+      label: 'Potensi Penurunan Engagement',
+      formula: 'Berdasarkan data historis fitur serupa',
+      assumptions: ['Asumsi tren pasar berlanjut', 'Kompetitor belum rilis fitur serupa']
+    },
+    evidenceSignals: [
+      { type: 'business', label: 'Analisis internal', detail: 'Fitur direkomendasikan berdasarkan feedback user.', source: 'User Survey', observedAt: 'Bulan lalu' },
+      { type: 'customer', label: 'Data Penggunaan', detail: 'Tingkat drop-off pada tahap awal mencapai 15%.', source: 'Product Analytics', observedAt: 'Minggu lalu' }
+    ],
     productId: 'prod-001',
   },
   {
@@ -425,6 +553,8 @@ export const MOCK_BACKLOGS: Backlog[] = [
       moscow: 'Must Have',
       reasoning: { summary: 'Activation rate adalah funnel utama untuk growth.', evidenceRefs: ['Funnel analytics'] },
       confidenceLevel: 88,
+      riceScore: { reach: 50000, impact: 3, confidence: 88, effort: 12, total: 1100 },
+      valueEffort: { value: 'High', effort: 'High' },
       promptVersion: 'demo-v3.0',
       scoredAt,
     },
@@ -435,6 +565,20 @@ export const MOCK_BACKLOGS: Backlog[] = [
     createdBy: 'user-po-001',
     createdAt: new Date('2025-12-10'),
     updatedAt: new Date('2026-03-30'),
+        opportunityAtRisk: {
+      metric: 'retained_balance',
+        min: 10000000,
+        max: 50000000,
+        currency: 'IDR',
+        isDemoEstimate: true,
+      label: 'Potensi Penurunan Engagement',
+      formula: 'Berdasarkan data historis fitur serupa',
+      assumptions: ['Asumsi tren pasar berlanjut', 'Kompetitor belum rilis fitur serupa']
+    },
+    evidenceSignals: [
+      { type: 'business', label: 'Analisis internal', detail: 'Fitur direkomendasikan berdasarkan feedback user.', source: 'User Survey', observedAt: 'Bulan lalu' },
+      { type: 'customer', label: 'Data Penggunaan', detail: 'Tingkat drop-off pada tahap awal mencapai 15%.', source: 'Product Analytics', observedAt: 'Minggu lalu' }
+    ],
     productId: 'prod-001',
   },
   {
@@ -457,6 +601,8 @@ export const MOCK_BACKLOGS: Backlog[] = [
       moscow: 'Should Have',
       reasoning: { summary: 'Efisiensi operasional yang berdampak langsung pada pengalaman nasabah.', evidenceRefs: ['Complaint data'] },
       confidenceLevel: 80,
+      riceScore: { reach: 200000, impact: 1, confidence: 80, effort: 6, total: 2667 },
+      valueEffort: { value: 'Medium', effort: 'Low' },
       promptVersion: 'demo-v3.0',
       scoredAt,
     },
@@ -467,17 +613,33 @@ export const MOCK_BACKLOGS: Backlog[] = [
     createdBy: 'user-po-001',
     createdAt: new Date('2025-12-15'),
     updatedAt: new Date('2026-02-28'),
+        opportunityAtRisk: {
+      metric: 'retained_balance',
+        min: 10000000,
+        max: 50000000,
+        currency: 'IDR',
+        isDemoEstimate: true,
+      label: 'Potensi Penurunan Engagement',
+      formula: 'Berdasarkan data historis fitur serupa',
+      assumptions: ['Asumsi tren pasar berlanjut', 'Kompetitor belum rilis fitur serupa']
+    },
+    evidenceSignals: [
+      { type: 'business', label: 'Analisis internal', detail: 'Fitur direkomendasikan berdasarkan feedback user.', source: 'User Survey', observedAt: 'Bulan lalu' },
+      { type: 'customer', label: 'Data Penggunaan', detail: 'Tingkat drop-off pada tahap awal mencapai 15%.', source: 'Product Analytics', observedAt: 'Minggu lalu' }
+    ],
     productId: 'prod-001',
   },
 ];
 
-export const MOCK_POCKET_BCA_AI_RESULT: AIResult = {
+export const MOCK_POCKET_RUPIAH_AI_RESULT: AIResult = {
   moscow: 'Must Have',
   reasoning: {
     summary: '⚠️ DETEKSI KOMPETITOR: Fitur pocket/kantong telah ada di Jenius (sejak 2017) dan blu (sejak 2020). Urgensi perlu dinaikkan dari Q4 ke Q3 untuk mencegah churn nasabah ke kompetitor yang sudah memiliki fitur ini lebih dulu.',
     evidenceRefs: ['Jenius - Kantong (rilis 2017)', 'blu by BCA Digital - Tabungan Tujuan (rilis 2020)', 'Demo eligible-user assumption'],
   },
   confidenceLevel: 75,
+  riceScore: { reach: 80000, impact: 3, confidence: 75, effort: 8, total: 2250 },
+  valueEffort: { value: 'High', effort: 'Medium' },
   promptVersion: 'demo-v3.0',
   scoredAt,
   agentFindings: [
@@ -520,9 +682,9 @@ export interface AgentDefinition {
 }
 
 export const AGENT_DEFINITIONS: AgentDefinition[] = [
-  { id: 'market-gap', name: 'Market Gap', role: 'Membaca ekspektasi pasar', icon: '◎', steps: ['Membandingkan kapabilitas kompetitor', 'Mengukur usia feature gap'] },
-  { id: 'business-impact', name: 'Customer & Business Impact', role: 'Mengestimasi opportunity at risk', icon: '↗', steps: ['Menghitung pengguna eligible', 'Membentuk rentang retained balance'] },
-  { id: 'feasibility-risk', name: 'Feasibility & Risk', role: 'Menilai effort dan trade-off', icon: '◇', steps: ['Memeriksa fondasi teknis', 'Menyusun rekomendasi final'] },
+  { id: 'market-gap', name: 'Market Gap', role: 'Mendeteksi tren kompetitor & opportunity loss', icon: '◎', steps: ['Menganalisis tren kompetitor...', 'Mengevaluasi urgensi pasar...', 'Menentukan target rilis optimal...'] },
+  { id: 'business-impact', name: 'Customer & Business Impact', role: 'Memvalidasi keselarasan dengan OKR Produk', icon: '↗', steps: ['Menyelaraskan dengan KPI Produk...', 'Mengkuantifikasi Reach & Impact...'] },
+  { id: 'feasibility-risk', name: 'Feasibility & Risk', role: 'Memindai blocker & regulasi', icon: '◇', steps: ['Menganalisis kompleksitas code...', 'Memindai regulasi BI/OJK...', 'Memeriksa proteksi data...'] },
 ];
 
 export const MOCK_ACTIVITIES: Activity[] = [
@@ -546,21 +708,21 @@ export const MOCK_ACTIVITIES: Activity[] = [
   },
   {
     id: 'act-pocket-001', type: 'ai_scored', actor: 'AIPRO AI', actorRole: 'PO',
-    description: '⚠️ Priority mismatch detected: Pocket BCA',
+    description: '⚠️ Priority mismatch detected: Pocket Rupiah',
     subDescription: 'PO Low → AI Must Have · confidence 75%',
-    backlogId: 'pocket-bca', backlogTitle: 'Pocket BCA', timestamp: new Date('2026-06-20T10:00:00'), productId: 'prod-001',
+    backlogId: 'pocket-rupiah', backlogTitle: 'Pocket Rupiah', timestamp: new Date('2026-06-20T10:00:00'), productId: 'prod-001',
   },
   {
     id: 'act-pocket-002', type: 'warning', actor: 'AIPRO AI', actorRole: 'PO',
     description: '⚠️ DETEKSI KOMPETITOR: Fitur pocket sudah ada di Jenius (2017) dan blu (2020)',
     subDescription: 'BCA tertinggal 6-9 tahun · Urgensi perlu dinaikkan dari Q4 ke Q3',
-    backlogId: 'pocket-bca', backlogTitle: 'Pocket BCA', timestamp: new Date('2026-06-20T10:05:00'), productId: 'prod-001',
+    backlogId: 'pocket-rupiah', backlogTitle: 'Pocket Rupiah', timestamp: new Date('2026-06-20T10:05:00'), productId: 'prod-001',
   },
   {
     id: 'act-pocket-003', type: 'human_override', actor: 'Budi Santoso', actorRole: 'PO',
-    description: 'Reviewed AIPRO recommendation for Pocket BCA',
+    description: 'Reviewed AIPRO recommendation for Pocket Rupiah',
     subDescription: 'Human decision required before roadmap change',
-    backlogId: 'pocket-bca', backlogTitle: 'Pocket BCA', timestamp: new Date('2026-06-20T10:10:00'), productId: 'prod-001',
+    backlogId: 'pocket-rupiah', backlogTitle: 'Pocket Rupiah', timestamp: new Date('2026-06-20T10:10:00'), productId: 'prod-001',
   },
   {
     id: 'act-onboarding-001', type: 'backlog_delivered', actor: 'Citra Dewi', actorRole: 'Dev',
@@ -594,22 +756,22 @@ export const MOCK_NOTIFICATIONS: Notification[] = [
   },
   {
     id: 'notif-pocket', type: 'ai_scored', title: '⚠️ Priority mismatch detected',
-    body: 'Pocket BCA dinilai Must Have meskipun prioritas awal PO masih Low.',
-    isRead: false, actionUrl: '/backlog/pocket-bca', timestamp: new Date('2026-06-20T10:00:00'),
+    body: 'Pocket Rupiah dinilai Must Have meskipun prioritas awal PO masih Low.',
+    isRead: false, actionUrl: '/backlog/pocket-rupiah', timestamp: new Date('2026-06-20T10:00:00'),
   },
   {
     id: 'notif-pocket-competitor', type: 'myservice_new', title: '⚠️ DETEKSI KOMPETITOR - Fitur sudah ada sejak lama',
     body: 'Fitur pocket/kantong sudah ada di Jenius (2017) dan blu (2020). BCA tertinggal 6-9 tahun. Urgensi perlu dinaikkan dari Q4 ke Q3.',
-    isRead: false, actionUrl: '/backlog/pocket-bca', timestamp: new Date('2026-06-20T10:05:00'),
+    isRead: false, actionUrl: '/backlog/pocket-rupiah', timestamp: new Date('2026-06-20T10:05:00'),
   },
 ];
 
 export const MOCK_IMPACT_RESULTS: Record<string, ImpactAnalysisResult> = {
-  'pocket-bca': {
-    backlogId: 'pocket-bca',
+  'pocket-rupiah': {
+    backlogId: 'pocket-rupiah',
     targetLane: 'Q3',
     roadmapImpacts: [
-      { affectedBacklogId: 'split-bill', affectedBacklogTitle: 'Split Bill', description: 'Bergeser ke Q4 karena Q3 capacity terbatas dan Pocket BCA memiliki urgensi kompetitor lebih tinggi.', severity: 'medium' },
+      { affectedBacklogId: 'split-bill', affectedBacklogTitle: 'Split Bill', description: 'Bergeser ke Q4 karena Q3 capacity terbatas dan Pocket Rupiah memiliki urgensi kompetitor lebih tinggi.', severity: 'medium' },
       { affectedBacklogId: 'virtual-card-control', affectedBacklogTitle: 'Virtual Card Control', description: 'Tetap di Later; tidak ada perubahan prioritas.', severity: 'low' },
     ],
     dependencyImpacts: [],
@@ -619,7 +781,7 @@ export const MOCK_IMPACT_RESULTS: Record<string, ImpactAnalysisResult> = {
       { kpi: 'Competitive gap', description: '⚠️ BCA tertinggal 6-9 tahun dari kompetitor (Jenius 2017, blu 2020). Perlu segera dikejar.', severity: 'high' },
     ],
     estimatedDelayInSprints: 0,
-    aiRecommendation: '⚠️ PROMOSIKAN SEGERA: Pocket BCA harus dipromosikan dari Q4 ke Q3. Trade-off utamanya adalah menunda Split Bill ke Q4, tetapi spending analytics v2 tetap di Q3 karena komplemen strategis. Tidak ada blocker kritis.',
+    aiRecommendation: '⚠️ PROMOSIKAN SEGERA: Pocket Rupiah harus dipromosikan dari Q4 ke Q3. Trade-off utamanya adalah menunda Split Bill ke Q4, tetapi spending analytics v2 tetap di Q3 karena komplemen strategis. Tidak ada blocker kritis.',
     recommendedAction: 'promote',
   },
   'qris-retry': {
@@ -638,7 +800,7 @@ export const MOCK_IMPACT_RESULTS: Record<string, ImpactAnalysisResult> = {
   },
 };
 
-export const MOCK_IMPACT_RESULT = MOCK_IMPACT_RESULTS['pocket-bca'];
+export const MOCK_IMPACT_RESULT = MOCK_IMPACT_RESULTS['pocket-rupiah'];
 
 @Injectable({ providedIn: 'root' })
 export class MockDataService {
