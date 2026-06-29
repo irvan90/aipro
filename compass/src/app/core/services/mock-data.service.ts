@@ -66,6 +66,27 @@ const scoredAt = new Date('2026-06-20T10:00:00');
 
 export const MOCK_BACKLOGS: Backlog[] = [
   {
+    id: 'identity-v2',
+    title: 'Identity Service v2',
+    description: 'Core backend service for Identity Management',
+    businessObjective: 'Provide centralized identity.',
+    targetUsers: 'All systems',
+    impactArea: ['Risk', 'Compliance'],
+    supportingEvidence: ['Business Request'],
+    estimatedImpact: 'Foundation for Biometric',
+    riskIfNotImplemented: 'Block biometric login',
+    effortEstimation: '20 story points',
+    targetQuarter: 'Q4',
+    dependency: [],
+    completenessScore: 80,
+    status: 'not_ready',
+    isEmergency: false,
+    createdBy: 'user-po-001',
+    createdAt: new Date('2026-06-15T10:00:00'),
+    updatedAt: new Date('2026-06-15T10:00:00'),
+    productId: 'prod-001',
+  },
+  {
     id: 'qris-retry',
     title: 'Improve QRIS Retry Flow',
     description: 'Retry otomatis dan recovery flow untuk transaksi QRIS yang gagal.',

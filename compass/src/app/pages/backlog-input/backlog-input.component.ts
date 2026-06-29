@@ -89,7 +89,7 @@ export class BacklogInputComponent implements OnInit {
           riskIfNotImplemented: backlog.riskIfNotImplemented,
           effortEstimation: backlog.effortEstimation,
           targetQuarter: backlog.targetQuarter,
-          dependency: [...backlog.dependency],
+          dependency: backlog.dependency ? [...backlog.dependency] : [],
           isEmergency: backlog.isEmergency,
           emergencyReason: backlog.emergencyReason ?? '',
         });

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, signal, computed } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal, computed, ElementRef, HostListener } from '@angular/core';
 import { NgClass, NgFor, NgIf, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Backlog } from '../../../core/models/backlog.model';
@@ -21,7 +21,16 @@ export class DependencyChipsComponent {
 
   allBacklogs = computed(() => backlogStore.all());
 
-  filteredBacklogs = computed(() => {
+  constructor(private el: ElementRef) {}
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    if (!this.el.nativeElement.contains(event.target)) {
+      this.showDropdown.set(false);
+    }
+  }
+
+  get filteredBacklogs(): Backlog[] {
     const q = this.searchQuery.toLowerCase();
     return this.allBacklogs()
       .filter(b =>
@@ -30,27 +39,42 @@ export class DependencyChipsComponent {
         (b.title.toLowerCase().includes(q) || !q)
       )
       .slice(0, 8);
-  });
+  }
 
-  selectedBacklogs = computed(() =>
-    this.selectedIds.map(id => this.allBacklogs().find(b => b.id === id)).filter(Boolean) as Backlog[]
-  );
+  get selectedBacklogs(): Backlog[] {
+    return this.selectedIds.map(id => this.allBacklogs().find(b => b.id === id)).filter(Boolean) as Backlog[];
+  }
 
   onSearch(): void {
     this.showDropdown.set(true);
   }
 
-  addDependency(backlog: Backlog): void {
+  addDependency(backlog: Backlog, event?: MouseEvent): void {
+    if (event) {
+      event.preventDefault(); // Prevent input blur
+    }
+    if (!this.selectedIds) {
+      this.selectedIds = [];
+    }
     if (!this.selectedIds.includes(backlog.id)) {
       const newIds = [...this.selectedIds, backlog.id];
+      this.selectedIds = newIds;
       this.selectedIdsChange.emit(newIds);
     }
     this.searchQuery = '';
     this.showDropdown.set(false);
   }
 
-  removeDependency(id: string): void {
-    this.selectedIdsChange.emit(this.selectedIds.filter(i => i !== id));
+  removeDependency(id: string, event?: MouseEvent): void {
+    if (event) {
+      event.preventDefault();
+    }
+    if (!this.selectedIds) {
+      this.selectedIds = [];
+    }
+    const newIds = this.selectedIds.filter(i => i !== id);
+    this.selectedIds = newIds;
+    this.selectedIdsChange.emit(newIds);
   }
 
   hasConflict(id: string): boolean {
@@ -59,6 +83,6 @@ export class DependencyChipsComponent {
   }
 
   getRank(backlog: Backlog): string {
-    return '-';
+    return backlog.targetQuarter;
   }
 }
