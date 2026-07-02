@@ -68,14 +68,19 @@ export class DashboardComponent {
 
     insights.push(
       {
-        type: 'dependency', eyebrow: 'Dependency monitor · Medium', title: 'Login Biometrik masih memiliki blocker',
-        body: 'Identity Service v2 belum siap. Memajukan delivery sekarang berisiko menambah dua sprint rework.',
-        source: 'Roadmap dependency graph', severity: 'medium', backlogId: 'login-biometric',
+        type: 'market', eyebrow: 'Industry News · Info', title: 'Tren: Personalisasi UI Meningkatkan Konversi',
+        body: 'Studi terbaru menunjukkan bahwa UI aplikasi banking yang dapat dipersonalisasi sesuai kebutuhan user mampu meningkatkan engagement secara signifikan.',
+        source: 'Fintech UX Report · Hari ini', severity: 'info', backlogId: 'pocket-rupiah',
       },
       {
-        type: 'performance', eyebrow: 'KPI monitor · Stable', title: 'QRIS Retry masuk fase pemantauan',
-        body: 'Backlog sudah delivered. AI akan memantau transaction success rate sebelum dampaknya dinyatakan tercapai.',
-        source: 'Product KPI context', severity: 'info', backlogId: 'qris-retry',
+        type: 'market', eyebrow: 'Productivity Insight · Medium', title: 'Adopsi AI Mempercepat Penyusunan Backlog',
+        body: 'Riset menunjukkan tim Scrum yang menggunakan AI assistance mengalami peningkatan kecepatan hingga 20% dalam penyusunan acceptance criteria.',
+        source: 'Agile Product Management Report · 1 hari yang lalu', severity: 'medium', backlogId: 'qris-retry',
+      },
+      {
+        type: 'market', eyebrow: 'Industry News · Info', title: 'Peningkatan Adopsi QRIS di Kalangan UMKM',
+        body: 'Laporan terbaru mencatat pertumbuhan volume transaksi QRIS lebih dari 130% tahun-ke-tahun, didorong oleh akselerasi digital UMKM.',
+        source: 'Berita Ekonomi Nasional · 5 jam yang lalu', severity: 'info', backlogId: 'qris-retry',
       }
     );
 

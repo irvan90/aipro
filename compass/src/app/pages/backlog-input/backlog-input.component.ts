@@ -1,6 +1,6 @@
 import { Component, computed, signal, OnInit } from '@angular/core';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
-import { NgClass, NgFor, NgIf, DecimalPipe } from '@angular/common';
+import { NgClass, NgFor, NgIf, DecimalPipe, DatePipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Backlog, ImpactArea, EvidenceType, Quarter, MyServiceData } from '../../core/models/backlog.model';
 import { backlogStore } from '../../core/stores/backlog.store';
@@ -14,7 +14,7 @@ import { AgentPipelineComponent } from '../../shared/components/agent-pipeline/a
 @Component({
   selector: 'app-backlog-input',
   standalone: true,
-  imports: [RouterLink, NgClass, NgFor, NgIf, DecimalPipe, FormsModule, ReactiveFormsModule, CompletenessBarComponent, DependencyChipsComponent, AgentPipelineComponent],
+  imports: [RouterLink, NgClass, NgFor, NgIf, DecimalPipe, DatePipe, FormsModule, ReactiveFormsModule, CompletenessBarComponent, DependencyChipsComponent, AgentPipelineComponent],
   templateUrl: './backlog-input.component.html',
   styleUrl: './backlog-input.component.scss',
 })
@@ -37,11 +37,31 @@ export class BacklogInputComponent implements OnInit {
     dependency: [] as string[],
     isEmergency: false,
     emergencyReason: '',
+    targetCakupanAdopsi: '',
+    skalaDampakBisnis: '',
+    estimasiKepercayaan: 80,
+    fleksibilitasPeluncuran: '',
+    riceImpact: 0,
   });
 
   impactAreas: ImpactArea[] = ['Revenue', 'CX', 'Compliance', 'Ops', 'Retention', 'Risk'];
   evidenceTypes: EvidenceType[] = ['Analytics', 'Complaint Data', 'Survey', 'Incident Report', 'Business Request'];
   quarters: Quarter[] = ['Q1', 'Q2', 'Q3', 'Q4', 'Unplanned'];
+
+  riceImpactOptions = [
+    { value: 0.25, label: '0.25x' },
+    { value: 0.5, label: '0.5x' },
+    { value: 1, label: '1x' },
+    { value: 2, label: '2x' },
+    { value: 3, label: '3x' },
+  ];
+
+  reachOptions: { value: string; label: string; score: number; normalizedLabel: (userType?: string) => string }[] = [
+    { value: '>50% TAM', label: '>50% TAM', score: 10, normalizedLabel: (ut) => ut === 'internal' ? 'Enterprise Wide (Skor 10)' : 'Massive Reach (Skor 10)' },
+    { value: '20-50% TAM', label: '20-50% TAM', score: 5, normalizedLabel: (ut) => ut === 'internal' ? 'Departmental (Skor 5)' : 'High Reach (Skor 5)' },
+    { value: '5-20% TAM', label: '5-20% TAM', score: 2, normalizedLabel: (ut) => ut === 'internal' ? 'Squad / Unit (Skor 2)' : 'Segmented (Skor 2)' },
+    { value: '<5% TAM', label: '<5% TAM', score: 1, normalizedLabel: (ut) => ut === 'internal' ? 'Micro / Niche (Skor 1)' : 'Niche Reach (Skor 1)' },
+  ];
 
   aiState = computed(() => backlogStore.aiLoadingState());
   currentStep = computed(() => backlogStore.aiLoadingStep());
@@ -92,6 +112,11 @@ export class BacklogInputComponent implements OnInit {
           dependency: backlog.dependency ? [...backlog.dependency] : [],
           isEmergency: backlog.isEmergency,
           emergencyReason: backlog.emergencyReason ?? '',
+          targetCakupanAdopsi: backlog.targetCakupanAdopsi ?? '',
+          skalaDampakBisnis: backlog.skalaDampakBisnis ?? '',
+          estimasiKepercayaan: backlog.estimasiKepercayaan ?? 80,
+          fleksibilitasPeluncuran: backlog.fleksibilitasPeluncuran ?? '',
+          riceImpact: backlog.riceImpact ?? 0,
         });
         backlogStore.selectedBacklogId.set(id);
       }
@@ -113,6 +138,11 @@ export class BacklogInputComponent implements OnInit {
     dependency: string[];
     isEmergency: boolean;
     emergencyReason: string;
+    targetCakupanAdopsi: string;
+    skalaDampakBisnis: string;
+    estimasiKepercayaan: number;
+    fleksibilitasPeluncuran: string;
+    riceImpact: number;
   }>): void {
     this.form.update(f => ({ ...f, ...updates }));
   }
@@ -196,6 +226,11 @@ export class BacklogInputComponent implements OnInit {
       dependency: f.dependency,
       isEmergency: f.isEmergency,
       emergencyReason: f.emergencyReason,
+      targetCakupanAdopsi: f.targetCakupanAdopsi || undefined,
+      skalaDampakBisnis: f.skalaDampakBisnis || undefined,
+      estimasiKepercayaan: f.estimasiKepercayaan,
+      fleksibilitasPeluncuran: f.fleksibilitasPeluncuran || undefined,
+      riceImpact: f.riceImpact || undefined,
       completenessScore: this.completenessScore(),
       status: this.original.status === 'new' ? 'draft' : this.original.status,
       updatedAt: new Date(),

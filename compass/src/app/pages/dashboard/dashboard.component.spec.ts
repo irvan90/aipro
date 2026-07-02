@@ -22,7 +22,7 @@ describe('DashboardComponent', () => {
     expect(element.textContent).toContain('Total Backlog');
     expect(element.textContent).toContain('On Progress');
     expect(element.textContent).toContain('Done');
-    expect(element.textContent).toContain('AI Daily Radar');
+    expect(element.textContent).toContain('Product & Productivity News');
     expect(element.querySelectorAll('.backlog-row')).toHaveLength(4);
   });
 });

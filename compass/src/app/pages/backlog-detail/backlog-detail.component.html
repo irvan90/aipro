@@ -24,11 +24,13 @@
           </div>
 
           <div class="flex items-center gap-2 flex-shrink-0">
-            <div class="px-4 py-3 rounded-xl bg-white/10 border border-white/10 min-w-28">
-              <div class="text-[9px] uppercase tracking-wider font-bold text-white/45">PO priority</div>
-              <div class="text-lg font-black mt-0.5">{{ item.initialPriority }}</div>
-            </div>
-            <span class="text-xl text-white/35">→</span>
+            @if (item.source !== 'myservice') {
+              <div class="px-4 py-3 rounded-xl bg-white/10 border border-white/10 min-w-28">
+                <div class="text-[9px] uppercase tracking-wider font-bold text-white/45">PO priority</div>
+                <div class="text-lg font-black mt-0.5">{{ item.initialPriority }}</div>
+              </div>
+              <span class="text-xl text-white/35">→</span>
+            }
             <div class="px-4 py-3 rounded-xl bg-amber-300 text-bca-navy min-w-32 shadow-sm">
               <div class="text-[9px] uppercase tracking-wider font-bold text-bca-navy/55">AIPRO</div>
               <div class="text-lg font-black mt-0.5">{{ item.aiResult?.moscow ?? 'Analyze first' }}</div>
@@ -37,204 +39,236 @@
         </div>
       </div>
 
-      <div class="grid lg:grid-cols-[0.9fr_1.35fr]">
-        <aside class="p-5 lg:p-6 bg-gray-50 border-b lg:border-b-0 lg:border-r border-gray-200">
-          <div class="text-[10px] uppercase tracking-[0.16em] font-bold text-gray-400">How AIPRO reached this</div>
-
-          @if (isAnalyzing()) {
-            <div class="mt-4 p-3 bg-white rounded-xl border border-blue-100 shadow-sm">
-              <app-agent-pipeline />
-            </div>
-          } @else {
-            <div class="mt-4 space-y-2">
-              <div class="signal-card">
-                <span class="signal-index">01</span>
-                <div><div class="signal-title">⚡ AIPRO Core Engine</div><p>Menerima Backlog Data Payload & Semantic Context Processing</p></div>
+      <div class="analysis-container" [class.analysis-container--streaming]="isAnalyzing()">
+        <!-- ═══ STREAMING STATE ═══ -->
+        @if (isAnalyzing()) {
+          <div class="agentic-stream" #logScroll (click)="fastForward()">
+            <div class="stream-header">
+              <div class="stream-header__left">
+                <div class="stream-header__dot"></div>
+                <span class="stream-header__title">AIPRO Analysis</span>
               </div>
-              <div class="signal-card">
-                <span class="signal-index">02</span>
-                <div><div class="signal-title">◎ AI Agent: Market Gap</div><p>Tren Kompetitor · Urgensi Pasar · Target Rilis</p></div>
-              </div>
-              <div class="signal-card">
-                <span class="signal-index">03</span>
-                <div><div class="signal-title">↗ AI Agent: Customer & Business Impact</div><p>Penyelarasan KPI Produk · Kuantifikasi Reach & Impact</p></div>
-              </div>
-              <div class="signal-card">
-                <span class="signal-index">04</span>
-                <div><div class="signal-title">◇ AI Agent: Feasibility & Risk</div><p>Kompleksitas Code · Regulasi BI/OJK · Proteksi Data</p></div>
-              </div>
-              <div class="signal-card">
-                <span class="signal-index">05</span>
-                <div><div class="signal-title">❖ Central Decision Engine</div><p>RICE Scoring · MoSCoW Categorization · Value-Effort Matrix</p></div>
-              </div>
-            </div>
-          }
-
-          <button (click)="runAnalysis()" [disabled]="isAnalyzing()"
-                  class="w-full mt-4 px-4 py-3 rounded-xl bg-bca-primary text-white text-sm font-bold hover:bg-bca-hover transition-colors disabled:opacity-50">
-            @if (isAnalyzing()) { Analyzing… } @else if (analysisComplete()) { Run analysis again } @else { Run full AIPRO analysis }
-          </button>
-          <p class="text-[10px] text-gray-400 leading-relaxed mt-2 text-center">Multi-Agent Architecture · 3 AI Agent paralel · keputusan tetap pada PO</p>
-        </aside>
-
-        <div class="p-5 lg:p-6">
-          @if (isAnalyzing()) {
-            <!-- LIVE THINKING LOG -->
-            <div class="thinking-log-container">
-              <div class="flex items-center gap-2 mb-3">
-                <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                <span class="text-[10px] uppercase tracking-[0.16em] font-bold text-gray-500">AIPRO Agent Thinking</span>
-                <span class="text-[10px] text-gray-400 ml-auto font-mono">{{ loadingStep() }}</span>
-              </div>
-              <div class="thinking-log-scroll bg-gray-950 rounded-xl p-4 font-mono text-[11px] leading-relaxed overflow-y-auto h-[420px] cursor-pointer" #logScroll (click)="fastForward()">
-                @for (entry of thinkingLogs(); track $index) {
-                  <div class="thinking-log-entry" [style.animation-delay]="$index * 30 + 'ms'">
-                    <span class="text-gray-600 mr-2 select-none">{{ ($index + 1).toString().padStart(2, '0') }}</span><!--
-                    -->@if (entry.startsWith('[RESULT]')) {
-                      <span class="text-green-400 font-bold">{{ entry }}</span>
-                    } @else if (entry.includes('⚠️') || entry.includes('WARNING')) {
-                      <span class="text-amber-400">{{ entry }}</span>
-                    } @else if (entry.startsWith('[Agent 1')) {
-                      <span class="text-blue-400">{{ entry }}</span>
-                    } @else if (entry.startsWith('[Agent 2')) {
-                      <span class="text-purple-400">{{ entry }}</span>
-                    } @else if (entry.startsWith('[Agent 3')) {
-                      <span class="text-cyan-400">{{ entry }}</span>
-                    } @else if (entry.startsWith('[Decision')) {
-                      <span class="text-amber-300">{{ entry }}</span>
-                    } @else if (entry.startsWith('[SYSTEM]') || entry.startsWith('[CORE]')) {
-                      <span class="text-gray-400">{{ entry }}</span>
-                    } @else {
-                      <span class="text-gray-300">{{ entry }}</span>
-                    }
-                  </div>
-                }
-                <div class="flex items-center gap-1 mt-1 text-gray-600">
-                  <span class="inline-block w-1.5 h-3.5 bg-gray-500 animate-blink"></span>
+              <div class="stream-header__right">
+                <span class="stream-header__phase">{{ loadingStep() }}</span>
+                <div class="stream-header__progress">
+                  <div class="stream-header__progress-bar" [style.width.%]="(completedAgentCount() / totalAgents) * 100"></div>
                 </div>
+                <span class="stream-header__count">{{ completedAgentCount() }}/{{ totalAgents }}</span>
               </div>
             </div>
-          } @else if (!analysisComplete()) {
-            <div class="analysis-placeholder min-h-80 flex flex-col justify-center items-center text-center rounded-2xl border border-dashed border-gray-200 bg-gray-50/60 p-8">
-              <div class="w-12 h-12 rounded-2xl bg-blue-50 text-bca-primary flex items-center justify-center text-xl font-black">↗</div>
-              <h2 class="text-lg font-bold text-gray-900 mt-4">AIPRO Siap Menganalisis Backlog</h2>
-              <p class="text-sm text-gray-500 mt-2 max-w-md">Jalankan analisis AI untuk mengevaluasi RICE score, memetakan market signal, dan mendapatkan rekomendasi prioritas roadmap yang optimal.</p>
+
+            <div class="stream-cards">
+              @for (card of agentCards(); track card.agent) {
+                <div class="agent-card" [class]="'agent-card--' + card.type"
+                     [class.agent-card--active]="card.status === 'active'"
+                     [class.agent-card--done]="card.status === 'done'"
+                     [class.agent-card--pending]="card.status === 'pending'"
+                     [class.agent-card--full]="card.agent === 'orchestrator' || card.agent === 'decision-engine'">
+                  <div class="agent-card__header">
+                    <div class="agent-card__icon-wrap"
+                         [class.agent-card__icon-wrap--active]="card.status === 'active'"
+                         [class.agent-card__icon-wrap--done]="card.status === 'done'">
+                      @if (card.status === 'done') {
+                        <svg class="agent-card__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                      } @else if (card.status === 'active') {
+                        <span class="agent-card__icon agent-card__icon--pulse">{{ card.icon }}</span>
+                      } @else {
+                        <span class="agent-card__icon">{{ card.icon }}</span>
+                      }
+                    </div>
+                    <div class="agent-card__title-group">
+                      <span class="agent-card__name">{{ card.label }}</span>
+                      <span class="agent-card__subtitle">{{ card.subtitle }}</span>
+                    </div>
+                    <div class="agent-card__badge"
+                         [class.agent-card__badge--active]="card.status === 'active'"
+                         [class.agent-card__badge--done]="card.status === 'done'">
+                      @if (card.status === 'active') {
+                        <span class="agent-card__badge-dot"></span>Analyzing
+                      } @else if (card.status === 'done') {
+                        Complete
+                      } @else {
+                        Pending
+                      }
+                    </div>
+                  </div>
+
+                  @if (card.steps.length > 0) {
+                    <div class="agent-card__body">
+                      @for (step of card.steps; track $index) {
+                        <div class="agent-step" [class]="'agent-step--' + step.type">
+                          <span class="agent-step__bullet"
+                                [class.agent-step__bullet--warning]="step.type === 'warning'"
+                                [class.agent-step__bullet--finding]="step.type === 'finding'"
+                                [class.agent-step__bullet--result]="step.type === 'result'"></span>
+                          <span class="agent-step__text"
+                                [class.agent-step__text--em]="step.type === 'finding' || step.type === 'result'"
+                                [class.agent-step__text--warn]="step.type === 'warning'"
+                                [class.agent-step__text--ok]="step.type === 'result'">{{ step.message }}</span>
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              }
             </div>
-          } @else if (analysisResult(); as result) {
-            <div class="result-reveal">
+
+            @if (thinkingLogs().length > 0) {
+              <div class="stream-footer">
+                <span class="stream-cursor"></span>
+                <span class="stream-hint">Click anywhere to skip animation</span>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- ═══ IDLE STATE (before analysis) ═══ -->
+        @if (!isAnalyzing() && !analysisComplete()) {
+          <div class="analysis-idle">
+            <div class="idle-header">
+              <span class="idle-header__title">AIPRO Analysis</span>
+              <span class="idle-header__badge">Multi-Agent Architecture</span>
+            </div>
+
+            <p class="idle-subtitle">5 specialized AI agents collaborate to evaluate your backlog</p>
+
+            <div class="idle-agents">
+              @for (agent of agentCardDefs; track agent.agent) {
+                <div class="idle-agent-card">
+                  <span class="idle-agent-card__icon">{{ agent.icon }}</span>
+                  <div class="idle-agent-card__info">
+                    <span class="idle-agent-card__name">{{ agent.label }}</span>
+                    <span class="idle-agent-card__role">{{ agent.subtitle }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <div class="idle-cta">
+              <button (click)="runAnalysis()"
+                      class="w-full px-4 py-3.5 rounded-xl bg-bca-primary text-white text-sm font-bold hover:bg-bca-hover transition-colors shadow-sm">
+                Run full AIPRO analysis
+              </button>
+              <p class="idle-cta__note">3 AI Agent berjalan paralel — keputusan tetap pada PO</p>
+            </div>
+          </div>
+        }
+
+        <!-- ═══ RESULT STATE (after analysis) ═══ -->
+        @if (analysisComplete() && analysisResult(); as result) {
+          <div class="analysis-result">
+            <!-- Result Header -->
+            <div class="result-header">
               <div class="flex items-center justify-between gap-3 flex-wrap">
                 <div>
                   <div class="text-[10px] uppercase tracking-[0.16em] font-bold text-bca-primary">Recommendation ready</div>
-                  <h2 class="text-xl font-black text-gray-950 mt-1">Promote this backlog.</h2>
+                  <h2 class="text-xl font-black text-gray-950 mt-1">Rekomendasi Final</h2>
+                  <p class="text-sm text-gray-600 leading-relaxed mt-2 max-w-2xl" [innerHTML]="getFinalRecommendation(result)"></p>
                 </div>
                 <div class="flex gap-2">
                   <div class="metric-pill"><span>MoSCoW</span><strong>{{ result.moscow }}</strong></div>
                   <div class="metric-pill"><span>Confidence</span><strong>{{ result.confidenceLevel }}%</strong></div>
                 </div>
               </div>
+            </div>
 
-              <!-- RICE Score Breakdown -->
-              @if (result.riceScore; as rice) {
-                <div class="mt-5 p-5 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200">
-                  <div class="flex items-center justify-between gap-3 flex-wrap">
-                    <div>
-                      <div class="text-[10px] uppercase tracking-[0.14em] font-bold text-blue-700">RICE Score</div>
-                      <div class="text-3xl font-black text-gray-950 mt-1">{{ rice.total | number:'1.0-0' }}</div>
-                    </div>
-                    <div class="text-[10px] text-blue-600/70 font-mono bg-white/70 px-3 py-1.5 rounded-lg border border-blue-100">
-                      (R × I × C%) / E
-                    </div>
+            <!-- RICE Score -->
+            @if (result.riceScore; as rice) {
+              <div class="rice-card">
+                <div class="flex items-center justify-between gap-3 flex-wrap">
+                  <div>
+                    <div class="text-[10px] uppercase tracking-[0.14em] font-bold text-blue-700">RICE Score</div>
+                    <div class="text-3xl font-black text-gray-950 mt-1">{{ rice.total | number:'1.0-1' }}</div>
                   </div>
-                  <div class="grid grid-cols-4 gap-2 mt-4">
-                    <div class="bg-white/80 rounded-xl p-3 text-center border border-blue-100">
-                      <div class="text-[9px] uppercase tracking-wider font-bold text-blue-500">Reach</div>
-                      <div class="text-lg font-black text-gray-900 mt-1">{{ rice.reach | number:'1.0-0' }}</div>
-                      <div class="text-[9px] text-gray-400 mt-0.5">users</div>
-                    </div>
-                    <div class="bg-white/80 rounded-xl p-3 text-center border border-blue-100">
-                      <div class="text-[9px] uppercase tracking-wider font-bold text-blue-500">Impact</div>
-                      <div class="text-lg font-black text-gray-900 mt-1">{{ rice.impact }}x</div>
-                      <div class="text-[9px] text-gray-400 mt-0.5">multiplier</div>
-                    </div>
-                    <div class="bg-white/80 rounded-xl p-3 text-center border border-blue-100">
-                      <div class="text-[9px] uppercase tracking-wider font-bold text-blue-500">Confidence</div>
-                      <div class="text-lg font-black text-gray-900 mt-1">{{ rice.confidence }}%</div>
-                      <div class="text-[9px] text-gray-400 mt-0.5">certainty</div>
-                    </div>
-                    <div class="bg-white/80 rounded-xl p-3 text-center border border-blue-100">
-                      <div class="text-[9px] uppercase tracking-wider font-bold text-blue-500">Effort</div>
-                      <div class="text-lg font-black text-gray-900 mt-1">{{ rice.effort }}</div>
-                      <div class="text-[9px] text-gray-400 mt-0.5">story pts</div>
-                    </div>
+                  <div class="text-[10px] text-blue-600/70 font-mono bg-white/70 px-3 py-1.5 rounded-lg border border-blue-100">
+                    (R × I × C%) / E
                   </div>
                 </div>
-              }
+                <div class="rice-stats-grid">
+                  <div class="rice-stat">
+                    <div class="rice-stat__label">Reach</div>
+                    <div class="rice-stat__value">{{ rice.reach }}/10</div>
+                    <div class="rice-stat__unit">{{ rice.reachLabel || 'skor normalisasi' }}</div>
+                  </div>
+                  <div class="rice-stat"><div class="rice-stat__label">Impact</div><div class="rice-stat__value">{{ rice.impact }}x</div><div class="rice-stat__unit">multiplier</div></div>
+                  <div class="rice-stat"><div class="rice-stat__label">Confidence</div><div class="rice-stat__value">{{ rice.confidence }}%</div><div class="rice-stat__unit">certainty</div></div>
+                  <div class="rice-stat"><div class="rice-stat__label">Effort</div><div class="rice-stat__value">{{ rice.effort }}</div><div class="rice-stat__unit">story pts</div></div>
+                </div>
+              </div>
+            }
 
-              <!-- Value-Effort Quadrant -->
+            <!-- Value-Effort + Opportunity -->
+            <div class="result-meta-grid">
               @if (getQuadrant(result); as quadrant) {
-                <div class="mt-3 p-4 rounded-xl border border-gray-200 bg-white flex items-center justify-between gap-3">
-                  <div>
-                    <div class="text-[9px] uppercase tracking-wider font-bold text-gray-500">Value-Effort Matrix</div>
-                    <div class="text-sm font-bold text-gray-900 mt-0.5">{{ quadrant.label }}</div>
-                    <div class="text-[10px] text-gray-400 mt-0.5">{{ quadrant.detail }}</div>
-                  </div>
-                  <div class="px-3 py-1.5 rounded-lg text-xs font-bold {{ quadrant.colorClass }}">
-                    {{ quadrant.label }}
-                  </div>
+                <div class="ve-card {{ quadrant.colorClass }}">
+                  <div class="text-[9px] uppercase tracking-wider font-bold opacity-70">Value-Effort Matrix</div>
+                  <div class="text-sm font-bold mt-0.5">{{ quadrant.label }}</div>
+                  <div class="text-[10px] opacity-60 mt-0.5">{{ quadrant.detail }}</div>
                 </div>
               }
 
               @if (item.opportunityAtRisk; as opportunity) {
-                <div class="mt-5 p-5 rounded-2xl bg-amber-50 border border-amber-200">
-                  <div class="text-[10px] uppercase tracking-[0.14em] font-bold text-amber-700">Opportunity at risk</div>
-                  <div class="text-2xl font-black text-gray-950 mt-1">{{ opportunity.label }}</div>
-                  <p class="text-xs text-gray-600 mt-2">{{ opportunity.formula }}</p>
-                  <div class="inline-flex items-center gap-1.5 mt-3 px-2.5 py-1 rounded-full bg-white border border-amber-200 text-[10px] font-bold text-amber-800">ⓘ Estimasi skenario demo—bukan kerugian aktual</div>
+                <div class="opportunity-card">
+                  <div class="text-[9px] uppercase tracking-wider font-bold text-amber-700">Opportunity at risk</div>
+                  <div class="text-base font-black text-gray-950 mt-0.5">{{ opportunity.label }}</div>
+                  <p class="text-[11px] text-gray-500 mt-1.5">{{ opportunity.formula }}</p>
+                  <div class="inline-flex items-center gap-1.5 mt-2 px-2.5 py-1 rounded-full bg-amber-100/60 border border-amber-200 text-[10px] font-bold text-amber-800">ⓘ Estimasi skenario demo</div>
                 </div>
               }
+            </div>
 
-              <div class="grid sm:grid-cols-3 gap-3 mt-5">
-                @for (finding of result.agentFindings; track finding.agentId) {
-                  <div class="p-4 rounded-xl border border-gray-200 bg-white">
-                    <div class="text-lg text-bca-primary font-black">{{ finding.icon }}</div>
-                    <div class="text-xs font-bold text-gray-900 mt-2">{{ finding.agentName }}</div>
-                    <p class="text-[11px] text-gray-500 leading-relaxed mt-1.5">{{ finding.summary }}</p>
+            <!-- Agent Findings -->
+            <div class="findings-grid">
+              @for (finding of result.agentFindings; track finding.agentId) {
+                <div class="finding-card">
+                  <div class="finding-card__icon">{{ finding.icon }}</div>
+                  <div class="finding-card__name">{{ finding.agentName }}</div>
+                  <p class="finding-card__summary">{{ finding.summary }}</p>
+                </div>
+              }
+            </div>
+
+            <!-- Evidence Toggle -->
+            <button (click)="showEvidence.set(!showEvidence())"
+                    class="w-full flex items-center justify-between mt-4 px-4 py-3 rounded-xl border border-gray-200 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors">
+              <span>Asumsi & evidence</span><span>{{ showEvidence() ? '−' : '+' }}</span>
+            </button>
+
+            @if (showEvidence()) {
+              <div class="mt-2 rounded-xl border border-gray-200 divide-y divide-gray-100 overflow-hidden">
+                @for (signal of item.evidenceSignals ?? []; track signal.label) {
+                  <div class="p-3.5 bg-gray-50/50">
+                    <div class="flex items-center justify-between gap-2">
+                      <span class="text-xs font-bold text-gray-800">{{ signal.label }}</span>
+                      <span class="text-[9px] text-gray-400">{{ signal.observedAt }}</span>
+                    </div>
+                    <p class="text-[11px] text-gray-500 mt-1">{{ signal.detail }}</p>
+                    <p class="text-[9px] text-gray-400 mt-1.5">Source: {{ signal.source }}</p>
                   </div>
                 }
+                @for (assumption of item.opportunityAtRisk?.assumptions ?? []; track assumption) {
+                  <div class="px-3.5 py-2.5 text-[11px] text-gray-600 bg-white">✓ {{ assumption }}</div>
+                }
               </div>
+            }
 
-              <button (click)="showEvidence.set(!showEvidence())"
-                      class="w-full flex items-center justify-between mt-4 px-4 py-3 rounded-xl border border-gray-200 text-xs font-bold text-gray-700 hover:bg-gray-50">
-                <span>Asumsi & evidence</span><span>{{ showEvidence() ? '−' : '+' }}</span>
-              </button>
-
-              @if (showEvidence()) {
-                <div class="mt-2 rounded-xl border border-gray-200 divide-y divide-gray-100 overflow-hidden">
-                  @for (signal of item.evidenceSignals ?? []; track signal.label) {
-                    <div class="p-3.5 bg-gray-50/50">
-                      <div class="flex items-center justify-between gap-2">
-                        <span class="text-xs font-bold text-gray-800">{{ signal.label }}</span>
-                        <span class="text-[9px] text-gray-400">{{ signal.observedAt }}</span>
-                      </div>
-                      <p class="text-[11px] text-gray-500 mt-1">{{ signal.detail }}</p>
-                      <p class="text-[9px] text-gray-400 mt-1.5">Source: {{ signal.source }}</p>
-                    </div>
-                  }
-                  @for (assumption of item.opportunityAtRisk?.assumptions ?? []; track assumption) {
-                    <div class="px-3.5 py-2.5 text-[11px] text-gray-600 bg-white">✓ {{ assumption }}</div>
-                  }
-                </div>
-              }
-
+            <!-- Actions -->
+            <div class="result-actions">
               @if (item.recommendation === 'promote') {
                 <button (click)="reviewRoadmap()"
-                        class="w-full mt-5 px-4 py-3.5 rounded-xl bg-bca-primary text-white text-sm font-bold hover:bg-bca-hover transition-colors shadow-sm">
+                        class="flex-1 px-4 py-3.5 rounded-xl bg-bca-primary text-white text-sm font-bold hover:bg-bca-hover transition-colors shadow-sm">
                   Promote to recommended roadmap →
                 </button>
               }
+              <button (click)="runAnalysis()"
+                      class="px-4 py-3.5 rounded-xl border border-gray-200 text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors">
+                Run analysis again
+              </button>
             </div>
-          }
-        </div>
+          </div>
+        }
       </div>
     </section>
   } @else {

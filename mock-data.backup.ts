@@ -66,27 +66,6 @@ const scoredAt = new Date('2026-06-20T10:00:00');
 
 export const MOCK_BACKLOGS: Backlog[] = [
   {
-    id: 'identity-v2',
-    title: 'Identity Service v2',
-    description: 'Core backend service for Identity Management',
-    businessObjective: 'Provide centralized identity.',
-    targetUsers: 'All systems',
-    impactArea: ['Risk', 'Compliance'],
-    supportingEvidence: ['Business Request'],
-    estimatedImpact: 'Foundation for Biometric',
-    riskIfNotImplemented: 'Block biometric login',
-    effortEstimation: '20 story points',
-    targetQuarter: 'Q4',
-    dependency: [],
-    completenessScore: 80,
-    status: 'not_ready',
-    isEmergency: false,
-    createdBy: 'user-po-001',
-    createdAt: new Date('2026-06-15T10:00:00'),
-    updatedAt: new Date('2026-06-15T10:00:00'),
-    productId: 'prod-001',
-  },
-  {
     id: 'qris-retry',
     title: 'Improve QRIS Retry Flow',
     description: 'Retry otomatis dan recovery flow untuk transaksi QRIS yang gagal.',
@@ -118,20 +97,6 @@ export const MOCK_BACKLOGS: Backlog[] = [
     createdBy: 'user-po-001',
     createdAt: new Date('2026-04-10'),
     updatedAt: scoredAt,
-        opportunityAtRisk: {
-      metric: 'retained_balance',
-        min: 10000000,
-        max: 50000000,
-        currency: 'IDR',
-        isDemoEstimate: true,
-      label: 'Potensi Penurunan Engagement',
-      formula: 'Berdasarkan data historis fitur serupa',
-      assumptions: ['Asumsi tren pasar berlanjut', 'Kompetitor belum rilis fitur serupa']
-    },
-    evidenceSignals: [
-      { type: 'business', label: 'Analisis internal', detail: 'Fitur direkomendasikan berdasarkan feedback user.', source: 'User Survey', observedAt: 'Bulan lalu' },
-      { type: 'customer', label: 'Data Penggunaan', detail: 'Tingkat drop-off pada tahap awal mencapai 15%.', source: 'Product Analytics', observedAt: 'Minggu lalu' }
-    ],
     productId: 'prod-001',
   },
   {
@@ -166,20 +131,6 @@ export const MOCK_BACKLOGS: Backlog[] = [
     createdBy: 'user-po-001',
     createdAt: new Date('2026-04-15'),
     updatedAt: scoredAt,
-        opportunityAtRisk: {
-      metric: 'retained_balance',
-        min: 10000000,
-        max: 50000000,
-        currency: 'IDR',
-        isDemoEstimate: true,
-      label: 'Potensi Penurunan Engagement',
-      formula: 'Berdasarkan data historis fitur serupa',
-      assumptions: ['Asumsi tren pasar berlanjut', 'Kompetitor belum rilis fitur serupa']
-    },
-    evidenceSignals: [
-      { type: 'business', label: 'Analisis internal', detail: 'Fitur direkomendasikan berdasarkan feedback user.', source: 'User Survey', observedAt: 'Bulan lalu' },
-      { type: 'customer', label: 'Data Penggunaan', detail: 'Tingkat drop-off pada tahap awal mencapai 15%.', source: 'Product Analytics', observedAt: 'Minggu lalu' }
-    ],
     productId: 'prod-001',
   },
   {
@@ -214,20 +165,6 @@ export const MOCK_BACKLOGS: Backlog[] = [
     createdBy: 'user-po-001',
     createdAt: new Date('2026-04-20'),
     updatedAt: scoredAt,
-        opportunityAtRisk: {
-      metric: 'retained_balance',
-        min: 10000000,
-        max: 50000000,
-        currency: 'IDR',
-        isDemoEstimate: true,
-      label: 'Potensi Penurunan Engagement',
-      formula: 'Berdasarkan data historis fitur serupa',
-      assumptions: ['Asumsi tren pasar berlanjut', 'Kompetitor belum rilis fitur serupa']
-    },
-    evidenceSignals: [
-      { type: 'business', label: 'Analisis internal', detail: 'Fitur direkomendasikan berdasarkan feedback user.', source: 'User Survey', observedAt: 'Bulan lalu' },
-      { type: 'customer', label: 'Data Penggunaan', detail: 'Tingkat drop-off pada tahap awal mencapai 15%.', source: 'Product Analytics', observedAt: 'Minggu lalu' }
-    ],
     productId: 'prod-001',
   },
   {
@@ -290,45 +227,23 @@ export const MOCK_BACKLOGS: Backlog[] = [
     isHistoricalScenario: true,
     source: 'myservice',
     myService: {
-      myServiceId: 'BPRO110026050',
-      projectName: 'Pocket Rupiah',
-      description: 'Membagi saldo ke beberapa kantong untuk budgeting harian dan tujuan menabung dalam satu aplikasi.',
-      product: 'myBCA Mobile',
-      businessProposalType: 'Feature',
+      myServiceId: 'MS-2026-0442',
+      businessProposalType: 'New Feature',
       featureInitiator: 'Divisi Digital Banking',
-      status: 'Approved',
-      category: 'Project',
-      projectNumber: 'PRO25103234',
+      category: 'Savings & Budgeting',
       epic: 'Money Management Experience',
-      timeToMarket: 'November-2026',
       timeToMarketMonths: 3,
       existingCondition: 'Saldo tabungan belum dapat dipisahkan berdasarkan tujuan atau kategori anggaran.',
       customerValue: 'Nasabah dapat mengatur budgeting dan tujuan menabung tanpa berpindah aplikasi.',
       functionalRequirement: 'Membuat, memberi nama, memindahkan saldo, dan memantau beberapa pocket.',
       concern: 'Perlu definisi perlakuan saldo dan mutasi antar-pocket.',
-      newActivityOrFeature: true,
-      testingMethodKLA: 'UAT, Integration Test, & Security Vulnerability Assessment by KLA',
-      pmoSubmission: 'planned',
-      picIT: 'Hendra Wijaya (S5) & Team',
-      ebiCode: 'R.200004',
-      userType: 'external',
+      userType: 'Nasabah individu aktif',
       valuegraphValue: 'High',
       valuegraphEffort: 'Medium',
       involvementDWH: false,
       involvementRPA: false,
-      networkIntranet: false,
-      networkInternet: true,
-      networkVsat: false,
-      networkVpnInternet: false,
-      networkVpnIpSec: false,
-      networkMpls: false,
       personalDataAccess: false,
-      ropaDpiaLink: '',
-      blueprintUrl: 'https://blueprint.internal.bca.co.id/docs/pocket-rupiah',
-      picBA: 'Eka Rahayu (S6)',
-      picBAManager: 'Sari Dewi (S3)',
-      picGSIT: 'Citra Dewi (S4)',
-      createdBy: 'u066684',
+      createdBy: 'Divisi Digital Banking',
       createdOn: new Date('2026-05-12T09:00:00'),
     },
     createdBy: 'user-po-001',
@@ -368,20 +283,6 @@ export const MOCK_BACKLOGS: Backlog[] = [
     createdBy: 'user-po-001',
     createdAt: new Date('2026-03-15'),
     updatedAt: scoredAt,
-        opportunityAtRisk: {
-      metric: 'retained_balance',
-        min: 10000000,
-        max: 50000000,
-        currency: 'IDR',
-        isDemoEstimate: true,
-      label: 'Potensi Penurunan Engagement',
-      formula: 'Berdasarkan data historis fitur serupa',
-      assumptions: ['Asumsi tren pasar berlanjut', 'Kompetitor belum rilis fitur serupa']
-    },
-    evidenceSignals: [
-      { type: 'business', label: 'Analisis internal', detail: 'Fitur direkomendasikan berdasarkan feedback user.', source: 'User Survey', observedAt: 'Bulan lalu' },
-      { type: 'customer', label: 'Data Penggunaan', detail: 'Tingkat drop-off pada tahap awal mencapai 15%.', source: 'Product Analytics', observedAt: 'Minggu lalu' }
-    ],
     productId: 'prod-001',
   },
   {
@@ -416,20 +317,6 @@ export const MOCK_BACKLOGS: Backlog[] = [
     createdBy: 'user-po-001',
     createdAt: new Date('2026-04-01'),
     updatedAt: scoredAt,
-        opportunityAtRisk: {
-      metric: 'retained_balance',
-        min: 10000000,
-        max: 50000000,
-        currency: 'IDR',
-        isDemoEstimate: true,
-      label: 'Potensi Penurunan Engagement',
-      formula: 'Berdasarkan data historis fitur serupa',
-      assumptions: ['Asumsi tren pasar berlanjut', 'Kompetitor belum rilis fitur serupa']
-    },
-    evidenceSignals: [
-      { type: 'business', label: 'Analisis internal', detail: 'Fitur direkomendasikan berdasarkan feedback user.', source: 'User Survey', observedAt: 'Bulan lalu' },
-      { type: 'customer', label: 'Data Penggunaan', detail: 'Tingkat drop-off pada tahap awal mencapai 15%.', source: 'Product Analytics', observedAt: 'Minggu lalu' }
-    ],
     productId: 'prod-001',
   },
   {
@@ -464,20 +351,6 @@ export const MOCK_BACKLOGS: Backlog[] = [
     createdBy: 'user-po-001',
     createdAt: new Date('2026-04-08'),
     updatedAt: scoredAt,
-        opportunityAtRisk: {
-      metric: 'retained_balance',
-        min: 10000000,
-        max: 50000000,
-        currency: 'IDR',
-        isDemoEstimate: true,
-      label: 'Potensi Penurunan Engagement',
-      formula: 'Berdasarkan data historis fitur serupa',
-      assumptions: ['Asumsi tren pasar berlanjut', 'Kompetitor belum rilis fitur serupa']
-    },
-    evidenceSignals: [
-      { type: 'business', label: 'Analisis internal', detail: 'Fitur direkomendasikan berdasarkan feedback user.', source: 'User Survey', observedAt: 'Bulan lalu' },
-      { type: 'customer', label: 'Data Penggunaan', detail: 'Tingkat drop-off pada tahap awal mencapai 15%.', source: 'Product Analytics', observedAt: 'Minggu lalu' }
-    ],
     productId: 'prod-001',
   },
   {
@@ -512,20 +385,6 @@ export const MOCK_BACKLOGS: Backlog[] = [
     createdBy: 'user-po-001',
     createdAt: new Date('2026-04-12'),
     updatedAt: scoredAt,
-        opportunityAtRisk: {
-      metric: 'retained_balance',
-        min: 10000000,
-        max: 50000000,
-        currency: 'IDR',
-        isDemoEstimate: true,
-      label: 'Potensi Penurunan Engagement',
-      formula: 'Berdasarkan data historis fitur serupa',
-      assumptions: ['Asumsi tren pasar berlanjut', 'Kompetitor belum rilis fitur serupa']
-    },
-    evidenceSignals: [
-      { type: 'business', label: 'Analisis internal', detail: 'Fitur direkomendasikan berdasarkan feedback user.', source: 'User Survey', observedAt: 'Bulan lalu' },
-      { type: 'customer', label: 'Data Penggunaan', detail: 'Tingkat drop-off pada tahap awal mencapai 15%.', source: 'Product Analytics', observedAt: 'Minggu lalu' }
-    ],
     productId: 'prod-001',
   },
   {
@@ -560,20 +419,6 @@ export const MOCK_BACKLOGS: Backlog[] = [
     createdBy: 'user-po-001',
     createdAt: new Date('2026-04-18'),
     updatedAt: scoredAt,
-        opportunityAtRisk: {
-      metric: 'retained_balance',
-        min: 10000000,
-        max: 50000000,
-        currency: 'IDR',
-        isDemoEstimate: true,
-      label: 'Potensi Penurunan Engagement',
-      formula: 'Berdasarkan data historis fitur serupa',
-      assumptions: ['Asumsi tren pasar berlanjut', 'Kompetitor belum rilis fitur serupa']
-    },
-    evidenceSignals: [
-      { type: 'business', label: 'Analisis internal', detail: 'Fitur direkomendasikan berdasarkan feedback user.', source: 'User Survey', observedAt: 'Bulan lalu' },
-      { type: 'customer', label: 'Data Penggunaan', detail: 'Tingkat drop-off pada tahap awal mencapai 15%.', source: 'Product Analytics', observedAt: 'Minggu lalu' }
-    ],
     productId: 'prod-001',
   },
   {
@@ -608,20 +453,6 @@ export const MOCK_BACKLOGS: Backlog[] = [
     createdBy: 'user-po-001',
     createdAt: new Date('2025-12-10'),
     updatedAt: new Date('2026-03-30'),
-        opportunityAtRisk: {
-      metric: 'retained_balance',
-        min: 10000000,
-        max: 50000000,
-        currency: 'IDR',
-        isDemoEstimate: true,
-      label: 'Potensi Penurunan Engagement',
-      formula: 'Berdasarkan data historis fitur serupa',
-      assumptions: ['Asumsi tren pasar berlanjut', 'Kompetitor belum rilis fitur serupa']
-    },
-    evidenceSignals: [
-      { type: 'business', label: 'Analisis internal', detail: 'Fitur direkomendasikan berdasarkan feedback user.', source: 'User Survey', observedAt: 'Bulan lalu' },
-      { type: 'customer', label: 'Data Penggunaan', detail: 'Tingkat drop-off pada tahap awal mencapai 15%.', source: 'Product Analytics', observedAt: 'Minggu lalu' }
-    ],
     productId: 'prod-001',
   },
   {
@@ -656,20 +487,6 @@ export const MOCK_BACKLOGS: Backlog[] = [
     createdBy: 'user-po-001',
     createdAt: new Date('2025-12-15'),
     updatedAt: new Date('2026-02-28'),
-        opportunityAtRisk: {
-      metric: 'retained_balance',
-        min: 10000000,
-        max: 50000000,
-        currency: 'IDR',
-        isDemoEstimate: true,
-      label: 'Potensi Penurunan Engagement',
-      formula: 'Berdasarkan data historis fitur serupa',
-      assumptions: ['Asumsi tren pasar berlanjut', 'Kompetitor belum rilis fitur serupa']
-    },
-    evidenceSignals: [
-      { type: 'business', label: 'Analisis internal', detail: 'Fitur direkomendasikan berdasarkan feedback user.', source: 'User Survey', observedAt: 'Bulan lalu' },
-      { type: 'customer', label: 'Data Penggunaan', detail: 'Tingkat drop-off pada tahap awal mencapai 15%.', source: 'Product Analytics', observedAt: 'Minggu lalu' }
-    ],
     productId: 'prod-001',
   },
 ];
@@ -687,30 +504,30 @@ export const MOCK_POCKET_RUPIAH_AI_RESULT: AIResult = {
   scoredAt,
   agentFindings: [
     {
-      agentId: 'market-agent',
-      agentName: 'Market Agent',
-      role: 'Trend Tracker · Context Adaptor · Loss Predictor · Schedule Guard',
+      agentId: 'market-gap',
+      agentName: 'Market Gap',
+      role: 'Membaca ekspektasi pasar',
       icon: '◎',
       summary: '⚠️ FITUR SUDAH ADA DI KOMPETITOR SEJAK LAMA: Jenius meluncurkan "Kantong" pada 2017 (9 tahun lalu), blu meluncurkan "Tabungan Tujuan" pada 2020 (6 tahun lalu). BCA tertinggal signifikan dalam kapabilitas money management.',
-      contributesTo: ['Market Urgency Score', 'Delay Risk', 'Timeline Flag'],
+      contributesTo: ['Impact', 'Confidence'],
       evidence: ['Jenius Kantong - launched 2017', 'blu Tabungan Tujuan - launched 2020', 'Public competitor references'],
     },
     {
-      agentId: 'value-agent',
-      agentName: 'Value Agent',
-      role: 'Context Matcher · Goal Aligner · Reach Estimator · Bias Calibrator',
+      agentId: 'business-impact',
+      agentName: 'Customer & Business Impact',
+      role: 'Mengestimasi opportunity at risk',
       icon: '↗',
       summary: 'Dengan asumsi konservatif, 6.400-12.000 pengguna dapat mempertahankan Rp9,6-30 miliar saldo. Risiko churn meningkat karena kompetitor sudah memiliki fitur ini bertahun-tahun.',
-      contributesTo: ['Reach Score', 'Impact Score', 'Alignment Product Rating'],
+      contributesTo: ['Reach', 'Impact'],
       evidence: ['Demo adoption and balance assumptions', 'Competitor feature maturity analysis'],
     },
     {
-      agentId: 'risk-agent',
-      agentName: 'Risk Agent',
-      role: 'Effort Estimator · Dependency Mapper · Compliance Guard',
+      agentId: 'feasibility-risk',
+      agentName: 'Feasibility & Risk',
+      role: 'Menilai effort dan trade-off',
       icon: '◇',
       summary: 'Effort moderat dan tidak memiliki blocker kritis; risiko terbesar adalah terlambat mengejar ekspektasi pasar yang sudah terbentuk sejak 2017.',
-      contributesTo: ['Effort Score', 'Compliance Rating', 'Dependency Map'],
+      contributesTo: ['Effort', 'MoSCoW'],
       evidence: ['Existing transfer and account capabilities', 'Market expectation established since 2017'],
     },
   ],
@@ -725,9 +542,9 @@ export interface AgentDefinition {
 }
 
 export const AGENT_DEFINITIONS: AgentDefinition[] = [
-  { id: 'market-agent', name: 'Market Agent', role: 'Trend Tracker · Context Adaptor · Loss Predictor · Schedule Guard', icon: '◎', steps: ['Mengekstrak Time to Market & PMO Status...', 'Menganalisis tren pasar & kompetitor...', 'Mengkalkulasi Market Urgency Score & Delay Risk...'] },
-  { id: 'value-agent', name: 'Value Agent', role: 'Context Matcher · Goal Aligner · Reach Estimator · Bias Calibrator', icon: '↗', steps: ['Menganalisis Function Req & User Type...', 'Mengekstrak Product Context...', 'Mengkalkulasi Reach, Impact & Alignment Score...'] },
-  { id: 'risk-agent', name: 'Risk Agent', role: 'Effort Estimator · Dependency Mapper · Compliance Guard', icon: '◇', steps: ['Memetakan Existing Condition & Concern...', 'Menganalisis Network & Scrum Team profile...', 'Mengkalkulasi Effort, Compliance & Dependency...'] },
+  { id: 'market-gap', name: 'Market Gap', role: 'Mendeteksi tren kompetitor & opportunity loss', icon: '◎', steps: ['Menganalisis tren kompetitor...', 'Mengevaluasi urgensi pasar...', 'Menentukan target rilis optimal...'] },
+  { id: 'business-impact', name: 'Customer & Business Impact', role: 'Memvalidasi keselarasan dengan OKR Produk', icon: '↗', steps: ['Menyelaraskan dengan KPI Produk...', 'Mengkuantifikasi Reach & Impact...'] },
+  { id: 'feasibility-risk', name: 'Feasibility & Risk', role: 'Memindai blocker & regulasi', icon: '◇', steps: ['Menganalisis kompleksitas code...', 'Memindai regulasi BI/OJK...', 'Memeriksa proteksi data...'] },
 ];
 
 export const MOCK_ACTIVITIES: Activity[] = [

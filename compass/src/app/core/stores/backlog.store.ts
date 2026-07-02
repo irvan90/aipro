@@ -1,5 +1,5 @@
 import { signal, computed, Signal } from '@angular/core';
-import { AgentFinding, AgentId, Backlog, BacklogStatus, Quarter, MoSCoW } from '../models/backlog.model';
+import { AgentFinding, AgentId, Backlog, BacklogStatus, Quarter, MoSCoW, ThinkingStep } from '../models/backlog.model';
 import { AILoadingState, AILoadingStep } from '../models/ui.model';
 import { MOCK_BACKLOGS } from '../services/mock-data.service';
 
@@ -26,7 +26,7 @@ const _aiLoadingState = signal<AILoadingState>('idle');
 const _aiLoadingStep = signal<AILoadingStep>('Reading backlog context...');
 const _currentAnalyzingId = signal<string | null>(null);
 const _selectedBacklogId = signal<string | null>(null);
-const _thinkingLogs = signal<string[]>([]);
+const _thinkingLogs = signal<ThinkingStep[]>([]);
 const _fastForwardAnalysis = signal(false);
 
 export const backlogStore = {

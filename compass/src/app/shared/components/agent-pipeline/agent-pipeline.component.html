@@ -1,83 +1,66 @@
-<div class="space-y-1">
+<div class="pipeline">
   <!-- Phase 1: AIPRO Core Engine -->
-  <div class="flex items-start gap-3 p-2.5 rounded-xl transition-colors"
-       [class.bg-bca-accent]="pipelinePhase() === 'core-engine'"
-       [class.opacity-50]="pipelinePhase() === 'idle'">
-    <div class="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-sm"
-         [class]="pipelinePhase() === 'core-engine' ? 'bg-white' : pipelinePhase() !== 'idle' ? 'bg-success-bg' : 'bg-gray-100'">
+  <div class="pipeline-row" [class.is-active]="pipelinePhase() === 'core-engine'" [class.is-done]="pipelinePhase() !== 'idle' && pipelinePhase() !== 'core-engine'"
+       [class.is-idle]="pipelinePhase() === 'idle'">
+    <div class="pipeline-dot" [class.pipeline-dot--active]="pipelinePhase() === 'core-engine'"
+         [class.pipeline-dot--done]="pipelinePhase() !== 'idle' && pipelinePhase() !== 'core-engine'">
       @if (pipelinePhase() !== 'idle' && pipelinePhase() !== 'core-engine') {
-        <svg class="w-3.5 h-3.5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
-        </svg>
+        <svg class="pipeline-check" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
       } @else if (pipelinePhase() === 'core-engine') {
-        <span class="animate-pulse">⚡</span>
+        <span class="pipeline-spinner">⚡</span>
       } @else {
-        <span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
+        <span class="pipeline-dot-empty"></span>
       }
     </div>
-    <div class="flex-1 min-w-0 pt-0.5">
-      <p class="text-xs font-semibold"
-         [class]="pipelinePhase() === 'idle' ? 'text-gray-400' : 'text-gray-800'">
-        ⚡ AIPRO Core Engine
-      </p>
+    <div class="pipeline-info">
+      <p class="pipeline-label" [class.text-gray-400]="pipelinePhase() === 'idle'">⚡ Orchestrator Agent</p>
       @if (pipelinePhase() === 'core-engine') {
-        <p class="text-[11px] text-bca-primary mt-0.5 animate-pulse">Memproses konteks...</p>
+        <p class="pipeline-hint active">Memproses backlog data payload…</p>
       } @else if (pipelinePhase() !== 'idle') {
-        <p class="text-[11px] text-gray-500 mt-0.5">Backlog Data Payload diterima</p>
+        <p class="pipeline-hint done">Data payload diterima</p>
       }
     </div>
   </div>
 
-  <!-- Phase 2: 3 AI Agents (parallel) -->
+  <!-- Phase 2: 3 AI Agents -->
   @for (agent of agentStates(); track agent.agentId) {
-    <div class="flex items-start gap-3 p-2.5 rounded-xl transition-colors"
-         [class.bg-bca-accent]="agent.status === 'running'"
-         [class.opacity-50]="agent.status === 'pending'">
-      <div class="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-sm"
-           [class]="agent.status === 'done' ? 'bg-success-bg' : agent.status === 'running' ? 'bg-white' : 'bg-gray-100'">
+    <div class="pipeline-row" [class.is-active]="agent.status === 'running'" [class.is-done]="agent.status === 'done'"
+         [class.is-idle]="agent.status === 'pending'">
+      <div class="pipeline-dot" [class.pipeline-dot--active]="agent.status === 'running'"
+           [class.pipeline-dot--done]="agent.status === 'done'">
         @if (agent.status === 'done') {
-          <svg class="w-3.5 h-3.5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
-          </svg>
+          <svg class="pipeline-check" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
         } @else if (agent.status === 'running') {
-          <span class="animate-pulse">{{ agent.icon }}</span>
+          <span class="pipeline-spinner">{{ agent.icon }}</span>
         } @else {
-          <span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
+          <span class="pipeline-dot-empty"></span>
         }
       </div>
-      <div class="flex-1 min-w-0 pt-0.5">
-        <p class="text-xs font-semibold"
-           [class]="agent.status === 'pending' ? 'text-gray-400' : 'text-gray-800'">
-          {{ agent.icon }} {{ agent.name }}
-        </p>
+      <div class="pipeline-info">
+        <p class="pipeline-label" [class.text-gray-400]="agent.status === 'pending'">{{ agent.icon }} {{ agent.name }}</p>
         @if (agent.status === 'running') {
-          <p class="text-[11px] text-bca-primary mt-0.5 animate-pulse">Menganalisa...</p>
+          <p class="pipeline-hint active">{{ agent.currentStep || 'Menganalisa…' }}</p>
         } @else if (agent.status === 'done' && agent.finding) {
-          <p class="text-[11px] text-gray-500 mt-0.5 leading-relaxed">{{ agent.finding.summary }}</p>
+          <p class="pipeline-hint done">{{ agent.finding.summary }}</p>
         }
       </div>
     </div>
   }
 
-  <!-- Phase 3: Central Decision Engine (LLM) -->
-  <div class="flex items-start gap-3 p-2.5 rounded-xl transition-colors"
-       [class.bg-bca-accent]="pipelinePhase() === 'decision-engine'"
-       [class.opacity-50]="pipelinePhase() === 'idle' || pipelinePhase() === 'core-engine' || pipelinePhase() === 'agents'">
-    <div class="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-sm"
-         [class]="pipelinePhase() === 'decision-engine' ? 'bg-white' : 'bg-gray-100'">
+  <!-- Phase 3: Central Decision Engine -->
+  <div class="pipeline-row" [class.is-active]="pipelinePhase() === 'decision-engine'"
+       [class.is-idle]="pipelinePhase() === 'idle' || pipelinePhase() === 'core-engine' || pipelinePhase() === 'agents'">
+    <div class="pipeline-dot" [class.pipeline-dot--active]="pipelinePhase() === 'decision-engine'">
       @if (pipelinePhase() === 'decision-engine') {
-        <span class="animate-pulse">❖</span>
+        <span class="pipeline-spinner">❖</span>
       } @else {
-        <span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
+        <span class="pipeline-dot-empty"></span>
       }
     </div>
-    <div class="flex-1 min-w-0 pt-0.5">
-      <p class="text-xs font-semibold"
-         [class]="pipelinePhase() === 'decision-engine' ? 'text-gray-800' : 'text-gray-400'">
-        ❖ Central Decision Engine
-      </p>
+    <div class="pipeline-info">
+      <p class="pipeline-label" [class.text-gray-400]="pipelinePhase() !== 'decision-engine'">❖ Central Decision Engine</p>
       @if (pipelinePhase() === 'decision-engine') {
-        <p class="text-[11px] text-bca-primary mt-0.5 animate-pulse">Mengkalkulasi rekomendasi...</p>
+        <p class="pipeline-hint active">Mengkalkulasi rekomendasi…</p>
       }
     </div>
   </div>
