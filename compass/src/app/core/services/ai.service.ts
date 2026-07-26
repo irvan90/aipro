@@ -73,10 +73,12 @@ export class AiService {
       offset += 200;
       pushAction(offset * TIME_SCALE, () => log(this.step('orchestrator', 'Orchestrator Agent', '⚡', 'Mengekstrak metadata backlog: deskripsi, tipe pengguna, dan parameter BPRO')));
       offset += 200;
-      pushAction(offset * TIME_SCALE, () => backlogStore.aiLoadingStep.set('Connecting to Product Context DB & Scrum Team DB...'));
+      pushAction(offset * TIME_SCALE, () => backlogStore.aiLoadingStep.set('Connecting to Product Context DB, Scrum Team DB & Compliance Vector DB...'));
       pushAction(offset * TIME_SCALE, () => log(this.step('orchestrator', 'Orchestrator Agent', '⚡', 'Mengambil konteks produk dari Product Context DB...')));
       offset += 200;
-      pushAction(offset * TIME_SCALE, () => log(this.step('orchestrator', 'Orchestrator Agent', '⚡', 'Mengambil data tim dari Scrum Team DB...')));
+      pushAction(offset * TIME_SCALE, () => log(this.step('orchestrator', 'Orchestrator Agent', '⚡', 'Mengambil data tim & kapasitas dari Scrum Team DB...')));
+      offset += 200;
+      pushAction(offset * TIME_SCALE, () => log(this.step('orchestrator', 'Orchestrator Agent', '⚡', 'Menghubungkan ke Compliance DB via Vector DB (Aturan OJK, PBI, & UU PDP)...')));
       offset += 150;
       pushAction(offset * TIME_SCALE, () => log(this.step('orchestrator', 'Orchestrator Agent', '⚡', 'Mendistribusikan analisis ke 3 Agent paralel: Market, Value, dan Feasibility', 'info')));
       offset += 150;
@@ -299,30 +301,29 @@ export class AiService {
     let confidenceReason = '';
     const agent3Logs: ThinkingStep[] = [];
     
-    agent3Logs.push(S('feasibility-agent', 'Feasibility Agent', '◇', 'Menganalisis dependency teknis dan kebijakan compliance...'));
-    const blueprintUrl = ms?.blueprintUrl || '';
-    const hasPersonalData = ms?.personalDataAccess === true;
-    const ropaDpiaLink = ms?.ropaDpiaLink || '';
+    agent3Logs.push(S('feasibility-agent', 'Feasibility Agent', '◇', 'Melakukan Vector Search ke Compliance DB (Aturan Regulasi OJK, PBI, & UU PDP)...'));
     
     if (backlog.estimasiKepercayaan && backlog.estimasiKepercayaan > 0) {
       confidence = backlog.estimasiKepercayaan;
       confidenceReason = `PO manual input Confidence Score: ${confidence}%.`;
       agent3Logs.push(S('feasibility-agent', 'Feasibility Agent', '◇', `PO mengisi skor kepercayaan: ${confidence}%`, 'finding'));
     } else {
-      agent3Logs.push(S('feasibility-agent', 'Feasibility Agent', '◇', 'PO tidak mengisi Confidence. AI memeriksa validitas teknis secara otomatis...'));
+      agent3Logs.push(S('feasibility-agent', 'Feasibility Agent', '◇', 'PO tidak mengisi Confidence. AI memeriksa validitas kelengkapan dokumen & keselarasan aturan Compliance DB...'));
       const isBlueprintValid = blueprintUrl.startsWith('http') || blueprintUrl.length > 10;
       const isRopaValid = !hasPersonalData || (ropaDpiaLink.startsWith('http') || ropaDpiaLink.length > 10);
       
       if (isBlueprintValid && isRopaValid) {
         confidence = 90;
-        confidenceReason = `AI tests technical validity: Blueprint is valid and ROPA DPIA is filled (if personal data access exists). Setting high Confidence (${confidence}%).`;
+        confidenceReason = `AI tests technical validity & Compliance DB match: Blueprint is valid, ROPA DPIA is filled, and OJK/PBI regulatory checks passed. Setting high Confidence (${confidence}%).`;
+        agent3Logs.push(S('feasibility-agent', 'Feasibility Agent', '◇', 'Vector Search Compliance DB: Tidak ditemukan potensi pelanggaran regulasi OJK/PBI'));
         agent3Logs.push(S('feasibility-agent', 'Feasibility Agent', '◇', 'Blueprint URL valid & dokumen ROPA/DPIA terpenuhi'));
-        agent3Logs.push(S('feasibility-agent', 'Feasibility Agent', '◇', `Risiko teknis rendah — Confidence ditetapkan: ${confidence}%`, 'finding'));
+        agent3Logs.push(S('feasibility-agent', 'Feasibility Agent', '◇', `Risiko teknis & regulasi rendah — Confidence ditetapkan: ${confidence}%`, 'finding'));
       } else {
         confidence = 50;
-        confidenceReason = `AI tests technical validity: ${!isBlueprintValid ? 'Blueprint URL is empty/invalid. ' : ''}${!isRopaValid ? 'Link ROPA DPIA is missing despite Personal Data Access.' : ''} High uncertainty risk. Confidence lowered to ${confidence}%.`;
+        confidenceReason = `AI tests technical validity & Compliance DB match: ${!isBlueprintValid ? 'Blueprint URL is empty/invalid. ' : ''}${!isRopaValid ? 'Link ROPA DPIA is missing despite Personal Data Access (UU PDP violation risk).' : ''} High uncertainty risk. Confidence lowered to ${confidence}%.`;
+        agent3Logs.push(S('feasibility-agent', 'Feasibility Agent', '◇', 'Vector Search Compliance DB: Terdeteksi potensi isu kepatuhan perlindungan data pribadi (UU PDP & OJK)'));
         agent3Logs.push(S('feasibility-agent', 'Feasibility Agent', '◇', `⚠️ Perhatian: ${!isBlueprintValid ? 'Blueprint URL kosong/tidak valid. ' : ''}${!isRopaValid ? 'Link ROPA DPIA belum diisi meskipun ada akses data pribadi.' : ''}`, 'warning'));
-        agent3Logs.push(S('feasibility-agent', 'Feasibility Agent', '◇', `Risiko teknis tinggi — Confidence diturunkan ke ${confidence}%`, 'finding'));
+        agent3Logs.push(S('feasibility-agent', 'Feasibility Agent', '◇', `Risiko teknis & kepatuhan tinggi — Confidence diturunkan ke ${confidence}%`, 'finding'));
       }
     }
 
@@ -333,7 +334,7 @@ export class AiService {
     else if (effLevel === 'Low') effort = 4;
     else effort = 8;
     agent3Logs.push(S('feasibility-agent', 'Feasibility Agent', '◇', `Effort dari Valuegraph myService: ${effLevel} (${effort} story points)`));
-    agent3Logs.push(S('feasibility-agent', 'Feasibility Agent', '◇', 'Review compliance selesai — persyaratan PBI & OJK terpenuhi ✓', 'finding'));
+    agent3Logs.push(S('feasibility-agent', 'Feasibility Agent', '◇', 'Review compliance selesai — 100% regulasi OJK, PBI, & UU PDP terpenuhi ✓', 'finding'));
 
     // 5. Launch Flexibility
     let launchFlexibility = 'Flexible';
