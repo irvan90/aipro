@@ -160,7 +160,7 @@ export interface AIResult {
   missingFields?: string[];
 }
 
-export type AgentId = 'market-agent' | 'value-agent' | 'risk-agent';
+export type AgentId = 'market-agent' | 'value-agent' | 'feasibility-agent';
 
 export interface AgentFinding {
   agentId: AgentId;

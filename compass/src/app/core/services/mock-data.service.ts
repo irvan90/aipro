@@ -705,8 +705,8 @@ export const MOCK_POCKET_RUPIAH_AI_RESULT: AIResult = {
       evidence: ['Demo adoption and balance assumptions', 'Competitor feature maturity analysis'],
     },
     {
-      agentId: 'risk-agent',
-      agentName: 'Risk Agent',
+      agentId: 'feasibility-agent',
+      agentName: 'Feasibility Agent',
       role: 'Effort Estimator · Dependency Mapper · Compliance Guard',
       icon: '◇',
       summary: 'Effort moderat dan tidak memiliki blocker kritis; risiko terbesar adalah terlambat mengejar ekspektasi pasar yang sudah terbentuk sejak 2017.',
@@ -727,7 +727,7 @@ export interface AgentDefinition {
 export const AGENT_DEFINITIONS: AgentDefinition[] = [
   { id: 'market-agent', name: 'Market Agent', role: 'Trend Tracker · Context Adaptor · Loss Predictor · Schedule Guard', icon: '◎', steps: ['Mengekstrak Time to Market & PMO Status...', 'Menganalisis tren pasar & kompetitor...', 'Mengkalkulasi Market Urgency Score & Delay Risk...'] },
   { id: 'value-agent', name: 'Value Agent', role: 'Context Matcher · Goal Aligner · Reach Estimator · Bias Calibrator', icon: '↗', steps: ['Menganalisis Function Req & User Type...', 'Mengekstrak Product Context...', 'Mengkalkulasi Reach, Impact & Alignment Score...'] },
-  { id: 'risk-agent', name: 'Risk Agent', role: 'Effort Estimator · Dependency Mapper · Compliance Guard', icon: '◇', steps: ['Memetakan Existing Condition & Concern...', 'Menganalisis Network & Scrum Team profile...', 'Mengkalkulasi Effort, Compliance & Dependency...'] },
+  { id: 'feasibility-agent', name: 'Feasibility Agent', role: 'Effort Estimator · Dependency Mapper · Compliance Guard', icon: '◇', steps: ['Memetakan Existing Condition & Concern...', 'Menganalisis Network & Scrum Team profile...', 'Mengkalkulasi Effort, Compliance & Dependency...'] },
 ];
 
 export const MOCK_ACTIVITIES: Activity[] = [

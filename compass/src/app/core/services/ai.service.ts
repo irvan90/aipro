@@ -40,11 +40,11 @@ export class AiService {
           evidence: [calculation.aiResult.reasoning.evidenceRefs[1] || 'User segment']
         },
         {
-          agentId: 'risk-agent',
-          agentName: 'Risk Agent',
+          agentId: 'feasibility-agent',
+          agentName: 'Feasibility Agent',
           role: 'Effort Estimator · Dependency Mapper · Compliance Guard',
           icon: '◇',
-          summary: calculation.agent3Logs[calculation.agent3Logs.length - 1]?.message || 'Risk Agent analysis completed.',
+          summary: calculation.agent3Logs[calculation.agent3Logs.length - 1]?.message || 'Feasibility Agent analysis completed.',
           contributesTo: ['Effort Score', 'Compliance Rating', 'Dependency Map'],
           evidence: [calculation.aiResult.reasoning.evidenceRefs[2] || 'Technical docs']
         }
@@ -78,7 +78,7 @@ export class AiService {
       offset += 200;
       pushAction(offset * TIME_SCALE, () => log(this.step('orchestrator', 'Orchestrator Agent', '⚡', 'Mengambil data tim dari Scrum Team DB...')));
       offset += 150;
-      pushAction(offset * TIME_SCALE, () => log(this.step('orchestrator', 'Orchestrator Agent', '⚡', 'Mendistribusikan analisis ke 3 Agent paralel: Market, Value, dan Risk', 'info')));
+      pushAction(offset * TIME_SCALE, () => log(this.step('orchestrator', 'Orchestrator Agent', '⚡', 'Mendistribusikan analisis ke 3 Agent paralel: Market, Value, dan Feasibility', 'info')));
       offset += 150;
 
       // ── Phase 2: Fan-out — 3 AI Agents run in PARALLEL ──
@@ -91,7 +91,7 @@ export class AiService {
           ));
         });
       });
-      pushAction(parallelStart * TIME_SCALE, () => backlogStore.aiLoadingStep.set('3 AI Agents (Market · Value · Risk) berjalan paralel...'));
+      pushAction(parallelStart * TIME_SCALE, () => backlogStore.aiLoadingStep.set('3 AI Agents (Market · Value · Feasibility) berjalan paralel...'));
 
       let agentLogOffset = parallelStart + 150;
 
@@ -299,7 +299,7 @@ export class AiService {
     let confidenceReason = '';
     const agent3Logs: ThinkingStep[] = [];
     
-    agent3Logs.push(S('risk-agent', 'Risk Agent', '◇', 'Menganalisis dependency teknis dan kebijakan compliance...'));
+    agent3Logs.push(S('feasibility-agent', 'Feasibility Agent', '◇', 'Menganalisis dependency teknis dan kebijakan compliance...'));
     const blueprintUrl = ms?.blueprintUrl || '';
     const hasPersonalData = ms?.personalDataAccess === true;
     const ropaDpiaLink = ms?.ropaDpiaLink || '';
@@ -307,22 +307,22 @@ export class AiService {
     if (backlog.estimasiKepercayaan && backlog.estimasiKepercayaan > 0) {
       confidence = backlog.estimasiKepercayaan;
       confidenceReason = `PO manual input Confidence Score: ${confidence}%.`;
-      agent3Logs.push(S('risk-agent', 'Risk Agent', '◇', `PO mengisi skor kepercayaan: ${confidence}%`, 'finding'));
+      agent3Logs.push(S('feasibility-agent', 'Feasibility Agent', '◇', `PO mengisi skor kepercayaan: ${confidence}%`, 'finding'));
     } else {
-      agent3Logs.push(S('risk-agent', 'Risk Agent', '◇', 'PO tidak mengisi Confidence. AI memeriksa validitas teknis secara otomatis...'));
+      agent3Logs.push(S('feasibility-agent', 'Feasibility Agent', '◇', 'PO tidak mengisi Confidence. AI memeriksa validitas teknis secara otomatis...'));
       const isBlueprintValid = blueprintUrl.startsWith('http') || blueprintUrl.length > 10;
       const isRopaValid = !hasPersonalData || (ropaDpiaLink.startsWith('http') || ropaDpiaLink.length > 10);
       
       if (isBlueprintValid && isRopaValid) {
         confidence = 90;
         confidenceReason = `AI tests technical validity: Blueprint is valid and ROPA DPIA is filled (if personal data access exists). Setting high Confidence (${confidence}%).`;
-        agent3Logs.push(S('risk-agent', 'Risk Agent', '◇', 'Blueprint URL valid & dokumen ROPA/DPIA terpenuhi'));
-        agent3Logs.push(S('risk-agent', 'Risk Agent', '◇', `Risiko teknis rendah — Confidence ditetapkan: ${confidence}%`, 'finding'));
+        agent3Logs.push(S('feasibility-agent', 'Feasibility Agent', '◇', 'Blueprint URL valid & dokumen ROPA/DPIA terpenuhi'));
+        agent3Logs.push(S('feasibility-agent', 'Feasibility Agent', '◇', `Risiko teknis rendah — Confidence ditetapkan: ${confidence}%`, 'finding'));
       } else {
         confidence = 50;
         confidenceReason = `AI tests technical validity: ${!isBlueprintValid ? 'Blueprint URL is empty/invalid. ' : ''}${!isRopaValid ? 'Link ROPA DPIA is missing despite Personal Data Access.' : ''} High uncertainty risk. Confidence lowered to ${confidence}%.`;
-        agent3Logs.push(S('risk-agent', 'Risk Agent', '◇', `⚠️ Perhatian: ${!isBlueprintValid ? 'Blueprint URL kosong/tidak valid. ' : ''}${!isRopaValid ? 'Link ROPA DPIA belum diisi meskipun ada akses data pribadi.' : ''}`, 'warning'));
-        agent3Logs.push(S('risk-agent', 'Risk Agent', '◇', `Risiko teknis tinggi — Confidence diturunkan ke ${confidence}%`, 'finding'));
+        agent3Logs.push(S('feasibility-agent', 'Feasibility Agent', '◇', `⚠️ Perhatian: ${!isBlueprintValid ? 'Blueprint URL kosong/tidak valid. ' : ''}${!isRopaValid ? 'Link ROPA DPIA belum diisi meskipun ada akses data pribadi.' : ''}`, 'warning'));
+        agent3Logs.push(S('feasibility-agent', 'Feasibility Agent', '◇', `Risiko teknis tinggi — Confidence diturunkan ke ${confidence}%`, 'finding'));
       }
     }
 
@@ -332,8 +332,8 @@ export class AiService {
     if (effLevel === 'High') effort = 13;
     else if (effLevel === 'Low') effort = 4;
     else effort = 8;
-    agent3Logs.push(S('risk-agent', 'Risk Agent', '◇', `Effort dari Valuegraph myService: ${effLevel} (${effort} story points)`));
-    agent3Logs.push(S('risk-agent', 'Risk Agent', '◇', 'Review compliance selesai — persyaratan PBI & OJK terpenuhi ✓', 'finding'));
+    agent3Logs.push(S('feasibility-agent', 'Feasibility Agent', '◇', `Effort dari Valuegraph myService: ${effLevel} (${effort} story points)`));
+    agent3Logs.push(S('feasibility-agent', 'Feasibility Agent', '◇', 'Review compliance selesai — persyaratan PBI & OJK terpenuhi ✓', 'finding'));
 
     // 5. Launch Flexibility
     let launchFlexibility = 'Flexible';

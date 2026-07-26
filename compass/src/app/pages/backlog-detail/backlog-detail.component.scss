@@ -1,4 +1,4 @@
-﻿// ─── Analysis Container (single column, all states) ───
+// ─── Analysis Container (single column, all states) ───
 
 .analysis-container {
   padding: 1.5rem;
@@ -270,7 +270,8 @@
   &--orchestrator { border-left: 3px solid #93c5fd; }
   &--market { border-left: 3px solid #6ee7b7; }
   &--value { border-left: 3px solid #93c5fd; }
-  &--risk { border-left: 3px solid #c4b5fd; }
+  &--risk,
+  &--feasibility { border-left: 3px solid #c4b5fd; }
   &--decision { border-left: 3px solid #fcd34d; }
 
   &--full {

@@ -29,7 +29,7 @@ const CARD_DEFS: AgentCardDef[] = [
   { agent: 'orchestrator', label: 'Orchestrator Agent', subtitle: 'Menerima & memproses backlog data', icon: '⚡', type: 'orchestrator' },
   { agent: 'market-agent', label: 'Market Agent', subtitle: 'Analisis tren pasar & kompetitor', icon: '◎', type: 'market' },
   { agent: 'value-agent', label: 'Value Agent', subtitle: 'Kalkulasi jangkauan & dampak bisnis', icon: '↗', type: 'value' },
-  { agent: 'risk-agent', label: 'Risk Agent', subtitle: 'Estimasi effort & compliance', icon: '◇', type: 'risk' },
+  { agent: 'feasibility-agent', label: 'Feasibility Agent', subtitle: 'Estimasi effort & compliance', icon: '◇', type: 'feasibility' },
   { agent: 'decision-engine', label: 'Central Decision Engine', subtitle: 'RICE Scoring & rekomendasi akhir', icon: '❖', type: 'decision' },
 ];
 
@@ -164,7 +164,7 @@ export class BacklogDetailComponent implements OnInit, AfterViewChecked {
       const steps = logs.filter(l => l.agent === cfg.agent);
       let status: CardStatus = 'pending';
 
-      if (cfg.agent === 'market-agent' || cfg.agent === 'value-agent' || cfg.agent === 'risk-agent') {
+      if (cfg.agent === 'market-agent' || cfg.agent === 'value-agent' || cfg.agent === 'feasibility-agent') {
         const state = states.find(s => s.agentId === cfg.agent);
         if (state?.status === 'running') status = 'active';
         else if (state?.status === 'done') status = 'done';
