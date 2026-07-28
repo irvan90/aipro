@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { ImpactAnalysisResult } from '../models/ai-result.model';
 import { AgentFinding, AIResult, Backlog, Quarter, RoadmapLane, MoSCoW, RICEScore, ThinkingStep, ThinkingAgent, ThinkingType } from '../models/backlog.model';
 import { backlogStore } from '../stores/backlog.store';
-import { AGENT_DEFINITIONS, MOCK_IMPACT_RESULTS, MOCK_POCKET_RUPIAH_AI_RESULT } from './mock-data.service';
+import { AGENT_DEFINITIONS, MOCK_IMPACT_RESULTS, MOCK_POCKET_RUPIAH_AI_RESULT, getDetailedImpactResult } from './mock-data.service';
 
 const STEP_MS = 400;
 
@@ -217,8 +217,9 @@ export class AiService {
         setTimeout(() => backlogStore.aiLoadingStep.set('Menghitung trade-off roadmap'), 450),
         setTimeout(() => backlogStore.aiLoadingStep.set('Menyiapkan rekomendasi untuk PO'), 900),
         setTimeout(() => {
-          const source = MOCK_IMPACT_RESULTS[backlogId] ?? MOCK_IMPACT_RESULTS['pocket-bca'];
-          observer.next({ ...source, backlogId, targetLane });
+          const item = backlogStore.all().find(b => b.id === backlogId);
+          const result = getDetailedImpactResult(backlogId, targetLane, item);
+          observer.next(result);
           observer.complete();
         }, 1350),
       ];

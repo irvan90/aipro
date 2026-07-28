@@ -8,7 +8,7 @@ export interface ImpactAnalysisResult {
   kpiImpacts: KPIImpact[];
   estimatedDelayInSprints: number;
   aiRecommendation: string;
-  recommendedAction: 'promote' | 'keep' | 'defer';
+  recommendedAction: 'promote' | 'keep' | 'defer' | 'reject';
 }
 
 export interface RoadmapImpact {

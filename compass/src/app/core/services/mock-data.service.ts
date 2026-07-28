@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Activity } from '../models/activity.model';
 import { ImpactAnalysisResult } from '../models/ai-result.model';
-import { AgentId, AgentFinding, AIResult, Backlog } from '../models/backlog.model';
+import { AgentId, AgentFinding, AIResult, Backlog, Quarter, RoadmapLane } from '../models/backlog.model';
 import { Notification } from '../models/notification.model';
 import { Product } from '../models/product.model';
 import { User } from '../models/user.model';
@@ -844,38 +844,346 @@ export const MOCK_NOTIFICATIONS: Notification[] = [
   },
 ];
 
+export function getDetailedImpactResult(backlogId: string, targetLane: RoadmapLane | Quarter, item?: Backlog): ImpactAnalysisResult {
+  const laneStr = String(targetLane);
+
+  switch (backlogId) {
+    case 'pocket-rupiah':
+      if (laneStr === 'Q3') {
+        return {
+          backlogId,
+          targetLane,
+          roadmapImpacts: [
+            { affectedBacklogId: 'split-bill', affectedBacklogTitle: 'Split Bill', description: 'Bergeser dari Q3 ke Q4 untuk membebaskan 9 story points.', severity: 'medium' },
+          ],
+          dependencyImpacts: [],
+          kpiImpacts: [
+            { kpi: 'Retained Balance', description: 'Mempertahankan potensi saldo Rp9,6-30 miliar dari risiko churn ke kompetitor.', severity: 'high' },
+            { kpi: 'Competitive Gap', description: '⚠️ Menutup ketertinggalan 6-9 tahun dari Jenius Kantong (2017) & blu Tabungan Tujuan (2020).', severity: 'high' },
+          ],
+          estimatedDelayInSprints: 0,
+          aiRecommendation: '⚠️ PROMOSIKAN SEGERA KE Q3: Memindahkan Pocket Rupiah ke Q3 sangat direkomendasikan. Ini menutup gap kompetitor kritis 6-9 tahun dan mempertahankan estimasi Rp9,6-30 miliar retained balance nasabah. Trade-off: Split Bill digeser ke Q4.',
+          recommendedAction: 'promote',
+        };
+      } else if (laneStr === 'Q2') {
+        return {
+          backlogId,
+          targetLane,
+          roadmapImpacts: [
+            { affectedBacklogId: 'qris-retry', affectedBacklogTitle: 'QRIS Auto Retry', description: 'Terancam bergeser dari Q2 karena overcapacity tim.', severity: 'high' },
+          ],
+          dependencyImpacts: [],
+          kpiImpacts: [
+            { kpi: 'Capacity Overload', description: 'Beban sprint Q2 melonjak hingga 160%, berisiko menyebabkan bug rilis.', severity: 'high' },
+          ],
+          estimatedDelayInSprints: 1,
+          aiRecommendation: '⛔ TIDAK DIREKOMENDASIKAN KE Q2: Q2 sudah mencapai batas kapasitas maksimum (15 story points dari QRIS Retry & Recurring Transfer). Rekomendasi terbaik adalah Q3.',
+          recommendedAction: 'reject',
+        };
+      } else {
+        return {
+          backlogId,
+          targetLane,
+          roadmapImpacts: [],
+          dependencyImpacts: [],
+          kpiImpacts: [
+            { kpi: 'Market Opportunity Loss', description: 'Risiko nasabah memindahkan aktivitas budgeting & saldo simpanan ke aplikasi kompetitor.', severity: 'high' },
+          ],
+          estimatedDelayInSprints: 0,
+          aiRecommendation: '⚠️ PENUNDAAN BERISIKO CHURN: Menahan Pocket Rupiah tetap di Q4 memperlebar risiko kehilangan nasabah muda yang membutuhkan fitur budgeting ke Jenius dan blu. Disarankan dipromosikan ke Q3.',
+          recommendedAction: 'defer',
+        };
+      }
+
+    case 'qris-retry':
+      if (laneStr === 'Q2') {
+        return {
+          backlogId,
+          targetLane,
+          roadmapImpacts: [],
+          dependencyImpacts: [],
+          kpiImpacts: [
+            { kpi: 'Transaction Success Rate', description: 'Memulihkan 8.500+ transaksi QRIS gagal bulanan (potensi nilai Rp1,2 miliar/bulan).', severity: 'high' },
+          ],
+          estimatedDelayInSprints: 0,
+          aiRecommendation: '✅ PERTAHANKAN DI Q2: QRIS Auto Retry memiliki dampak langsung pada perbaikan transaksi gagal bulanan. Pertahankan rilis di Q2.',
+          recommendedAction: 'keep',
+        };
+      } else {
+        return {
+          backlogId,
+          targetLane,
+          roadmapImpacts: [
+            { affectedBacklogId: 'recurring-transfer', affectedBacklogTitle: 'Recurring Transfer', description: 'Kapasitas Q3/Q4 menjadi padat dengan akumulasi backlog transaksi.', severity: 'medium' },
+          ],
+          dependencyImpacts: [],
+          kpiImpacts: [
+            { kpi: 'Transaction Failure Loss', description: 'Kerugian Rp1,2 miliar/bulan dari transaksi QRIS gagal akan terus berlanjut hingga kuartal berikutnya.', severity: 'high' },
+            { kpi: 'Call Center Volume', description: 'Komplain transaksi menggantung di Halo BCA tidak dapat diredam di Q2.', severity: 'high' },
+          ],
+          estimatedDelayInSprints: 2,
+          aiRecommendation: `⚠️ PENUNDAAN BERISIKO HIGH: Memindahkan QRIS Auto Retry dari Q2 ke ${laneStr} menunda pemulihan 8.500+ transaksi gagal bulanan. Disarankan tetap dieksekusi di Q2.`,
+          recommendedAction: 'defer',
+        };
+      }
+
+    case 'recurring-transfer':
+      if (laneStr === 'Q2') {
+        return {
+          backlogId,
+          targetLane,
+          roadmapImpacts: [],
+          dependencyImpacts: [],
+          kpiImpacts: [
+            { kpi: 'Routine Transaction Volume', description: 'Mendorong retensi transaksi rutin untuk 1,8 juta nasabah eligible.', severity: 'high' },
+          ],
+          estimatedDelayInSprints: 0,
+          aiRecommendation: '✅ PERTAHANKAN DI Q2: Recurring Transfer adalah komitmen retensi transaksi digital penting. Tetap jalankan di Q2.',
+          recommendedAction: 'keep',
+        };
+      } else {
+        return {
+          backlogId,
+          targetLane,
+          roadmapImpacts: [
+            { affectedBacklogId: 'spending-analytics-v2', affectedBacklogTitle: 'Spending Analytics v2', description: 'Menambah beban sprint di kuartal target.', severity: 'medium' },
+          ],
+          dependencyImpacts: [],
+          kpiImpacts: [
+            { kpi: 'Digital Retention Rate', description: 'Penundaan 3 bulan adopsi transaksi rutin berkala nasabah payroll/investasi.', severity: 'medium' },
+          ],
+          estimatedDelayInSprints: 1,
+          aiRecommendation: `⚠️ PENUNDAAN RETENSI: Memindahkan Recurring Transfer ke ${laneStr} membebaskan 7 pts di Q2, namun menunda otomasi transaksi rutin nasabah. Evaluasi kapasitas tim.`,
+          recommendedAction: 'defer',
+        };
+      }
+
+    case 'login-biometric':
+      if (laneStr === 'Q2') {
+        return {
+          backlogId,
+          targetLane,
+          roadmapImpacts: [],
+          dependencyImpacts: [
+            { dependencyId: 'identity-v2', dependencyTitle: 'Identity Service v2', description: 'BLOCKER KRITIS: Core API Auth v2 belum rilis di Q2. Integrasi biometrik akan gagal build.', isBlocker: true },
+          ],
+          kpiImpacts: [
+            { kpi: 'System Stability', description: 'Risiko kegagalan integrasi gateway autentikasi.', severity: 'high' },
+          ],
+          estimatedDelayInSprints: 2,
+          aiRecommendation: '⛔ TERHALANG DEPENDENCY KRITIS: Biometric Login v2 TIDAK BISA dipindahkan ke Q2 karena core service "Identity Service v2" belum siap dan baru dijadwalkan selesai di akhir Q3.',
+          recommendedAction: 'reject',
+        };
+      } else if (laneStr === 'Q3') {
+        return {
+          backlogId,
+          targetLane,
+          roadmapImpacts: [],
+          dependencyImpacts: [
+            { dependencyId: 'identity-v2', dependencyTitle: 'Identity Service v2', description: 'Dependency aktif: Perlu koordinasi rilis paralel dengan Tim Core Platform di akhir Q3.', isBlocker: false },
+          ],
+          kpiImpacts: [
+            { kpi: 'Login Friction Reduction', description: 'Mengurangi waktu login nasabah dari 8 detik ke 1,2 detik.', severity: 'high' },
+          ],
+          estimatedDelayInSprints: 0,
+          aiRecommendation: '⚠️ RISIKO DEPENDENCY SLIP: Rilis di Q3 dapat dilakukan jika Identity Service v2 tepat waktu di akhir Q3. Jika ada keterlambatan 1 sprint, fitur ini berisiko bergeser ke Q4.',
+          recommendedAction: 'keep',
+        };
+      } else {
+        return {
+          backlogId,
+          targetLane,
+          roadmapImpacts: [],
+          dependencyImpacts: [
+            { dependencyId: 'identity-v2', dependencyTitle: 'Identity Service v2', description: 'Identity Service v2 diprediksi sudah 100% stable di Q3.', isBlocker: false },
+          ],
+          kpiImpacts: [
+            { kpi: 'Authentication Security', description: 'Peningkatan keamanan login tanpa menambah kecemasan lupa PIN.', severity: 'medium' },
+          ],
+          estimatedDelayInSprints: 0,
+          aiRecommendation: '✅ TIMING PALING AMAN (Q4): Identity Service v2 diprediksi rampung penuh di Q3, menjadikan Q4 timing paling stabil dan bebas risiko untuk rilis Biometric Login.',
+          recommendedAction: 'keep',
+        };
+      }
+
+    case 'spending-analytics-v2':
+      if (laneStr === 'Q3') {
+        return {
+          backlogId,
+          targetLane,
+          roadmapImpacts: [],
+          dependencyImpacts: [],
+          kpiImpacts: [
+            { kpi: 'Money Management Synergy', description: 'Memberikan kategorisasi pengeluaran otomatis untuk mendukung Pocket Rupiah.', severity: 'high' },
+          ],
+          estimatedDelayInSprints: 0,
+          aiRecommendation: '✅ SANGAT DIREKOMENDASIKAN DI Q3: Peluncuran bersamaan dengan Pocket Rupiah di Q3 menciptakan ekosistem Money Management yang lengkap dan solid.',
+          recommendedAction: 'keep',
+        };
+      } else {
+        return {
+          backlogId,
+          targetLane,
+          roadmapImpacts: [
+            { affectedBacklogId: 'loyalty-dashboard', affectedBacklogTitle: 'Loyalty Points Dashboard', description: 'Menambah kepadatan rilis fitur analitik di Q4.', severity: 'low' },
+          ],
+          dependencyImpacts: [],
+          kpiImpacts: [
+            { kpi: 'Ecosystem Synergy Loss', description: 'Nasabah Pocket Rupiah di Q3 tidak mendapatkan insight pengeluaran otomatis untuk budgeting.', severity: 'medium' },
+          ],
+          estimatedDelayInSprints: 1,
+          aiRecommendation: `⚠️ MENGERUS SINERGI MONEY MANAGEMENT: Spending Analytics v2 adalah komplemen wajib Pocket Rupiah (Q3). Memindahkannya ke ${laneStr} menghilangkan sinergi pengeluaran & budgeting saat launching.`,
+          recommendedAction: 'defer',
+        };
+      }
+
+    case 'split-bill':
+      if (laneStr === 'Q4') {
+        return {
+          backlogId,
+          targetLane,
+          roadmapImpacts: [
+            { affectedBacklogId: 'pocket-rupiah', affectedBacklogTitle: 'Pocket Rupiah', description: 'Memberikan ruang kapasitas penuh 9 pts bagi Pocket Rupiah di Q3.', severity: 'high' },
+          ],
+          dependencyImpacts: [],
+          kpiImpacts: [
+            { kpi: 'Capacity Optimization Q3', description: 'Membebaskan 9 story points di Q3 tanpa mengganggu target KPI keamanan & retensi.', severity: 'high' },
+          ],
+          estimatedDelayInSprints: 0,
+          aiRecommendation: '✅ REKOMENDASI TRADE-OFF OPTIMAL: Memindahkan Split Bill dari Q3 ke Q4 membebaskan 9 story points di Q3, memberikan ruang bagi peluncuran Pocket Rupiah tanpa risiko rilis.',
+          recommendedAction: 'defer',
+        };
+      } else {
+        return {
+          backlogId,
+          targetLane,
+          roadmapImpacts: [
+            { affectedBacklogId: 'pocket-rupiah', affectedBacklogTitle: 'Pocket Rupiah', description: 'Perebutan 9 pts kapasitas sprint dengan Pocket Rupiah.', severity: 'medium' },
+          ],
+          dependencyImpacts: [],
+          kpiImpacts: [
+            { kpi: 'Gen-Z P2P Engagement', description: 'Mempercepat fitur berbagi tagihan sosial untuk segmen nasabah muda.', severity: 'medium' },
+          ],
+          estimatedDelayInSprints: 0,
+          aiRecommendation: `⚠️ MEMBEBANI SPRINT Q3: Menempatkan Split Bill di Q3 bersamaan dengan Pocket Rupiah & Spending Analytics akan melampaui batas velocity tim. Pertimbangkan Q4.`,
+          recommendedAction: 'keep',
+        };
+      }
+
+    case 'virtual-card-control':
+      if (laneStr === 'Q4') {
+        return {
+          backlogId,
+          targetLane,
+          roadmapImpacts: [],
+          dependencyImpacts: [],
+          kpiImpacts: [
+            { kpi: 'Card Security Management', description: 'Memberikan kontrol limit & toggle kartu mandiri nasabah di Q4.', severity: 'medium' },
+          ],
+          estimatedDelayInSprints: 0,
+          aiRecommendation: '✅ TEPAT DI Q4: Eksekusi di Q4 memungkinkan fokus penuh pada kontrol kartu setelah pengerjaan fitur konsumen di Q3 rampung.',
+          recommendedAction: 'keep',
+        };
+      } else {
+        return {
+          backlogId,
+          targetLane,
+          roadmapImpacts: [
+            { affectedBacklogId: 'spending-analytics-v2', affectedBacklogTitle: 'Spending Analytics v2', description: 'Beban sprint Q3 meningkat 8 story points.', severity: 'medium' },
+          ],
+          dependencyImpacts: [],
+          kpiImpacts: [
+            { kpi: 'Security CX Acceleration', description: 'Mempercepat ketersediaan kontrol kartu mandiri nasabah di Q3.', severity: 'medium' },
+          ],
+          estimatedDelayInSprints: 0,
+          aiRecommendation: `⚠️ KAPASITAS KETAT: Memindahkan Virtual Card Control ke ${laneStr} menambah 8 story points di kuartal tersebut yang sudah padat. Pastikan ketersediaan resource dev.`,
+          recommendedAction: 'defer',
+        };
+      }
+
+    case 'loyalty-dashboard':
+      if (laneStr === 'Q4') {
+        return {
+          backlogId,
+          targetLane,
+          roadmapImpacts: [],
+          dependencyImpacts: [],
+          kpiImpacts: [
+            { kpi: 'Voucher Redemption Rate', description: 'Potensi kenaikan redemption rate voucher promo (+2%).', severity: 'low' },
+          ],
+          estimatedDelayInSprints: 0,
+          aiRecommendation: '✅ PILIHAN TEPAT DI Q4: Tetap di Q4 sebagai backlog opsional (Fill-in) saat ada kapasitas lebih.',
+          recommendedAction: 'keep',
+        };
+      } else {
+        return {
+          backlogId,
+          targetLane,
+          roadmapImpacts: [
+            { affectedBacklogId: 'pocket-rupiah', affectedBacklogTitle: 'Pocket Rupiah', description: 'Mengambil 10 pts kapasitas yang seharusnya untuk fitur core.', severity: 'high' },
+          ],
+          dependencyImpacts: [],
+          kpiImpacts: [
+            { kpi: 'Low Business ROI', description: 'Effort 10 pts tidak sebanding dengan dampak revenue/retensi langsung.', severity: 'low' },
+          ],
+          estimatedDelayInSprints: 1,
+          aiRecommendation: `⛔ LOW BUSINESS IMPACT (RICE 0.16): Loyalty Points Dashboard memiliki nilai RICE paling rendah (0.16). Memindahkannya ke ${laneStr} akan mengorbankan fitur berorientasi growth.`,
+          recommendedAction: 'reject',
+        };
+      }
+
+    case 'dark-mode':
+      if (laneStr === 'Q4') {
+        return {
+          backlogId,
+          targetLane,
+          roadmapImpacts: [],
+          dependencyImpacts: [],
+          kpiImpacts: [
+            { kpi: 'UX Satisfaction', description: 'Peningkatan kepuasan estetika dan hemat daya layar OLED.', severity: 'low' },
+          ],
+          estimatedDelayInSprints: 0,
+          aiRecommendation: '✅ TEPAT DITUNDA KE Q4: Dikerjakan di Q4 sebagai penyempurnaan UI/UX setelah fitur-fitur transaksi utama selesai.',
+          recommendedAction: 'keep',
+        };
+      } else {
+        return {
+          backlogId,
+          targetLane,
+          roadmapImpacts: [
+            { affectedBacklogId: 'qris-retry', affectedBacklogTitle: 'QRIS Auto Retry', description: 'Refactoring 40+ layar menyita waktu dev hingga 13 story points.', severity: 'high' },
+          ],
+          dependencyImpacts: [],
+          kpiImpacts: [
+            { kpi: 'Resource Opportunity Cost', description: 'Mengalokasikan 13 pts dev pada perbaikan kosmetik dibanding fitur transaksi inti.', severity: 'medium' },
+          ],
+          estimatedDelayInSprints: 2,
+          aiRecommendation: `⚠️ EFFORT BESAR REFACTORING: Dark Mode memerlukan refactoring 40+ layar UI (13 pts). Memindahkannya ke ${laneStr} menyita kapasitas besar tanpa dampak revenue/retensi langsung.`,
+          recommendedAction: 'defer',
+        };
+      }
+
+    default:
+      const title = item?.title || 'Backlog item';
+      const effort = item?.effortEstimation || '8 pts';
+      const moscow = item?.aiResult?.moscow || 'Should Have';
+      return {
+        backlogId,
+        targetLane,
+        roadmapImpacts: [],
+        dependencyImpacts: [],
+        kpiImpacts: [
+          { kpi: 'Sprint Capacity Alignment', description: `Evaluasi alokasi ${effort} pada roadmap ${laneStr}.`, severity: 'medium' },
+        ],
+        estimatedDelayInSprints: 0,
+        aiRecommendation: `Analisis dampak perpindahan ${title} (${moscow}, ${effort}) ke ${laneStr}: Pastikan alokasi resource tim dan dependency antar-squad telah selaras sebelum persetujuan final PO.`,
+        recommendedAction: 'keep',
+      };
+  }
+}
+
 export const MOCK_IMPACT_RESULTS: Record<string, ImpactAnalysisResult> = {
-  'pocket-rupiah': {
-    backlogId: 'pocket-rupiah',
-    targetLane: 'Q3',
-    roadmapImpacts: [
-      { affectedBacklogId: 'split-bill', affectedBacklogTitle: 'Split Bill', description: 'Bergeser ke Q4 karena Q3 capacity terbatas dan Pocket Rupiah memiliki urgensi kompetitor lebih tinggi.', severity: 'medium' },
-      { affectedBacklogId: 'virtual-card-control', affectedBacklogTitle: 'Virtual Card Control', description: 'Tetap di Later; tidak ada perubahan prioritas.', severity: 'low' },
-    ],
-    dependencyImpacts: [],
-    kpiImpacts: [
-      { kpi: 'Retained balance', description: 'Membuka opportunity Rp9,6-30 miliar berdasarkan skenario demo.', severity: 'high' },
-      { kpi: 'Engagement', description: 'Menambah alasan pengguna mengelola uang tanpa berpindah aplikasi.', severity: 'medium' },
-      { kpi: 'Competitive gap', description: '⚠️ BCA tertinggal 6-9 tahun dari kompetitor (Jenius 2017, blu 2020). Perlu segera dikejar.', severity: 'high' },
-    ],
-    estimatedDelayInSprints: 0,
-    aiRecommendation: '⚠️ PROMOSIKAN SEGERA: Pocket Rupiah harus dipromosikan dari Q4 ke Q3. Trade-off utamanya adalah menunda Split Bill ke Q4, tetapi spending analytics v2 tetap di Q3 karena komplemen strategis. Tidak ada blocker kritis.',
-    recommendedAction: 'promote',
-  },
-  'qris-retry': {
-    backlogId: 'qris-retry', targetLane: 'Q2', roadmapImpacts: [], dependencyImpacts: [],
-    kpiImpacts: [{ kpi: 'Transaction success rate', description: 'Tetap menjadi komitmen aktif.', severity: 'high' }],
-    estimatedDelayInSprints: 0, aiRecommendation: 'Pertahankan di Now.', recommendedAction: 'keep',
-  },
-  'login-biometric': {
-    backlogId: 'login-biometric', targetLane: 'Q4', roadmapImpacts: [],
-    dependencyImpacts: [{ dependencyId: 'identity-v2', dependencyTitle: 'Identity Service v2', description: 'Belum siap untuk delivery.', isBlocker: true }],
-    kpiImpacts: [], estimatedDelayInSprints: 2, aiRecommendation: 'Tunda hingga Identity Service v2 siap.', recommendedAction: 'defer',
-  },
-  'dark-mode': {
-    backlogId: 'dark-mode', targetLane: 'Q4', roadmapImpacts: [], dependencyImpacts: [], kpiImpacts: [],
-    estimatedDelayInSprints: 0, aiRecommendation: 'Letakkan di Later setelah backlog berdampak langsung.', recommendedAction: 'defer',
-  },
+  'pocket-rupiah': getDetailedImpactResult('pocket-rupiah', 'Q3'),
 };
 
 export const MOCK_IMPACT_RESULT = MOCK_IMPACT_RESULTS['pocket-rupiah'];
