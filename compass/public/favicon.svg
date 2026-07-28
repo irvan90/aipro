@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bca-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#002D62" />
+      <stop offset="100%" stop-color="#0D5CAB" />
+    </linearGradient>
+    <linearGradient id="ai-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCD34D" />
+      <stop offset="100%" stop-color="#F59E0B" />
+    </linearGradient>
+    <linearGradient id="spark-light" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#93C5FD" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background Card -->
+  <rect width="64" height="64" rx="16" fill="url(#bca-bg)" />
+
+  <!-- Subtle Outer Compass Ring -->
+  <circle cx="32" cy="32" r="21" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="2" stroke-dasharray="4 2" />
+
+  <!-- Inner Accent Ring -->
+  <circle cx="32" cy="32" r="14" fill="none" stroke="url(#ai-gold)" stroke-width="2.5" />
+
+  <!-- North-South-East-West Compass Dots -->
+  <circle cx="32" cy="8" r="2" fill="#FCD34D" />
+  <circle cx="32" cy="56" r="2" fill="rgba(255,255,255,0.5)" />
+  <circle cx="8" cy="32" r="2" fill="rgba(255,255,255,0.5)" />
+  <circle cx="56" cy="32" r="2" fill="rgba(255,255,255,0.5)" />
+
+  <!-- Center AI Sparkle (4-point star) -->
+  <path d="M32 20 C32 26 26 32 20 32 C26 32 32 38 32 44 C32 38 38 32 44 32 C38 32 32 26 32 20 Z" fill="url(#spark-light)" />
+
+  <!-- Top Right AI Indicator Dot -->
+  <circle cx="48" cy="16" r="4" fill="#F59E0B" />
+  <circle cx="48" cy="16" r="2" fill="#FFFFFF" />
+</svg>
