@@ -696,6 +696,68 @@
   margin-top: 0.2rem;
 }
 
+// RICE tier badge — inline layout
+.reko-stat--rice {
+  min-width: 120px;
+}
+
+// Flex row: score value + tier badge side by side
+.reko-stat__rice-row {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: nowrap;
+}
+
+.reko-stat__tier {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.18rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.54rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  // flex-shrink so it doesn't push value off screen
+  flex-shrink: 0;
+
+  // Default (fallback)
+  background: #f1f5f9;
+  color: #64748b;
+
+  &[data-tier='top'] {
+    background: #d1fae5;
+    color: #065f46;
+    .reko-stat__tier-dot { background: #10b981; }
+  }
+  &[data-tier='high'] {
+    background: #dbeafe;
+    color: #1e40af;
+    .reko-stat__tier-dot { background: #3b82f6; }
+  }
+  &[data-tier='medium'] {
+    background: #fef3c7;
+    color: #92400e;
+    .reko-stat__tier-dot { background: #f59e0b; }
+  }
+  &[data-tier='low'] {
+    background: #f1f5f9;
+    color: #64748b;
+    .reko-stat__tier-dot { background: #94a3b8; }
+  }
+}
+
+.reko-stat__tier-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #94a3b8;
+  flex-shrink: 0;
+}
+
+
 .reko-stat-divider {
   width: 1px;
   background: #e2e8f0;

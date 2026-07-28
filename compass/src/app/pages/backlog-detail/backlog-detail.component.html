@@ -212,9 +212,20 @@
                   </div>
                   @if (result.riceScore; as rice) {
                     <div class="reko-stat-divider"></div>
-                    <div class="reko-stat">
-                      <span class="reko-stat__val">{{ rice.total | number:'1.0-1' }}</span>
-                      <span class="reko-stat__lbl">RICE Score</span>
+                    <div class="reko-stat reko-stat--rice">
+                      <div class="reko-stat__rice-row">
+                        <span class="reko-stat__val">{{ rice.total | number:'1.0-1' }}</span>
+                        @if (riceRankInfo(); as rank) {
+                          <span class="reko-stat__tier" [attr.data-tier]="rank.tierKey">
+                            <span class="reko-stat__tier-dot"></span>{{ rank.tier }}
+                          </span>
+                        }
+                      </div>
+                      @if (riceRankInfo(); as rank) {
+                        <span class="reko-stat__lbl">RICE Score &nbsp;·&nbsp; Top {{ rank.topPercent }}% dari {{ rank.total }}</span>
+                      } @else {
+                        <span class="reko-stat__lbl">RICE Score</span>
+                      }
                     </div>
                   }
                   @if (getQuadrant(result); as quadrant) {

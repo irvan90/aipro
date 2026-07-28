@@ -46,6 +46,45 @@ export class BacklogDetailComponent implements OnInit, AfterViewChecked {
   analysisComplete = signal(false);
   analysisResult = signal<AIResult | null>(null);
 
+  /** Computed dynamically from all backlogs that have a RICE score. */
+  riceRankInfo = computed(() => {
+    const item = this.backlog();
+    if (!item?.aiResult?.riceScore) return null;
+
+    const currentScore = item.aiResult.riceScore.total;
+
+    // Collect every RICE total across all backlogs (including the current one)
+    const allScores = backlogStore.all()
+      .map(b => b.aiResult?.riceScore?.total)
+      .filter((s): s is number => s !== undefined && s !== null);
+
+    if (allScores.length === 0) return null;
+
+    // Sort ascending so we can find the rank
+    const sorted = [...allScores].sort((a, b) => a - b);
+
+    // How many scores is the current one strictly better than?
+    const beatenCount = sorted.filter(s => s < currentScore).length;
+    const percentileBeat = Math.round((beatenCount / sorted.length) * 100); // % of backlogs beaten
+    const topPercent   = Math.max(1, 100 - percentileBeat);                  // "Top X%"
+
+    // Tier based on relative position (fully dynamic — no hardcoded value thresholds)
+    const ratio = beatenCount / sorted.length;
+    let tier: string;
+    let tierKey: 'top' | 'high' | 'medium' | 'low';
+    if (ratio >= 0.75) {
+      tier = 'Top Tier'; tierKey = 'top';
+    } else if (ratio >= 0.50) {
+      tier = 'High';     tierKey = 'high';
+    } else if (ratio >= 0.25) {
+      tier = 'Medium';   tierKey = 'medium';
+    } else {
+      tier = 'Low';      tierKey = 'low';
+    }
+
+    return { topPercent, percentileBeat, tier, tierKey, total: sorted.length };
+  });
+
   getQuadrant(result: AIResult): ValueEffortQuadrantInfo | null {
     if (!result.valueEffort) return null;
     return valueEffortQuadrant(result.valueEffort.value, result.valueEffort.effort);
@@ -239,7 +278,15 @@ export class BacklogDetailComponent implements OnInit, AfterViewChecked {
       next: result => {
         this.analysisResult.set(result);
         backlogStore.all.update(all => all.map(backlog =>
-          backlog.id === item.id ? { ...backlog, aiResult: result, updatedAt: new Date() } : backlog
+          backlog.id === item.id ? {
+            ...backlog,
+            status: 'ai_scored',
+            aiResult: result,
+            priorityChangeReason: backlog.id === 'pocket-rupiah'
+              ? '⚠️ ANALISIS KOMPETITOR: Fitur pocket/kantong sudah ada di Jenius sejak 2017 dan blu sejak 2020. BCA tertinggal 6-9 tahun. Urgensi harus dinaikkan dari Q4 ke Q3 untuk mencegah nasabah beralih ke kompetitor yang sudah memiliki fitur matang ini.'
+              : backlog.priorityChangeReason,
+            updatedAt: new Date()
+          } : backlog
         ));
         this.analysisComplete.set(true);
         this.isAnalyzing.set(false);

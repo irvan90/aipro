@@ -62,7 +62,7 @@ export class DashboardComponent {
 
     insights.push({
       type: 'market', eyebrow: 'News signal · High', title: 'Berita: Fitur Alokasi Dana Semakin Diminati',
-      body: 'Media teknologi melaporkan bahwa fitur tabungan pos/pocket semakin diminati nasabah gen-Z. Blu dan Jenius memimpin tren ini.',
+      body: 'Media teknologi melaporkan bahwa fitur tabungan pos/pocket semakin diminati nasabah gen-Z. Tren digital banking mempercepat adopsi fitur ini.',
       source: 'Top tech media · 2 jam yang lalu', severity: 'high', backlogId: 'pocket-rupiah',
     });
 

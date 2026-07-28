@@ -31,6 +31,48 @@
   transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
 }
 
+
+.rice-tier-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.1rem 0.35rem;
+  border-radius: 999px;
+  font-size: 0.5rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  &[data-tier='top'] {
+    background: #d1fae5;
+    color: #065f46;
+    .rice-tier-dot { background: #10b981; }
+  }
+  &[data-tier='high'] {
+    background: #dbeafe;
+    color: #1e40af;
+    .rice-tier-dot { background: #3b82f6; }
+  }
+  &[data-tier='medium'] {
+    background: #fef3c7;
+    color: #92400e;
+    .rice-tier-dot { background: #f59e0b; }
+  }
+  &[data-tier='low'] {
+    background: #f1f5f9;
+    color: #64748b;
+    .rice-tier-dot { background: #94a3b8; }
+  }
+}
+
+.rice-tier-dot {
+  width: 3.5px;
+  height: 3.5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
 .modal-in {
   animation: modal-in 180ms ease-out both;
 }

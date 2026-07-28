@@ -1,4 +1,4 @@
-﻿import { Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Activity } from '../models/activity.model';
 import { ImpactAnalysisResult } from '../models/ai-result.model';
 import { AgentId, AgentFinding, AIResult, Backlog } from '../models/backlog.model';
@@ -248,7 +248,7 @@ export const MOCK_BACKLOGS: Backlog[] = [
     isEmergency: false,
     initialPriority: 'Low',
     recommendation: 'promote',
-    priorityChangeReason: '⚠️ ANALISIS KOMPETITOR: Fitur pocket/kantong sudah ada di Jenius sejak 2017 dan blu sejak 2020. BCA tertinggal 6-9 tahun. Urgensi harus dinaikkan dari Q4 ke Q3 untuk mencegah nasabah beralih ke kompetitor yang sudah memiliki fitur matang ini.',
+    priorityChangeReason: 'Fitur budgeting dan alokasi saldo ke beberapa kantong — diajukan dengan prioritas awal PO: Low.',
     roadmapLane: 'Later',
     opportunityAtRisk: {
       metric: 'retained_balance',
