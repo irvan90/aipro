@@ -28,7 +28,7 @@ export class DashboardComponent {
   sortBy = signal<'date'>('date');
 
   allBacklogs = backlogStore.all;
-  fromMyService = computed(() => this.allBacklogs().filter(item => item.source === 'myservice'));
+  fromMyService = computed(() => this.allBacklogs().filter(item => item.source === 'myservice' && (item.status === 'new' || !item.aiResult)));
   totalCount = computed(() => this.allBacklogs().length);
   doneCount = computed(() => this.allBacklogs().filter(item => item.status === 'delivered' || item.status === 'submitted').length);
   onProgressCount = computed(() => this.totalCount() - this.doneCount());
