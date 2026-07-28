@@ -33,7 +33,13 @@
             }
             <div class="px-4 py-3 rounded-xl bg-amber-300 text-bca-navy min-w-32 shadow-sm">
               <div class="text-[9px] uppercase tracking-wider font-bold text-bca-navy/55">AIPRO</div>
-              <div class="text-lg font-black mt-0.5">{{ item.aiResult?.moscow ?? 'Analyze first' }}</div>
+              <div class="text-lg font-black mt-0.5">
+                @if (isAnalyzing()) {
+                  Analyzing...
+                } @else {
+                  {{ item.aiResult?.moscow ?? 'Analyze first' }}
+                }
+              </div>
             </div>
           </div>
         </div>
@@ -118,10 +124,7 @@
             @if (thinkingLogs().length > 0) {
               <div class="stream-footer">
                 <span class="stream-cursor"></span>
-                <span class="stream-hint">Mode Presentasi (60 min pause) — Klik di mana saja untuk melihat Hasil Analisis</span>
-                <button type="button" class="stream-footer__btn" (click)="$event.stopPropagation(); fastForward()">
-                  Lihat Hasil Analisis &rarr;
-                </button>
+                <span class="stream-hint">Mode Presentasi — Klik di mana saja untuk melihat Hasil Analisis</span>
               </div>
             }
           </div>
@@ -160,7 +163,7 @@
         }
 
         <!-- ═══ RESULT STATE ═══ -->
-        @if ((analysisComplete() || item.aiResult) && (analysisResult() || item.aiResult); as result) {
+        @if (!isAnalyzing() && (analysisComplete() || item.aiResult) && (analysisResult() || item.aiResult); as result) {
           <div class="analysis-result">
 
             <!-- ★ REKOMENDASI FINAL HERO ★ -->
@@ -327,6 +330,15 @@
                 </div>
               }
             </div>
+
+            <!-- Stream footer button (only shown after analysis complete) -->
+            @if (analysisComplete()) {
+              <!-- <div class="stream-footer">
+                <button type="button" class="stream-footer__btn" (click)="fastForward()">
+                  Lihat Hasil Analisis &rarr;
+                </button>
+              </div> -->
+            }
           </div>
         }
       </div>

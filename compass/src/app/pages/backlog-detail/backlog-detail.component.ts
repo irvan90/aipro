@@ -175,7 +175,7 @@ export class BacklogDetailComponent implements OnInit, AfterViewChecked {
         else if (state?.status === 'done') status = 'done';
       } else if (cfg.agent === 'orchestrator') {
         if (phase === 'core-engine') status = 'active';
-        else if (phase === 'agents' || phase === 'decision-engine') status = 'done';
+        else if (steps.length > 0) status = 'done';
       } else if (cfg.agent === 'decision-engine') {
         if (phase === 'decision-engine') status = 'active';
         else if (steps.some(s => s.type === 'result')) status = 'done';
