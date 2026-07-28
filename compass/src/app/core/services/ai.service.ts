@@ -130,7 +130,9 @@ export class AiService {
           }
         });
       }
-      offset = parallelStart + maxSteps * STEP_MS;
+
+      // Agents are only "done" after all their streamed logs have been displayed.
+      offset = agentLogOffset;
 
       // Agents complete
       AGENT_DEFINITIONS.forEach((agent, index) => {
