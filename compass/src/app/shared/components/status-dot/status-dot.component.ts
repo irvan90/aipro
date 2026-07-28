@@ -1,11 +1,10 @@
 import { Component, Input } from '@angular/core';
-import { NgClass } from '@angular/common';
 import { BacklogStatus } from '../../../core/models/backlog.model';
 
 @Component({
   selector: 'app-status-dot',
   standalone: true,
-  imports: [NgClass],
+  imports: [],
   templateUrl: './status-dot.component.html',
   styleUrl: './status-dot.component.scss',
 })

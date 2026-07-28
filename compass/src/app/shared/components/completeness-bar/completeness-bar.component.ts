@@ -1,10 +1,9 @@
 import { Component, Input } from '@angular/core';
-import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-completeness-bar',
   standalone: true,
-  imports: [NgClass],
+  imports: [],
   templateUrl: './completeness-bar.component.html',
   styleUrl: './completeness-bar.component.scss',
 })

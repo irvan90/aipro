@@ -1,10 +1,9 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-slide-panel',
   standalone: true,
-  imports: [NgClass],
+  imports: [],
   templateUrl: './slide-panel.component.html',
   styleUrl: './slide-panel.component.scss',
 })

@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
-import { NgClass } from '@angular/common';
 import { appStore } from '../../../core/stores/app.store';
 import { Toast } from '../../../core/models/ui.model';
 
 @Component({
   selector: 'app-toast',
   standalone: true,
-  imports: [NgClass],
+  imports: [],
   templateUrl: './toast.component.html',
   styleUrl: './toast.component.scss',
 })

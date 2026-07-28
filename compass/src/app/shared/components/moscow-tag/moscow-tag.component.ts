@@ -1,11 +1,10 @@
 import { Component, Input } from '@angular/core';
-import { NgClass } from '@angular/common';
 import { MoSCoW } from '../../../core/models/backlog.model';
 
 @Component({
   selector: 'app-moscow-tag',
   standalone: true,
-  imports: [NgClass],
+  imports: [],
   templateUrl: './moscow-tag.component.html',
   styleUrl: './moscow-tag.component.scss',
 })

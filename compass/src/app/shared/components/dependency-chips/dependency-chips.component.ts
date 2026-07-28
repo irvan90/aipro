@@ -1,5 +1,4 @@
 import { Component, Input, Output, EventEmitter, signal, computed, ElementRef, HostListener } from '@angular/core';
-import { NgClass, NgFor, NgIf, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Backlog } from '../../../core/models/backlog.model';
 import { backlogStore } from '../../../core/stores/backlog.store';
@@ -7,7 +6,7 @@ import { backlogStore } from '../../../core/stores/backlog.store';
 @Component({
   selector: 'app-dependency-chips',
   standalone: true,
-  imports: [NgClass, NgFor, NgIf, FormsModule, DecimalPipe],
+  imports: [FormsModule],
   templateUrl: './dependency-chips.component.html',
   styleUrl: './dependency-chips.component.scss',
 })

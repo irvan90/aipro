@@ -1,7 +1,7 @@
+@use 'styles/animations' as *;
+@use 'styles/drag-drop' as *;
+
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import 'styles/animations';
-@import 'styles/drag-drop';

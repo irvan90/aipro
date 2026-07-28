@@ -1,10 +1,9 @@
 import { Component, Input } from '@angular/core';
-import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-stat-card',
   standalone: true,
-  imports: [NgClass],
+  imports: [],
   templateUrl: './stat-card.component.html',
   styleUrl: './stat-card.component.scss',
 })

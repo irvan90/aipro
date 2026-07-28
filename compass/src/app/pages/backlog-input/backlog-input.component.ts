@@ -1,20 +1,18 @@
 import { Component, computed, signal, OnInit } from '@angular/core';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
-import { NgClass, NgFor, NgIf, DecimalPipe, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Backlog, ImpactArea, EvidenceType, Quarter, MyServiceData } from '../../core/models/backlog.model';
 import { backlogStore } from '../../core/stores/backlog.store';
 import { AiService } from '../../core/services/ai.service';
 import { BacklogService } from '../../core/services/backlog.service';
 import { ToastService } from '../../core/services/toast.service';
-import { CompletenessBarComponent } from '../../shared/components/completeness-bar/completeness-bar.component';
 import { DependencyChipsComponent } from '../../shared/components/dependency-chips/dependency-chips.component';
-import { AgentPipelineComponent } from '../../shared/components/agent-pipeline/agent-pipeline.component';
 
 @Component({
   selector: 'app-backlog-input',
   standalone: true,
-  imports: [RouterLink, NgClass, NgFor, NgIf, DecimalPipe, DatePipe, FormsModule, ReactiveFormsModule, CompletenessBarComponent, DependencyChipsComponent, AgentPipelineComponent],
+  imports: [RouterLink, DatePipe, FormsModule, ReactiveFormsModule, DependencyChipsComponent],
   templateUrl: './backlog-input.component.html',
   styleUrl: './backlog-input.component.scss',
 })

@@ -118,7 +118,10 @@
             @if (thinkingLogs().length > 0) {
               <div class="stream-footer">
                 <span class="stream-cursor"></span>
-                <span class="stream-hint">Click anywhere to skip animation</span>
+                <span class="stream-hint">Mode Presentasi (60 min pause) — Klik di mana saja untuk melihat Hasil Analisis</span>
+                <button type="button" class="stream-footer__btn" (click)="$event.stopPropagation(); fastForward()">
+                  Lihat Hasil Analisis &rarr;
+                </button>
               </div>
             }
           </div>
@@ -156,116 +159,173 @@
           </div>
         }
 
-        <!-- ═══ RESULT STATE (after analysis) ═══ -->
-        @if (analysisComplete() && analysisResult(); as result) {
+        <!-- ═══ RESULT STATE ═══ -->
+        @if ((analysisComplete() || item.aiResult) && (analysisResult() || item.aiResult); as result) {
           <div class="analysis-result">
-            <!-- Result Header -->
-            <div class="result-header">
-              <div class="flex items-center justify-between gap-3 flex-wrap">
-                <div>
-                  <div class="text-[10px] uppercase tracking-[0.16em] font-bold text-bca-primary">Recommendation ready</div>
-                  <h2 class="text-xl font-black text-gray-950 mt-1">Rekomendasi Final</h2>
-                  <p class="text-sm text-gray-600 leading-relaxed mt-2 max-w-2xl" [innerHTML]="getFinalRecommendation(result)"></p>
-                </div>
-                <div class="flex gap-2">
-                  <div class="metric-pill"><span>MoSCoW</span><strong>{{ result.moscow }}</strong></div>
-                  <div class="metric-pill"><span>Confidence</span><strong>{{ result.confidenceLevel }}%</strong></div>
-                </div>
-              </div>
-            </div>
 
-            <!-- RICE Score -->
-            @if (result.riceScore; as rice) {
-              <div class="rice-card">
-                <div class="flex items-center justify-between gap-3 flex-wrap">
-                  <div>
-                    <div class="text-[10px] uppercase tracking-[0.14em] font-bold text-blue-700">RICE Score</div>
-                    <div class="text-3xl font-black text-gray-950 mt-1">{{ rice.total | number:'1.0-1' }}</div>
+            <!-- ★ REKOMENDASI FINAL HERO ★ -->
+            <div class="reko-hero">
+              <!-- Left accent bar -->
+              <div class="reko-hero__accent"></div>
+
+              <div class="reko-hero__inner">
+                <!-- Top row: label + MoSCoW pill -->
+                <div class="reko-hero__toprow">
+                  <div class="reko-hero__label">
+                    <span class="reko-hero__dot"></span>
+                    Rekomendasi Final
                   </div>
-                  <div class="text-[10px] text-blue-600/70 font-mono bg-white/70 px-3 py-1.5 rounded-lg border border-blue-100">
-                    (R × I × C%) / E
+                  <div class="reko-moscow" [class]="'reko-moscow--' + result.moscow.toLowerCase().replace(' ', '-')">
+                    {{ result.moscow }}
                   </div>
                 </div>
-                <div class="rice-stats-grid">
-                  <div class="rice-stat">
-                    <div class="rice-stat__label">Reach</div>
-                    <div class="rice-stat__value">{{ rice.reach }}/10</div>
-                    <div class="rice-stat__unit">{{ rice.reachLabel || 'skor normalisasi' }}</div>
+
+                <!-- Main headline -->
+                <div class="reko-hero__headline">
+                  @if (result.moscow === 'Must Have') {
+                    Segera Promote ke Roadmap &amp; Sprint
+                  } @else if (result.moscow === 'Should Have') {
+                    Masukkan ke Roadmap Kuartal Ini
+                  } @else if (result.moscow === 'Could Have') {
+                    Pertahankan dalam Backlog Opsional
+                  } @else {
+                    Tunda ke Siklus Mendatang
+                  }
+                </div>
+
+                <!-- Narrative text -->
+                <div class="reko-hero__narrative" [innerHTML]="getFinalRecommendation(result, item)"></div>
+
+                <!-- Key stats strip -->
+                <div class="reko-hero__stats">
+                  <div class="reko-stat">
+                    <span class="reko-stat__val">{{ result.moscow }}</span>
+                    <span class="reko-stat__lbl">MoSCoW</span>
                   </div>
-                  <div class="rice-stat"><div class="rice-stat__label">Impact</div><div class="rice-stat__value">{{ rice.impact }}x</div><div class="rice-stat__unit">multiplier</div></div>
-                  <div class="rice-stat"><div class="rice-stat__label">Confidence</div><div class="rice-stat__value">{{ rice.confidence }}%</div><div class="rice-stat__unit">certainty</div></div>
-                  <div class="rice-stat"><div class="rice-stat__label">Effort</div><div class="rice-stat__value">{{ rice.effort }}</div><div class="rice-stat__unit">story pts</div></div>
-                </div>
-              </div>
-            }
-
-            <!-- Value-Effort + Opportunity -->
-            <div class="result-meta-grid">
-              @if (getQuadrant(result); as quadrant) {
-                <div class="ve-card {{ quadrant.colorClass }}">
-                  <div class="text-[9px] uppercase tracking-wider font-bold opacity-70">Value-Effort Matrix</div>
-                  <div class="text-sm font-bold mt-0.5">{{ quadrant.label }}</div>
-                  <div class="text-[10px] opacity-60 mt-0.5">{{ quadrant.detail }}</div>
-                </div>
-              }
-
-              @if (item.opportunityAtRisk; as opportunity) {
-                <div class="opportunity-card">
-                  <div class="text-[9px] uppercase tracking-wider font-bold text-amber-700">Opportunity at risk</div>
-                  <div class="text-base font-black text-gray-950 mt-0.5">{{ opportunity.label }}</div>
-                  <p class="text-[11px] text-gray-500 mt-1.5">{{ opportunity.formula }}</p>
-                  <div class="inline-flex items-center gap-1.5 mt-2 px-2.5 py-1 rounded-full bg-amber-100/60 border border-amber-200 text-[10px] font-bold text-amber-800">ⓘ Estimasi skenario demo</div>
-                </div>
-              }
-            </div>
-
-            <!-- Agent Findings -->
-            <div class="findings-grid">
-              @for (finding of result.agentFindings; track finding.agentId) {
-                <div class="finding-card">
-                  <div class="finding-card__icon">{{ finding.icon }}</div>
-                  <div class="finding-card__name">{{ finding.agentName }}</div>
-                  <p class="finding-card__summary">{{ finding.summary }}</p>
-                </div>
-              }
-            </div>
-
-            <!-- Evidence Toggle -->
-            <button (click)="showEvidence.set(!showEvidence())"
-                    class="w-full flex items-center justify-between mt-4 px-4 py-3 rounded-xl border border-gray-200 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors">
-              <span>Asumsi & evidence</span><span>{{ showEvidence() ? '−' : '+' }}</span>
-            </button>
-
-            @if (showEvidence()) {
-              <div class="mt-2 rounded-xl border border-gray-200 divide-y divide-gray-100 overflow-hidden">
-                @for (signal of item.evidenceSignals ?? []; track signal.label) {
-                  <div class="p-3.5 bg-gray-50/50">
-                    <div class="flex items-center justify-between gap-2">
-                      <span class="text-xs font-bold text-gray-800">{{ signal.label }}</span>
-                      <span class="text-[9px] text-gray-400">{{ signal.observedAt }}</span>
+                  <div class="reko-stat-divider"></div>
+                  <div class="reko-stat">
+                    <span class="reko-stat__val">{{ result.confidenceLevel }}%</span>
+                    <span class="reko-stat__lbl">Confidence</span>
+                  </div>
+                  @if (result.riceScore; as rice) {
+                    <div class="reko-stat-divider"></div>
+                    <div class="reko-stat">
+                      <span class="reko-stat__val">{{ rice.total | number:'1.0-1' }}</span>
+                      <span class="reko-stat__lbl">RICE Score</span>
                     </div>
-                    <p class="text-[11px] text-gray-500 mt-1">{{ signal.detail }}</p>
-                    <p class="text-[9px] text-gray-400 mt-1.5">Source: {{ signal.source }}</p>
+                  }
+                  @if (getQuadrant(result); as quadrant) {
+                    <div class="reko-stat-divider"></div>
+                    <div class="reko-stat">
+                      <span class="reko-stat__val">{{ quadrant.label }}</span>
+                      <span class="reko-stat__lbl">Kuadran</span>
+                    </div>
+                  }
+                </div>
+
+                <!-- Actions -->
+                <div class="reko-hero__actions">
+                  @if (item.recommendation === 'promote' || result.moscow === 'Must Have' || result.moscow === 'Should Have') {
+                    <button (click)="reviewRoadmap()" class="reko-btn-primary">
+                      Promote ke Roadmap
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </button>
+                  }
+                  <button (click)="runAnalysis()" class="reko-btn-secondary">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                    Ulangi Analisis
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- ─── BREAKDOWN SECTION ─── -->
+            <div class="breakdown-section">
+              <div class="breakdown-section__header">
+                <span class="breakdown-section__title">Landasan Analisis</span>
+                <span class="breakdown-section__badge">Supporting Data</span>
+              </div>
+
+              <!-- RICE Score -->
+              @if (result.riceScore; as rice) {
+                <div class="rice-card">
+                  <div class="flex items-center justify-between gap-3 flex-wrap">
+                    <div>
+                      <div class="text-[10px] uppercase tracking-[0.14em] font-bold text-blue-700">RICE Score Calculation</div>
+                      <div class="text-2xl font-black text-gray-950 mt-1">{{ rice.total | number:'1.0-1' }}</div>
+                    </div>
+                    <div class="text-[10px] text-blue-600/70 font-mono bg-white/70 px-3 py-1.5 rounded-lg border border-blue-100">
+                      (R × I × C%) / E
+                    </div>
+                  </div>
+                  <div class="rice-stats-grid">
+                    <div class="rice-stat">
+                      <div class="rice-stat__label">Reach</div>
+                      <div class="rice-stat__value">{{ rice.reach }}/10</div>
+                      <div class="rice-stat__unit">{{ rice.reachLabel || 'skor normalisasi' }}</div>
+                    </div>
+                    <div class="rice-stat"><div class="rice-stat__label">Impact</div><div class="rice-stat__value">{{ rice.impact }}x</div><div class="rice-stat__unit">multiplier</div></div>
+                    <div class="rice-stat"><div class="rice-stat__label">Confidence</div><div class="rice-stat__value">{{ rice.confidence }}%</div><div class="rice-stat__unit">certainty</div></div>
+                    <div class="rice-stat"><div class="rice-stat__label">Effort</div><div class="rice-stat__value">{{ rice.effort }}</div><div class="rice-stat__unit">story pts</div></div>
+                  </div>
+                </div>
+              }
+
+              <!-- Value-Effort + Opportunity -->
+              <div class="result-meta-grid">
+                @if (getQuadrant(result); as quadrant) {
+                  <div class="ve-card {{ quadrant.colorClass }}">
+                    <div class="text-[9px] uppercase tracking-wider font-bold opacity-70">Value-Effort Matrix</div>
+                    <div class="text-sm font-bold mt-0.5">{{ quadrant.label }}</div>
+                    <div class="text-[10px] opacity-60 mt-0.5">{{ quadrant.detail }}</div>
                   </div>
                 }
-                @for (assumption of item.opportunityAtRisk?.assumptions ?? []; track assumption) {
-                  <div class="px-3.5 py-2.5 text-[11px] text-gray-600 bg-white">✓ {{ assumption }}</div>
+                @if (item.opportunityAtRisk; as opportunity) {
+                  <div class="opportunity-card">
+                    <div class="text-[9px] uppercase tracking-wider font-bold text-amber-700">Opportunity at risk</div>
+                    <div class="text-base font-black text-gray-950 mt-0.5">{{ opportunity.label }}</div>
+                    <p class="text-[11px] text-gray-500 mt-1.5">{{ opportunity.formula }}</p>
+                    <div class="inline-flex items-center gap-1.5 mt-2 px-2.5 py-1 rounded-full bg-amber-100/60 border border-amber-200 text-[10px] font-bold text-amber-800">ⓘ Estimasi skenario demo</div>
+                  </div>
                 }
               </div>
-            }
 
-            <!-- Actions -->
-            <div class="result-actions">
-              @if (item.recommendation === 'promote') {
-                <button (click)="reviewRoadmap()"
-                        class="flex-1 px-4 py-3.5 rounded-xl bg-bca-primary text-white text-sm font-bold hover:bg-bca-hover transition-colors shadow-sm">
-                  Promote to recommended roadmap →
-                </button>
-              }
-              <button (click)="runAnalysis()"
-                      class="px-4 py-3.5 rounded-xl border border-gray-200 text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors">
-                Run analysis again
+              <!-- Agent Findings -->
+              <div class="mt-5">
+                <div class="text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-2">Analisis Per Agent</div>
+                <div class="findings-grid">
+                  @for (finding of result.agentFindings; track finding.agentId) {
+                    <div class="finding-card">
+                      <div class="finding-card__icon">{{ finding.icon }}</div>
+                      <div class="finding-card__name">{{ finding.agentName }}</div>
+                      <p class="finding-card__summary">{{ finding.summary }}</p>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <!-- Evidence Toggle -->
+              <button (click)="showEvidence.set(!showEvidence())"
+                      class="w-full flex items-center justify-between mt-4 px-4 py-3 rounded-xl border border-gray-200 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors">
+                <span>Asumsi &amp; evidence</span><span>{{ showEvidence() ? '−' : '+' }}</span>
               </button>
+              @if (showEvidence()) {
+                <div class="mt-2 rounded-xl border border-gray-200 divide-y divide-gray-100 overflow-hidden">
+                  @for (signal of item.evidenceSignals ?? []; track signal.label) {
+                    <div class="p-3.5 bg-gray-50/50">
+                      <div class="flex items-center justify-between gap-2">
+                        <span class="text-xs font-bold text-gray-800">{{ signal.label }}</span>
+                        <span class="text-[9px] text-gray-400">{{ signal.observedAt }}</span>
+                      </div>
+                      <p class="text-[11px] text-gray-500 mt-1">{{ signal.detail }}</p>
+                      <p class="text-[9px] text-gray-400 mt-1.5">Source: {{ signal.source }}</p>
+                    </div>
+                  }
+                  @for (assumption of item.opportunityAtRisk?.assumptions ?? []; track assumption) {
+                    <div class="px-3.5 py-2.5 text-[11px] text-gray-600 bg-white">✓ {{ assumption }}</div>
+                  }
+                </div>
+              }
             </div>
           </div>
         }

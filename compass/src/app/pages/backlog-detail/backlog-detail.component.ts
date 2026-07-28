@@ -1,7 +1,7 @@
 import { Component, computed, OnInit, signal, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { AIResult, ThinkingStep, valueEffortQuadrant, ValueEffortQuadrantInfo } from '../../core/models/backlog.model';
+import { AIResult, Backlog, ThinkingStep, valueEffortQuadrant, ValueEffortQuadrantInfo } from '../../core/models/backlog.model';
 import { AiService } from '../../core/services/ai.service';
 import { backlogStore } from '../../core/stores/backlog.store';
 
@@ -71,21 +71,25 @@ export class BacklogDetailComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  getFinalRecommendation(result: AIResult): string {
+  getFinalRecommendation(result: AIResult, backlog?: Backlog): string {
     const moscow = result.moscow;
     const confidence = result.confidenceLevel;
     const rice = result.riceScore;
     const quadrant = this.getQuadrant(result);
 
+    // Detect competitive evidence signals
+    const competitiveSignal = backlog?.evidenceSignals?.find(s => s.type === 'competitive');
+    const hasCompetitiveGap = !!competitiveSignal;
+
     const parts: string[] = [];
 
-    // MoSCoW + Confidence intro
+    // ── Opening: MoSCoW classification ──
     switch (moscow) {
       case 'Must Have':
         parts.push(`Backlog ini diklasifikasi sebagai <strong>Must Have</strong> — prioritas tertinggi yang harus segera dieksekusi`);
         break;
       case 'Should Have':
-        parts.push(`Backlog ini diklasifikasi sebagai <strong>Should Have</strong> — penting namun tidak bersifat darurat`);
+        parts.push(`Backlog ini diklasifikasi sebagai <strong>Should Have</strong> — penting dan perlu masuk roadmap kuartal ini`);
         break;
       case 'Could Have':
         parts.push(`Backlog ini diklasifikasi sebagai <strong>Could Have</strong> — memberikan nilai tambah namun dapat ditunda`);
@@ -97,45 +101,46 @@ export class BacklogDetailComponent implements OnInit, AfterViewChecked {
         parts.push(`Hasil analisis menunjukkan rekomendasi <strong>${moscow}</strong>`);
     }
 
-    // RICE score context
+    // ── RICE score context ──
     if (rice) {
       parts.push(`dengan <strong>RICE Score ${rice.total.toLocaleString('id-ID', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}</strong> (Reach: ${rice.reach}/10 — ${rice.reachLabel || 'skor normalisasi'}, Impact: ${rice.impact}x, Confidence: ${confidence}%, Effort: ${rice.effort} pts)`);
     } else {
       parts.push(`dengan confidence level <strong>${confidence}%</strong>`);
     }
 
-    // Value-Effort quadrant insight
+    // ── Value-Effort quadrant insight ──
     if (quadrant) {
       switch (quadrant.label) {
         case 'Quick Win':
-          parts.push(`— masuk dalam kuadran <strong>Quick Win</strong>: high value, low effort, sehingga layak langsung diprioritaskan dalam sprint mendatang`);
+          parts.push(`— masuk kuadran <strong>Quick Win</strong>: high value, low effort, layak langsung diprioritaskan`);
           break;
         case 'Big Bet':
-          parts.push(`— masuk dalam kuadran <strong>Big Bet</strong>: high value namun high effort, memerlukan perencanaan matang dan alokasi resource yang signifikan`);
+          parts.push(`— masuk kuadran <strong>Big Bet</strong>: high value namun high effort, perlu perencanaan resource signifikan`);
           break;
         case 'Fill-in':
-          parts.push(`— masuk dalam kuadran <strong>Fill-in</strong>: low value, low effort, dapat dikerjakan saat ada kapasitas lebih`);
+          parts.push(`— masuk kuadran <strong>Fill-in</strong>: low value, low effort, kerjakan saat ada kapasitas lebih`);
           break;
         case 'Money Pit':
-          parts.push(`— masuk dalam kuadran <strong>Money Pit</strong>: low value, high effort, perlu dipertimbangkan kembali kelayakannya`);
+          parts.push(`— masuk kuadran <strong>Money Pit</strong>: low value, high effort, pertimbangkan kembali kelayakannya`);
           break;
       }
     }
 
-    // Closing based on MoSCoW
-    switch (moscow) {
-      case 'Must Have':
-        parts.push(`Rekomendasi: segera <strong>promote</strong> ke roadmap dan alokasikan resource dalam sprint ini.`);
-        break;
-      case 'Should Have':
-        parts.push(`Rekomendasi: masukkan ke dalam <strong>roadmap kuartal ini</strong> namun dapat dinegosiasikan urutannya.`);
-        break;
-      case 'Could Have':
-        parts.push(`Rekomendasi: <strong>keep</strong> dalam backlog, eksekusi jika kapasitas tim memungkinkan.`);
-        break;
-      case "Won't Have":
-        parts.push(`Rekomendasi: <strong>defer</strong> — evaluasi kembali saat kondisi bisnis atau kapasitas berubah.`);
-        break;
+    // ── Competitive gap finding dari Market Agent ──
+    if (hasCompetitiveGap && competitiveSignal) {
+      parts.push(`<br><br><strong>⚠️ Temuan Market Agent — ${competitiveSignal.label}:</strong> ${competitiveSignal.detail} Keterlambatan ini berdampak langsung pada risiko churn nasabah yang menginginkan fitur money management terpadu — dan saat ini mencari solusi di aplikasi kompetitor.`);
+    }
+
+    // ── Closing action ──
+    const closingMap: Record<string, string> = {
+      'Must Have': `<strong>Promote segera</strong> ke roadmap dan alokasikan resource dalam sprint ini.`,
+      'Should Have': `<strong>Masukkan ke roadmap kuartal ini</strong> — urutan dapat dinegosiasikan namun jangan lewatkan dari planning.`,
+      'Could Have': `<strong>Keep</strong> dalam backlog; eksekusi jika kapasitas tim memungkinkan.`,
+      "Won't Have": `<strong>Defer</strong> — evaluasi kembali saat kondisi bisnis atau kapasitas berubah.`,
+    };
+    const closing = closingMap[moscow];
+    if (closing) {
+      parts.push(`<br>Rekomendasi: ${closing}`);
     }
 
     return parts.join(' ');
@@ -195,7 +200,14 @@ export class BacklogDetailComponent implements OnInit, AfterViewChecked {
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    if (id) backlogStore.selectedBacklogId.set(id);
+    if (id) {
+      backlogStore.selectedBacklogId.set(id);
+      const item = this.backlog();
+      if (item?.aiResult) {
+        this.analysisResult.set(item.aiResult);
+        this.analysisComplete.set(true);
+      }
+    }
   }
 
   fastForward(): void {

@@ -159,6 +159,12 @@ export class AiService {
       offset += STEP_MS;
 
       pushAction(offset * TIME_SCALE, () => {
+        backlogStore.aiLoadingStep.set('Analisis Selesai · Mode Presentasi (Auto-pause 60 menit)');
+      });
+
+      // Pause for 60 minutes (3,600,000 ms) before auto-completing to allow full flexibility when explaining
+      const AUTO_PAUSE_PRESENTATION_MS = 60 * 60 * 1000;
+      pushAction(offset * TIME_SCALE + AUTO_PAUSE_PRESENTATION_MS, () => {
         observer.next(finalResult);
         observer.complete();
       });
@@ -228,6 +234,10 @@ export class AiService {
     const isPocket = backlog.id === 'pocket-rupiah' || backlog.id === 'pocket-bca' || backlog.title.toLowerCase().includes('pocket');
     const ms = backlog.myService;
     const S = this.step.bind(this);
+
+    const blueprintUrl = ms?.blueprintUrl || '';
+    const hasPersonalData = ms?.personalDataAccess ?? false;
+    const ropaDpiaLink = ms?.ropaDpiaLink || '';
     
     // 1. Reach Calculation (Metode Normalisasi Skala Relatif Berbasis Segmen)
     let reach = 5;
@@ -329,11 +339,18 @@ export class AiService {
 
     // 4. Effort Calculation
     let effort = 8;
-    const effLevel = ms?.valuegraphEffort || 'Medium';
-    if (effLevel === 'High') effort = 13;
-    else if (effLevel === 'Low') effort = 4;
-    else effort = 8;
-    agent3Logs.push(S('feasibility-agent', 'Feasibility Agent', '◇', `Effort dari Valuegraph myService: ${effLevel} (${effort} story points)`));
+    if (backlog.effortEstimation) {
+      const parsed = parseInt(backlog.effortEstimation.replace(/\D/g, ''), 10);
+      if (!isNaN(parsed) && parsed > 0) {
+        effort = parsed;
+      }
+    } else {
+      const effLevel = ms?.valuegraphEffort || 'Medium';
+      if (effLevel === 'High') effort = 13;
+      else if (effLevel === 'Low') effort = 4;
+      else effort = 8;
+    }
+    agent3Logs.push(S('feasibility-agent', 'Feasibility Agent', '◇', `Effort estimasi backlog: ${effort} story points`));
     agent3Logs.push(S('feasibility-agent', 'Feasibility Agent', '◇', 'Review compliance selesai — 100% regulasi OJK, PBI, & UU PDP terpenuhi ✓', 'finding'));
 
     // 5. Launch Flexibility
